@@ -1,10 +1,9 @@
 using BookStore.Common.Configuration;
+using BookStore.Common.Instrumentation;
 using BookStore.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-using OpenTelemetry;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,16 +83,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // OpenTelemetry
-builder.Services.AddOpenTelemetry()
-    .WithTracing(tracingBuilder =>
-    {
-        tracingBuilder
-            .SetResourceBuilder(ResourceBuilder.CreateDefault()
-                .AddService("BookStore.Service", "1.0.0"))
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddMongoDBInstrumentation();
-    });
+builder.Services.AddBookStoreOpenTelemetry(builder.Configuration, "BookStore.Service");
 
 var app = builder.Build();
 

@@ -1,20 +1,23 @@
 # BookStore Performance Testing Example
 
-A standalone .NET 8 application designed to replicate the infrastructure complexity of enterprise microservices for performance testing investigations. This project mirrors the architecture of complex hub-services projects but uses a simple BookStore domain to focus on performance characteristics rather than business logic.
+An enterprise-grade .NET 8 application designed to replicate the full infrastructure complexity of production microservices for comprehensive performance testing investigations. This project mirrors the architecture of complex hub-services projects but uses a simple BookStore domain to focus on performance characteristics rather than business logic.
 
 ## Architecture Overview
 
-### Services
+### Core Services
 - **BookStore.Service** - Main API service with CRUD operations
+- **BookStore.Performance.Service** - K6 orchestration service with Docker integration
 - **BookStore.Common** - Shared models and configurations
+- **BookStore.Common.Instrumentation** - OpenTelemetry integration library
 - **BookStore.Aspire.AppHost** - .NET Aspire orchestration
 
-### Infrastructure Components
-- **MongoDB** - Primary database for storing books and authors
-- **Redis** - Distributed caching layer
-- **OpenTelemetry** - Observability and tracing
-- **K6** - Performance testing framework
-- **Docker** - Container orchestration via Aspire
+### Enterprise Infrastructure
+- **MongoDB** - Primary database with connection pooling and instrumentation
+- **Redis** - Distributed caching with advanced configuration
+- **OpenTelemetry** - Full observability stack (tracing, metrics, logging)
+- **K6** - Performance testing with Docker orchestration
+- **Docker** - Container orchestration with multi-profile support
+- **SignalR** - Real-time performance test monitoring
 
 ### API Endpoints
 - `GET /api/v1/books` - List books with filtering and pagination
@@ -27,32 +30,72 @@ A standalone .NET 8 application designed to replicate the infrastructure complex
 - `GET /api/v1/authors` - List authors
 - `POST /api/v1/authors` - Create new author
 
+## Enterprise Features
+
+### Performance Orchestration Service
+- **Docker-based K6 orchestration** - Run performance tests in isolated containers
+- **Real-time test monitoring** - SignalR-based live updates
+- **Multiple test scenarios** - Smoke, Load, Stress, Spike testing
+- **Result aggregation** - Comprehensive metrics collection and analysis
+- **RESTful API** - Programmatic test execution and monitoring
+
+### OpenTelemetry Integration
+- **Distributed tracing** - Full request tracing across services
+- **Custom metrics** - Business-specific performance indicators
+- **Structured logging** - Correlated logs with trace context
+- **Multiple exporters** - Console, OTLP, Prometheus support
+- **Activity tracking** - Detailed span creation in business logic
+
+### Docker Orchestration
+- **Multi-profile support** - Development, performance, observability stacks
+- **Health checks** - Proper service dependency management
+- **Volume management** - Persistent data and shared results
+- **Network isolation** - Secure inter-service communication
+
 ## Getting Started
 
 ### Prerequisites
 - .NET 8 SDK
 - Docker Desktop
-- Node.js (for K6 performance tests)
-- K6 (install via npm or homebrew)
+- K6 (install via homebrew: `brew install k6`)
+- Make (for using Makefile commands)
 
-### Running the Application
+### Quick Start (Recommended)
 
-1. **Start with Aspire (Recommended)**:
+1. **Setup development environment**:
    ```bash
-   cd BookStore.Aspire.AppHost
-   dotnet run
+   make dev-setup
    ```
-   This will automatically start MongoDB, Redis, and the BookStore service.
 
-2. **Access the application**:
-   - API: https://localhost:7001
+2. **Start with .NET Aspire**:
+   ```bash
+   make run-aspire
+   ```
+   This automatically starts MongoDB, Redis, BookStore service, and Performance service.
+
+3. **Access the applications**:
+   - BookStore API: https://localhost:7001
+   - Performance Service: https://localhost:7003
    - Swagger UI: https://localhost:7001/swagger
    - Aspire Dashboard: https://localhost:15888
 
-3. **Seed test data**:
+4. **Run your first performance test**:
    ```bash
-   curl -X POST https://localhost:7001/seed-data
+   make perf-smoke
    ```
+
+### Alternative: Docker Compose
+
+1. **Start full stack with Docker**:
+   ```bash
+   make docker-run
+   ```
+
+2. **Start with observability stack**:
+   ```bash
+   make docker-observability
+   ```
+   Includes Jaeger, Prometheus, and Grafana.
 
 ### Performance Testing
 

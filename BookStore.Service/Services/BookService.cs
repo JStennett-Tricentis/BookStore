@@ -1,6 +1,7 @@
 using BookStore.Common.Models;
 using Microsoft.Extensions.Caching.Distributed;
 using MongoDB.Driver;
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace BookStore.Service.Services;
@@ -10,6 +11,7 @@ public class BookService : IBookService
     private readonly IMongoCollection<Book> _books;
     private readonly IDistributedCache _cache;
     private readonly ILogger<BookService> _logger;
+    private static readonly ActivitySource ActivitySource = new("BookStore.Service");
     private const int CacheExpirationMinutes = 10;
 
     public BookService(
@@ -64,29 +66,58 @@ public class BookService : IBookService
 
     public async Task<Book?> GetBookByIdAsync(string id)
     {
+        using var activity = ActivitySource.StartActivity("BookService.GetBookById");
+        activity?.SetTag("book.id", id);
+
         var cacheKey = $"book:{id}";
-        var cachedBook = await _cache.GetStringAsync(cacheKey);
 
-        if (!string.IsNullOrEmpty(cachedBook))
+        using (var cacheActivity = ActivitySource.StartActivity("BookService.GetFromCache"))
         {
-            _logger.LogDebug("Retrieved book {BookId} from cache", id);
-            return JsonSerializer.Deserialize<Book>(cachedBook);
-        }
+            cacheActivity?.SetTag("cache.key", cacheKey);
 
-        var book = await _books.Find(b => b.Id == id).FirstOrDefaultAsync();
+            var cachedBook = await _cache.GetStringAsync(cacheKey);
 
-        if (book != null)
-        {
-            var cacheOptions = new DistributedCacheEntryOptions
+            if (!string.IsNullOrEmpty(cachedBook))
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(CacheExpirationMinutes)
-            };
+                activity?.SetTag("cache.hit", true);
+                _logger.LogDebug("Retrieved book {BookId} from cache", id);
+                return JsonSerializer.Deserialize<Book>(cachedBook);
+            }
 
-            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(book), cacheOptions);
-            _logger.LogDebug("Cached book {BookId}", id);
+            activity?.SetTag("cache.hit", false);
         }
 
-        return book;
+        using (var dbActivity = ActivitySource.StartActivity("BookService.GetFromDatabase"))
+        {
+            dbActivity?.SetTag("database.collection", "books");
+            dbActivity?.SetTag("book.id", id);
+
+            var book = await _books.Find(b => b.Id == id).FirstOrDefaultAsync();
+
+            if (book != null)
+            {
+                activity?.SetTag("book.found", true);
+                activity?.SetTag("book.title", book.Title);
+                activity?.SetTag("book.author", book.Author);
+
+                using (var setCacheActivity = ActivitySource.StartActivity("BookService.SetCache"))
+                {
+                    var cacheOptions = new DistributedCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(CacheExpirationMinutes)
+                    };
+
+                    await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(book), cacheOptions);
+                    _logger.LogDebug("Cached book {BookId}", id);
+                }
+            }
+            else
+            {
+                activity?.SetTag("book.found", false);
+            }
+
+            return book;
+        }
     }
 
     public async Task<Book> CreateBookAsync(Book book)

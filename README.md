@@ -174,28 +174,52 @@ BookStore.sln
 └── README.md
 ```
 
-## Development
+## Development Workflow
 
-### Building the Solution
+### Available Commands (Use Makefile)
 ```bash
+# Get all available commands
+make help
+
+# Development workflow
+make dev-setup          # Setup development environment
+make run-aspire         # Start all services with .NET Aspire
+make health-check       # Check service health
+make seed-data         # Populate with test data
+
+# Performance testing
+make perf-smoke         # Quick 2-minute smoke test
+make perf-load          # Realistic 10-minute load test
+make perf-stress        # High-load 15-minute stress test
+make perf-comprehensive # Run all tests sequentially
+
+# Docker operations
+make docker-run                # Full stack with Docker
+make docker-observability      # With monitoring stack
+make docker-clean             # Clean Docker resources
+
+# Debugging & monitoring
+make logs-bookstore    # View service logs
+make status           # Complete project status
+make perf-results     # View performance test results
+```
+
+### Manual Development
+```bash
+# Build solution
 dotnet build
+
+# Run individual services (requires dependencies)
+cd BookStore.Service && dotnet run
+cd BookStore.Performance.Service && dotnet run
 ```
 
-### Running Individual Services
-```bash
-# Start dependencies first (MongoDB + Redis)
-docker run -d -p 27017:27017 mongo
-docker run -d -p 6379:6379 redis
-
-# Then start the service
-cd BookStore.Service
-dotnet run
-```
-
-### Configuration
-- Database connection strings in `appsettings.json`
-- Performance test environments in `BookStore.Performance.Tests/config/environments.js`
-- Load test thresholds in `BookStore.Performance.Tests/config/thresholds.js`
+### Configuration Files
+- `appsettings.json` - Service configuration with telemetry settings
+- `docker-compose.perf.yml` - Docker orchestration with multiple profiles
+- `BookStore.Performance.Tests/config/environments.js` - Test environments
+- `BookStore.Performance.Tests/config/thresholds.js` - Performance thresholds
+- `Makefile` - Development automation with 40+ commands
 
 ## Performance Characteristics
 

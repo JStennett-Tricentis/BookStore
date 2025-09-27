@@ -1,3 +1,5 @@
+using OpenTelemetry.Exporter;
+
 namespace BookStore.Common.Instrumentation;
 
 public class TelemetrySettings
@@ -83,11 +85,6 @@ public class ConsoleExporterSettings
     public ConsoleExporterOutputTargets Targets { get; set; } = ConsoleExporterOutputTargets.Console;
 }
 
-public enum ConsoleExporterOutputTargets
-{
-    Console = 1,
-    Debug = 2
-}
 
 public class PrometheusExporterSettings
 {

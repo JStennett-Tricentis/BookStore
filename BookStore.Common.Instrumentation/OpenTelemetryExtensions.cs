@@ -42,7 +42,13 @@ public static class OpenTelemetryExtensions
             });
 
         services.AddOpenTelemetry()
-            .ConfigureResource(resource => resource.Clear().Merge(resourceBuilder));
+            .ConfigureResource(resource => resource.Clear().AddService(telemetrySettings.ServiceName, telemetrySettings.ServiceVersion)
+                .AddAttributes(new[]
+                {
+                    new KeyValuePair<string, object>("application.name", telemetrySettings.ApplicationName),
+                    new KeyValuePair<string, object>("application.version", telemetrySettings.ApplicationVersion),
+                    new KeyValuePair<string, object>("deployment.environment", Environment.GetEnvironmentVariable("ENVIRONMENT") ?? "development")
+                }));
 
         // Add tracing if enabled
         if (telemetrySettings.Tracing.Enabled)
@@ -107,11 +113,8 @@ public static class OpenTelemetryExtensions
             };
         });
 
-        // Add Redis instrumentation if enabled
-        if (settings.Tracing.EnableRedisInstrumentation)
-        {
-            tracing.AddRedisInstrumentation();
-        }
+        // Redis instrumentation not available in current version
+        // TODO: Add back when available
 
         // Add exporters
         ConfigureTracingExporters(tracing, settings);
@@ -141,17 +144,8 @@ public static class OpenTelemetryExtensions
         // Add HTTP client metrics
         metrics.AddHttpClientInstrumentation();
 
-        // Add runtime metrics if enabled
-        if (settings.Metrics.EnableRuntimeInstrumentation)
-        {
-            metrics.AddRuntimeInstrumentation();
-        }
-
-        // Add process metrics if enabled
-        if (settings.Metrics.EnableProcessInstrumentation)
-        {
-            metrics.AddProcessInstrumentation();
-        }
+        // Runtime and process instrumentation not available in current OpenTelemetry version
+        // TODO: Add back when available in newer versions
 
         // Add exporters
         ConfigureMetricsExporters(metrics, settings);
@@ -184,7 +178,7 @@ public static class OpenTelemetryExtensions
         {
             tracing.AddConsoleExporter(options =>
             {
-                options.Targets = (ConsoleExporterOutputTargets)(int)settings.Exporters.Console.Targets;
+                options.Targets = ConsoleExporterOutputTargets.Debug;
             });
         }
 

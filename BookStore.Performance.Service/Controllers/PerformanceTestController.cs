@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookStore.Performance.Service.Controllers;
 
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
-[ApiVersion("1.0")]
+[Route("api/v1/[controller]")]
 public class PerformanceTestController : ControllerBase
 {
     private readonly IK6OrchestrationService _k6Service;

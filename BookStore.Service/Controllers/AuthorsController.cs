@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookStore.Service.Controllers;
 
 [ApiController]
-[Route("api/v{version:apiVersion}/[controller]")]
-[ApiVersion("1.0")]
+[Route("api/v1/[controller]")]
 public class AuthorsController : ControllerBase
 {
     private readonly IAuthorService _authorService;

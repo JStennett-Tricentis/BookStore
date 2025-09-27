@@ -74,9 +74,9 @@ An enterprise-grade .NET 8 application designed to replicate the full infrastruc
    This automatically starts MongoDB, Redis, BookStore service, and Performance service.
 
 3. **Access the applications**:
-   - BookStore API: https://localhost:7001
+   - BookStore API: http://localhost:7002
    - Performance Service: https://localhost:7003
-   - Swagger UI: https://localhost:7001/swagger
+   - Swagger UI: http://localhost:7002/swagger
    - Aspire Dashboard: https://localhost:15888
 
 4. **Run your first performance test**:
@@ -129,13 +129,13 @@ Test the API endpoints:
 
 ```bash
 # List books
-curl https://localhost:7001/api/v1/books
+curl http://localhost:7002/api/v1/books
 
 # Get specific book
-curl https://localhost:7001/api/v1/books/{book-id}
+curl http://localhost:7002/api/v1/books/{book-id}
 
 # Create a book
-curl -X POST https://localhost:7001/api/v1/books \
+curl -X POST http://localhost:7002/api/v1/books \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Test Book",

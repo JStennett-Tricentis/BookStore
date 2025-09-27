@@ -78,8 +78,8 @@ public class K6OrchestrationService : IK6OrchestrationService, IDisposable
                         $"{GetResultsPath(testId)}:/shared"
                     },
                     AutoRemove = false,
-                    Memory = 512 * 1024 * 1024, // 512MB
-                    CpuShares = 512
+                    Memory = 512 * 1024 * 1024 // 512MB
+                    // CpuShares removed in newer Docker.DotNet version
                 },
                 Labels = new Dictionary<string, string>
                 {

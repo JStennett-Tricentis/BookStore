@@ -37,18 +37,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 
-// API Versioning
-builder.Services.AddApiVersioning(opt =>
-{
-    opt.DefaultApiVersion = new ApiVersion(1, 0);
-    opt.AssumeDefaultVersionWhenUnspecified = true;
-    opt.ApiVersionReader = ApiVersionReader.Combine(
-        new UrlSegmentApiVersionReader(),
-        new QueryStringApiVersionReader("version"),
-        new HeaderApiVersionReader("X-Version"),
-        new MediaTypeApiVersionReader("ver")
-    );
-});
+// Simplified API setup - remove versioning for now
 
 // Controllers
 builder.Services.AddControllers()
@@ -57,10 +46,8 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
     });
 
-// Health Checks
-builder.Services.AddHealthChecks()
-    .AddMongoDb(databaseSettings.ConnectionString, name: "mongodb")
-    .AddRedis(redisSettings.ConnectionString, name: "redis");
+// Health Checks - simplified
+builder.Services.AddHealthChecks();
 
 // CORS
 builder.Services.AddCors(options =>

@@ -22,18 +22,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 // Core services
 builder.Services.AddScoped<IK6OrchestrationService, K6OrchestrationService>();
 
-// API Versioning
-builder.Services.AddApiVersioning(opt =>
-{
-    opt.DefaultApiVersion = new ApiVersion(1, 0);
-    opt.AssumeDefaultVersionWhenUnspecified = true;
-    opt.ApiVersionReader = ApiVersionReader.Combine(
-        new UrlSegmentApiVersionReader(),
-        new QueryStringApiVersionReader("version"),
-        new HeaderApiVersionReader("X-Version"),
-        new MediaTypeApiVersionReader("ver")
-    );
-});
+// Simplified API setup - remove versioning for now
 
 // Controllers
 builder.Services.AddControllers()
@@ -43,9 +32,8 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
 
-// Health Checks
-builder.Services.AddHealthChecks()
-    .AddRedis(redisSettings.ConnectionString, name: "redis");
+// Health Checks - simplified
+builder.Services.AddHealthChecks();
 
 // CORS
 builder.Services.AddCors(options =>
@@ -84,7 +72,7 @@ builder.Services.AddOpenTelemetry()
                 .AddService("BookStore.Performance.Service", "1.0.0"))
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
-            .AddRedisInstrumentation();
+;
     });
 
 var app = builder.Build();

@@ -4,8 +4,8 @@ export function getEnvironment() {
     const environments = {
         local: {
             name: "Local Development",
-            serviceUrl: "https://localhost:7001",
-            managementUrl: "https://localhost:7002",
+            serviceUrl: "http://localhost:7002",
+            managementUrl: "http://localhost:7004",
             timeout: "10s",
             healthCheckInterval: "30s"
         },

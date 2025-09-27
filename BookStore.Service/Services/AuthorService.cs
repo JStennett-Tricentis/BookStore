@@ -24,27 +24,34 @@ public class AuthorService : IAuthorService
 
     public async Task<IEnumerable<Author>> GetAuthorsAsync(int page = 1, int pageSize = 10)
     {
-        var cacheKey = $"authors:{page}:{pageSize}";
-        var cachedAuthors = await _cache.GetStringAsync(cacheKey);
-
-        if (!string.IsNullOrEmpty(cachedAuthors))
-        {
-            _logger.LogDebug("Retrieved authors from cache");
-            return JsonSerializer.Deserialize<IEnumerable<Author>>(cachedAuthors) ?? [];
-        }
+        // Temporarily bypass cache to debug the issue
+        _logger.LogDebug("Getting authors: page={Page}, pageSize={PageSize}", page, pageSize);
 
         var authors = await _authors.Find(_ => true)
             .Skip((page - 1) * pageSize)
             .Limit(pageSize)
             .ToListAsync();
 
+        _logger.LogInformation("Found {Count} authors from database", authors.Count);
+
+        // Re-enable caching later
+        /*
+        var cacheKey = $"authors:{page}:{pageSize}";
         var cacheOptions = new DistributedCacheEntryOptions
         {
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(CacheExpirationMinutes)
         };
 
-        await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(authors), cacheOptions);
-        _logger.LogDebug("Cached authors result");
+        try
+        {
+            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(authors), cacheOptions);
+            _logger.LogDebug("Cached authors result");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to cache authors result");
+        }
+        */
 
         return authors;
     }
@@ -130,6 +137,22 @@ public class AuthorService : IAuthorService
 
     private async Task InvalidateRelatedCaches()
     {
-        await Task.CompletedTask;
+        // Clear author list cache entries
+        var cacheKeysToRemove = new List<string>();
+
+        // Generate common cache key patterns to clear
+        for (int page = 1; page <= 10; page++)
+        {
+            for (int pageSize = 10; pageSize <= 100; pageSize += 10)
+            {
+                cacheKeysToRemove.Add($"authors:{page}:{pageSize}");
+            }
+        }
+
+        // Remove the cache entries
+        var tasks = cacheKeysToRemove.Select(key => _cache.RemoveAsync(key));
+        await Task.WhenAll(tasks);
+
+        _logger.LogDebug("Invalidated related author caches");
     }
 }

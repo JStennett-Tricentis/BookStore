@@ -83,6 +83,9 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = "swagger";
 });
 
+// Add a redirect from /swagger to /swagger/index.html for convenience
+app.MapGet("/swagger", () => Results.Redirect("/swagger/index.html"));
+
 app.UseHealthChecks("/health");
 
 app.UseCors();

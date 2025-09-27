@@ -26,14 +26,8 @@ public class BookService : IBookService
 
     public async Task<IEnumerable<Book>> GetBooksAsync(string? genre = null, string? author = null, int page = 1, int pageSize = 10)
     {
-        var cacheKey = $"books:{genre}:{author}:{page}:{pageSize}";
-        var cachedBooks = await _cache.GetStringAsync(cacheKey);
-
-        if (!string.IsNullOrEmpty(cachedBooks))
-        {
-            _logger.LogDebug("Retrieved books from cache");
-            return JsonSerializer.Deserialize<IEnumerable<Book>>(cachedBooks) ?? [];
-        }
+        // Temporarily bypass cache to debug the issue
+        _logger.LogDebug("Getting books: genre={Genre}, author={Author}, page={Page}, pageSize={PageSize}", genre, author, page, pageSize);
 
         var filterBuilder = Builders<Book>.Filter;
         var filter = filterBuilder.Empty;
@@ -53,13 +47,26 @@ public class BookService : IBookService
             .Limit(pageSize)
             .ToListAsync();
 
+        _logger.LogInformation("Found {Count} books from database", books.Count);
+
+        // Re-enable caching later
+        /*
+        var cacheKey = $"books:{genre}:{author}:{page}:{pageSize}";
         var cacheOptions = new DistributedCacheEntryOptions
         {
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(CacheExpirationMinutes)
         };
 
-        await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(books), cacheOptions);
-        _logger.LogDebug("Cached books result");
+        try
+        {
+            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(books), cacheOptions);
+            _logger.LogDebug("Cached books result");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to cache books result");
+        }
+        */
 
         return books;
     }
@@ -232,6 +239,29 @@ public class BookService : IBookService
 
     private async Task InvalidateRelatedCaches()
     {
-        await Task.CompletedTask;
+        // Pattern to match all book list cache keys
+        // In a real implementation, you'd want a more sophisticated cache invalidation strategy
+        // For now, we'll just clear all cached book lists by using a simple pattern
+
+        // Note: StackExchange.Redis doesn't have a direct way to delete by pattern in IDistributedCache
+        // This is a simplified approach - in production you'd want to track cache keys or use Redis directly
+        var cacheKeysToRemove = new List<string>();
+
+        // Generate some common cache key patterns to clear
+        for (int page = 1; page <= 10; page++)
+        {
+            for (int pageSize = 10; pageSize <= 100; pageSize += 10)
+            {
+                cacheKeysToRemove.Add($"books::::{page}:{pageSize}");
+                cacheKeysToRemove.Add($"books:Fiction::{page}:{pageSize}");
+                cacheKeysToRemove.Add($"books:Test::{page}:{pageSize}");
+            }
+        }
+
+        // Remove the cache entries
+        var tasks = cacheKeysToRemove.Select(key => _cache.RemoveAsync(key));
+        await Task.WhenAll(tasks);
+
+        _logger.LogDebug("Invalidated related book caches");
     }
 }

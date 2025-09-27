@@ -41,6 +41,9 @@ wait_for_service() {
     return 1
 }
 
+# Create logs directory first
+mkdir -p logs
+
 # Check required ports
 echo "🔍 Checking ports..."
 check_port 7002 || exit 1
@@ -67,9 +70,6 @@ cd BookStore.Performance.Service
 dotnet run --urls "http://localhost:7004" > ../logs/performance-service.log 2>&1 &
 PERFORMANCE_PID=$!
 cd ..
-
-# Create logs directory if it doesn't exist
-mkdir -p logs
 
 # Save PIDs for cleanup
 echo $BOOKSTORE_PID > logs/bookstore.pid

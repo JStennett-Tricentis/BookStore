@@ -18,13 +18,19 @@ BookStore is an enterprise-grade .NET 8 performance testing application that rep
 # Build entire solution
 dotnet build
 
-# Run with .NET Aspire (recommended for development)
+# Quick start with startup scripts (RECOMMENDED - works reliably)
+make run-services          # or ./start-services.sh
+make stop-services         # or ./stop-services.sh
+
+# Alternative: Run with .NET Aspire (requires workload installation)
 cd BookStore.Aspire.AppHost
 dotnet run
+# Note: Aspire workload installation may have dependency conflicts
+# Use the startup scripts above as a reliable alternative
 
-# Run individual services (requires MongoDB and Redis)
-cd BookStore.Service && dotnet run
-cd BookStore.Performance.Service && dotnet run
+# Individual services (requires MongoDB and Redis running separately)
+cd BookStore.Service && dotnet run --urls "http://localhost:7002"
+cd BookStore.Performance.Service && dotnet run --urls "http://localhost:7004"
 ```
 
 ### Testing
@@ -56,6 +62,41 @@ docker-compose -f docker-compose.perf.yml down
 
 # View logs
 docker-compose -f docker-compose.perf.yml logs -f bookstore-api
+```
+
+## Troubleshooting
+
+### Aspire Workload Issues
+If you encounter .NET Aspire workload installation problems:
+
+```bash
+# Clean corrupted workload manifests
+rm -rf ~/.dotnet/sdk-manifests/9.0.100/microsoft.net.workload.mono.toolchain.current
+
+# Try installing Aspire workload
+dotnet workload install aspire
+
+# If installation fails due to permission issues:
+# Use the startup scripts instead - they provide equivalent functionality
+make run-services
+```
+
+**Common Issues:**
+- Workload dependency conflicts between Emscripten and Mono toolchain versions
+- Permission denied errors on ~/.dotnet/metadata/ (requires admin privileges to fix)
+- DCP executable and Dashboard binaries missing
+
+**Solution:** Use the provided startup scripts (`./start-services.sh`) which replicate Aspire functionality without requiring workload installation.
+
+### Service Startup Issues
+```bash
+# If services fail to start, check:
+ls logs/                    # Check log files for errors
+make status                 # Check service status
+make health-check          # Test endpoint connectivity
+
+# Reset everything
+make reset                 # Clean containers, rebuild, restart
 ```
 
 ## Architecture Patterns

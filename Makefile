@@ -20,7 +20,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "🎯 RUN SERVICES"
 	@echo "──────────────────────────────────────────────────────────────────"
-	@grep -E '^(run-aspire|run-bookstore|run-performance|up|watch):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^(run-aspire|run-services|stop-services|run-bookstore|run-performance|up|watch):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "🐳 DOCKER OPERATIONS"
 	@echo "──────────────────────────────────────────────────────────────────"

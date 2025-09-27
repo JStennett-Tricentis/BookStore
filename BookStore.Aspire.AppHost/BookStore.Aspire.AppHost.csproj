@@ -6,12 +6,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspire-bookstore-apphost</UserSecretsId>
+    <!-- Disable workload resolution to avoid corruption issues -->
+    <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="8.2.1" />
-    <PackageReference Include="Aspire.Hosting.MongoDB" Version="8.2.1" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="8.2.1" />
+    <!-- Use basic .NET packages instead of Aspire workload -->
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>

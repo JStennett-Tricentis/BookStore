@@ -57,19 +57,15 @@ docker-compose -f docker-compose.perf.yml up -d mongodb redis
 echo "⏳ Waiting for infrastructure..."
 sleep 5
 
-# Start BookStore API Service
+# Start BookStore API Service (using compiled DLL to avoid workload issues)
 echo "🔧 Starting BookStore API Service..."
-cd BookStore.Service
-dotnet run --urls "http://localhost:7002" > ../logs/bookstore-api.log 2>&1 &
+dotnet BookStore.Service/bin/Debug/net9.0/BookStore.Service.dll --urls "http://localhost:7002" > logs/bookstore-api.log 2>&1 &
 BOOKSTORE_PID=$!
-cd ..
 
-# Start Performance Service
+# Start Performance Service (using compiled DLL to avoid workload issues)
 echo "🎯 Starting Performance Service..."
-cd BookStore.Performance.Service
-dotnet run --urls "http://localhost:7004" > ../logs/performance-service.log 2>&1 &
+dotnet BookStore.Performance.Service/bin/Debug/net9.0/BookStore.Performance.Service.dll --urls "http://localhost:7004" > logs/performance-service.log 2>&1 &
 PERFORMANCE_PID=$!
-cd ..
 
 # Save PIDs for cleanup
 echo $BOOKSTORE_PID > logs/bookstore.pid

@@ -85,7 +85,11 @@ restore: ## Restore NuGet packages
 .PHONY: run-aspire
 run-aspire: ## Start all services with Aspire [RECOMMENDED]
 	@echo "Starting services with .NET Aspire..."
-	@cd BookStore.Aspire.AppHost && dotnet run
+	@cd BookStore.Aspire.AppHost && \
+		export ASPNETCORE_URLS="http://localhost:15889" && \
+		export DOTNET_DASHBOARD_OTLP_HTTP_ENDPOINT_URL="http://localhost:19999" && \
+		export ASPIRE_ALLOW_UNSECURED_TRANSPORT=true && \
+		dotnet run
 
 .PHONY: run-services
 run-services: ## Start all services (alternative to Aspire)

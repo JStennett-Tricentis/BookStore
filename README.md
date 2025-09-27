@@ -75,9 +75,9 @@ An enterprise-grade .NET 8 application designed to replicate the full infrastruc
 
 3. **Access the applications**:
    - BookStore API: http://localhost:7002
-   - Performance Service: https://localhost:7003
+   - Performance Service: http://localhost:7004
    - Swagger UI: http://localhost:7002/swagger
-   - Aspire Dashboard: https://localhost:15888
+   - Aspire Dashboard: http://localhost:15889
 
 4. **Run your first performance test**:
    ```bash

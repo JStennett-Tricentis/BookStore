@@ -8,7 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Anthropic.SDK" Version="5.5.3" />
+    <PackageReference Include="AWSSDK.BedrockRuntime" Version="3.7.400.36" />
+    <PackageReference Include="AWSSDK.Core" Version="3.7.400.36" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
+    <PackageReference Include="OllamaSharp" Version="3.0.8" />
+    <PackageReference Include="OpenAI" Version="2.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.10" />

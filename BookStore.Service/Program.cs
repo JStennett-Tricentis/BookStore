@@ -69,7 +69,19 @@ builder.Services.AddStackExchangeRedisCache(options =>
 // Services
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
-builder.Services.AddSingleton<IClaudeService, ClaudeService>();
+
+// LLM Service registration - select provider based on configuration
+var llmProvider = builder.Configuration["LLM:Provider"] ?? "Claude";
+switch (llmProvider.ToLowerInvariant())
+{
+    case "ollama":
+        builder.Services.AddSingleton<IClaudeService, OllamaService>();
+        break;
+    case "claude":
+    default:
+        builder.Services.AddSingleton<IClaudeService, ClaudeService>();
+        break;
+}
 
 // Simplified API setup - remove versioning for now
 

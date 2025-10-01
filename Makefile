@@ -31,6 +31,10 @@ help: ## Show this help message
 	@echo "──────────────────────────────────────────────────────────────────"
 	@grep -E '^(perf-smoke|perf-load|perf-stress|perf-spike|perf-comprehensive|perf-start-test|perf-list-tests|perf-results):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
+	@echo "🤖 AI/LLM PERFORMANCE TESTING"
+	@echo "──────────────────────────────────────────────────────────────────"
+	@grep -E '^(perf-ai-smoke|perf-ai-load|perf-ai-stress|perf-ai-spike|perf-mixed|perf-mixed-heavy|perf-ai-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@echo ""
 	@echo "📊 MONITORING & HEALTH"
 	@echo "──────────────────────────────────────────────────────────────────"
 	@grep -E '^(health-check|health-wait|status|logs-bookstore|logs-performance|swagger|aspire-dashboard):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -207,6 +211,57 @@ perf-comprehensive: ## Run ALL tests (~30 min)
 	@$(MAKE) perf-load
 	@sleep 30
 	@$(MAKE) perf-stress
+
+# ==================== LLM Performance Testing ====================
+
+.PHONY: perf-ai-smoke
+perf-ai-smoke: ## Quick AI summary test (1-2 users, 3 min)
+	@echo "Running AI summary smoke test..."
+	cd BookStore.Performance.Tests && \
+		k6 run tests/ai-summary.js --env SCENARIO=llm_smoke --env BASE_URL=http://localhost:7002
+
+.PHONY: perf-ai-load
+perf-ai-load: ## AI load test (3-5 users, 12 min)
+	@echo "Running AI summary load test..."
+	cd BookStore.Performance.Tests && \
+		k6 run tests/ai-summary.js --env SCENARIO=llm_load --env BASE_URL=http://localhost:7002
+
+.PHONY: perf-ai-stress
+perf-ai-stress: ## AI stress test (5-15 users, 17 min)
+	@echo "Running AI summary stress test..."
+	cd BookStore.Performance.Tests && \
+		k6 run tests/ai-summary.js --env SCENARIO=llm_stress --env BASE_URL=http://localhost:7002
+
+.PHONY: perf-ai-spike
+perf-ai-spike: ## AI spike test (2 → 20 users, 8 min)
+	@echo "Running AI summary spike test..."
+	cd BookStore.Performance.Tests && \
+		k6 run tests/ai-summary.js --env SCENARIO=llm_spike --env BASE_URL=http://localhost:7002
+
+.PHONY: perf-mixed
+perf-mixed: ## Mixed workload test (CRUD + AI, 20% LLM traffic)
+	@echo "Running mixed workload test (80% CRUD / 20% AI)..."
+	cd BookStore.Performance.Tests && \
+		k6 run scenarios/mixed-workload.js --env BASE_URL=http://localhost:7002 \
+			--env LLM_PERCENTAGE=20 --env AI_USERS=30
+
+.PHONY: perf-mixed-heavy
+perf-mixed-heavy: ## Mixed workload test (50% LLM traffic)
+	@echo "Running heavy AI mixed workload test (50% CRUD / 50% AI)..."
+	cd BookStore.Performance.Tests && \
+		k6 run scenarios/mixed-workload.js --env BASE_URL=http://localhost:7002 \
+			--env LLM_PERCENTAGE=50 --env AI_USERS=60
+
+.PHONY: perf-ai-all
+perf-ai-all: ## Run all AI performance tests (~40 min)
+	@echo "Running comprehensive AI performance test suite..."
+	@$(MAKE) perf-ai-smoke
+	@sleep 30
+	@$(MAKE) perf-ai-load
+	@sleep 30
+	@$(MAKE) perf-mixed
+	@sleep 30
+	@$(MAKE) perf-ai-spike
 
 .PHONY: docker-perf
 docker-perf: ## Run performance test via Docker

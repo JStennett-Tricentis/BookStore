@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using BookStore.Common.Instrumentation;
 using OllamaSharp;
+using OllamaSharp.Models;
 
 namespace BookStore.Service.Services;
 
@@ -79,26 +80,34 @@ public class OllamaService : IClaudeService
 
         try
         {
-            var request = new GenerateCompletionRequest
+            var request = new GenerateRequest
             {
                 Prompt = prompt,
                 Model = _model,
-                Stream = false,
-                Options = new ModelOptions
-                {
-                    Temperature = 0.7f,
-                    NumPredict = 500  // Max tokens to generate
-                }
+                Stream = false
             };
 
-            var response = await _client.GetCompletion(request, cancellationToken);
+            var responseStream = _client.Generate(request, cancellationToken);
+            var summaryBuilder = new System.Text.StringBuilder();
+            GenerateResponseStream? lastChunk = null;
+
+            await foreach (var chunk in responseStream)
+            {
+                if (chunk?.Response != null)
+                {
+                    summaryBuilder.Append(chunk.Response);
+                }
+                lastChunk = chunk;
+            }
 
             var latency = (DateTimeOffset.UtcNow - startTime).TotalMilliseconds;
-            var summary = response.Response?.Trim() ?? "Unable to generate summary";
+            var summary = summaryBuilder.ToString().Trim();
+            if (string.IsNullOrEmpty(summary))
+                summary = "Unable to generate summary";
 
-            // Estimate token counts (Ollama doesn't always provide accurate counts)
-            var inputTokens = response.PromptEvalCount ?? EstimateTokenCount(prompt);
-            var outputTokens = response.EvalCount ?? EstimateTokenCount(summary);
+            // Estimate token counts (Ollama streaming doesn't provide count details)
+            var inputTokens = EstimateTokenCount(prompt);
+            var outputTokens = EstimateTokenCount(summary);
             var totalTokens = inputTokens + outputTokens;
 
             // Ollama is free - cost is always $0
@@ -118,7 +127,7 @@ public class OllamaService : IClaudeService
             activity?.SetTag(TraceTags.LlmLatencyKey, latency);
             activity?.SetTag(TraceTags.LlmCompletion0ContentKey, summary);
             activity?.SetTag(TraceTags.LlmCompletion0RoleKey, "assistant");
-            activity?.SetTag(TraceTags.LlmCompletion0FinishReasonKey, response.DoneReason ?? "stop");
+            activity?.SetTag(TraceTags.LlmCompletion0FinishReasonKey, lastChunk?.Done == true ? "stop" : "length");
             activity?.SetTag(TraceTags.TraceLoopOutputKey, summary);
             activity?.SetTag("gen_ai.cost.usd", totalCost);
             activity?.SetStatus(ActivityStatusCode.Ok);
@@ -132,7 +141,8 @@ public class OllamaService : IClaudeService
         catch (Exception ex)
         {
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            activity?.RecordException(ex);
+            activity?.AddTag("exception.type", ex.GetType().FullName);
+            activity?.AddTag("exception.message", ex.Message);
             _logger.LogError(ex, "Failed to generate book summary using Ollama");
             throw;
         }

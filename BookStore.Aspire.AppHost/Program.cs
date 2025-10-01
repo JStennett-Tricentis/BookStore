@@ -1,12 +1,10 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-// MongoDB
+// MongoDB - use Aspire default configuration (matches hub-services-latest)
 var mongodb = builder.AddMongoDB("mongodb")
-    .WithDataVolume()
-    .WithEnvironment("MONGO_INITDB_ROOT_USERNAME", "")
-    .WithEnvironment("MONGO_INITDB_ROOT_PASSWORD", "")
-    .WithArgs("--noauth")
-    .AddDatabase("bookstore");
+    .WithDataVolume();
+
+var bookstoreDb = mongodb.AddDatabase("bookstore", "bookstore");
 
 // Redis
 var redis = builder.AddRedis("redis")
@@ -36,11 +34,9 @@ var grafana = builder.AddContainer("grafana", "grafana/grafana", "10.2.0")
 
 // BookStore Service
 var bookstoreService = builder.AddProject<Projects.BookStore_Service>("bookstore-service")
-    .WithReference(mongodb)
+    .WithReference(bookstoreDb)
     .WithReference(redis)
-    .WithHttpEndpoint(port: 7002, name: "http")
-    .WithEnvironment("ConnectionStrings__mongodb", mongodb)
-    .WithEnvironment("ConnectionStrings__redis", redis);
+    .WithHttpEndpoint(port: 7002, name: "http");
 
 // Performance Service
 var performanceService = builder.AddProject<Projects.BookStore_Performance_Service>("bookstore-performance")

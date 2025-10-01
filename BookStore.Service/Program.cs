@@ -14,35 +14,16 @@ builder.Services.Configure<DatabaseSettings>(
 builder.Services.Configure<RedisSettings>(
     builder.Configuration.GetSection("Redis"));
 
-// MongoDB - Use Aspire or fallback to configuration
-var mongoConnectionString = builder.Configuration.GetConnectionString("mongodb")
+// MongoDB - Use Aspire connection string injection pattern (matches hub-services-latest)
+var databaseSettings = builder.Configuration.GetSection("Database").Get<DatabaseSettings>()
+    ?? new DatabaseSettings { ConnectionString = "mongodb://localhost:27017", DatabaseName = "bookstore" };
+
+// Get connection string from Aspire injection or fallback to appsettings
+var mongoConnectionString = builder.Configuration.GetConnectionString(databaseSettings.DatabaseName)
     ?? builder.Configuration.GetSection("Database")?.GetValue<string>("ConnectionString")
     ?? "mongodb://localhost:27017";
 
-// Check if running under Aspire orchestration
-var isAspireMongo = builder.Configuration.GetConnectionString("mongodb") != null &&
-                    !builder.Configuration.GetConnectionString("mongodb")!.Contains("localhost");
-
-if (isAspireMongo)
-{
-    try
-    {
-        builder.AddMongoDBClient("mongodb");
-    }
-    catch
-    {
-        // Fallback if Aspire is not available
-        builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(mongoConnectionString));
-    }
-}
-else
-{
-    // Running standalone - skip Aspire integration
-    builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(mongoConnectionString));
-}
-
-var databaseSettings = builder.Configuration.GetSection("Database").Get<DatabaseSettings>()
-    ?? new DatabaseSettings { ConnectionString = "mongodb://localhost:27017", DatabaseName = "bookstore" };
+builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(mongoConnectionString));
 
 builder.Services.AddScoped(sp =>
 {

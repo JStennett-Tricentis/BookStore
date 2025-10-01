@@ -1475,7 +1475,7 @@
       "datasource": {
         "type": "prometheus"
       },
-      "description": "Note: Token metrics require custom instrumentation. Currently showing HTTP metrics only. To add token metrics, export custom counters from ClaudeService using OpenTelemetry Meter.",
+      "description": "Real-time token consumption from Claude API. Input and output tokens tracked separately.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1554,7 +1554,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "rate(claude_tokens_input_total[1m])",
+          "expr": "rate(claude_tokens_input_total{service=\"bookstore-api\"}[1m])",
           "legendFormat": "Input Tokens/sec",
           "refId": "A"
         },
@@ -1562,12 +1562,217 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "rate(claude_tokens_output_total[1m])",
+          "expr": "rate(claude_tokens_output_total{service=\"bookstore-api\"}[1m])",
           "legendFormat": "Output Tokens/sec",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus"
+          },
+          "expr": "rate(claude_tokens_total_total{service=\"bookstore-api\"}[1m])",
+          "legendFormat": "Total Tokens/sec",
+          "refId": "C"
+        }
+      ],
+      "title": "LLM Token Usage per Second",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus"
+      },
+      "description": "Cumulative token usage over time. Useful for cost tracking and usage analysis.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 48
+      },
+      "id": 19,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus"
+          },
+          "expr": "sum(increase(claude_tokens_input_total{service=\"bookstore-api\"}[5m]))",
+          "legendFormat": "Input Tokens (5m)",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus"
+          },
+          "expr": "sum(increase(claude_tokens_output_total{service=\"bookstore-api\"}[5m]))",
+          "legendFormat": "Output Tokens (5m)",
           "refId": "B"
         }
       ],
-      "title": "LLM Token Usage (Requires Custom Metrics)",
+      "title": "Token Usage (5m window)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus"
+      },
+      "description": "Estimated cost in USD based on Claude 3.5 Sonnet pricing ($3/M input, $15/M output tokens)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 48
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "sum",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus"
+          },
+          "expr": "sum(rate(claude_cost_usd_sum{service=\"bookstore-api\"}[1m]))",
+          "legendFormat": "Cost per Second",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus"
+          },
+          "expr": "sum(increase(claude_cost_usd_sum{service=\"bookstore-api\"}[5m]))",
+          "legendFormat": "Total Cost (5m)",
+          "refId": "B"
+        }
+      ],
+      "title": "LLM API Cost",
       "type": "timeseries"
     }
   ],

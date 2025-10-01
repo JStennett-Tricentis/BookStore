@@ -1759,7 +1759,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "sum(rate(claude_cost_usd_sum{service=\"bookstore-api\"}[1m]))",
+          "expr": "sum(rate(claude_cost_usd_USD_sum{service=\"bookstore-api\"}[1m]))",
           "legendFormat": "Cost per Second",
           "refId": "A"
         },
@@ -1767,7 +1767,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "sum(increase(claude_cost_usd_sum{service=\"bookstore-api\"}[5m]))",
+          "expr": "sum(increase(claude_cost_usd_USD_sum{service=\"bookstore-api\"}[5m]))",
           "legendFormat": "Total Cost (5m)",
           "refId": "B"
         }

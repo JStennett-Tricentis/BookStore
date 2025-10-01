@@ -131,9 +131,7 @@ public class ClaudeService : IClaudeService
         catch (Exception ex)
         {
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            activity?.AddTag("exception.type", ex.GetType().FullName);
-            activity?.AddTag("exception.message", ex.Message);
-            activity?.AddTag("exception.stacktrace", ex.StackTrace ?? "");
+            activity?.RecordException(ex);
             _logger.LogError(ex, "Failed to generate book summary using Claude");
             throw;
         }

@@ -16,19 +16,22 @@ make perf-report
 ```
 
 **Access:**
-- API: http://localhost:7002/swagger
-- Aspire Dashboard: http://localhost:15888
-- Grafana: http://localhost:3000 (admin/admin123)
-- Prometheus: http://localhost:9090
+
+- API: <http://localhost:7002/swagger>
+- Aspire Dashboard: <http://localhost:15888>
+- Grafana: <http://localhost:3000> (admin/admin123)
+- Prometheus: <http://localhost:9090>
 
 ## Architecture
 
 ### Services
+
 - **BookStore.Service** - REST API with CRUD + AI summaries
 - **BookStore.Performance.Service** - K6 test orchestration
 - **BookStore.Aspire.AppHost** - .NET Aspire orchestration
 
 ### Infrastructure
+
 - **MongoDB** - Primary database
 - **Redis** - Distributed caching
 - **Ollama** - Free local LLM (default, $0 cost)
@@ -37,6 +40,7 @@ make perf-report
 - **K6** - Load testing
 
 ### Observability Stack
+
 - **OpenTelemetry** - Traces, metrics, logs
 - **TraceLoop** - LLM-specific observability
 - **Semantic Conventions** - Standard gen_ai.*, llm.* tags
@@ -45,6 +49,7 @@ make perf-report
 ## LLM Support (Multi-Provider)
 
 ### Providers
+
 1. **Ollama** (default) - Free unlimited local models
    - llama3.2, mistral, phi3, etc.
    - Zero cost for performance testing
@@ -61,7 +66,9 @@ make perf-report
    - us.anthropic.claude-sonnet-4-*
 
 ### Switch Provider
+
 Edit `appsettings.json`:
+
 ```json
 {
   "LLM": {
@@ -73,6 +80,7 @@ Edit `appsettings.json`:
 ## Performance Testing
 
 ### K6 Scenarios
+
 ```bash
 make perf-smoke         # 1-2 users, 2 min
 make perf-load          # 10 users, 10 min
@@ -84,6 +92,7 @@ make perf-comprehensive # All tests (~30 min)
 ```
 
 ### Test Features
+
 - Multiple user profiles (reader, librarian, manager)
 - Mixed workloads (CRUD + AI operations)
 - Error scenario testing
@@ -93,6 +102,7 @@ make perf-comprehensive # All tests (~30 min)
 ## CI/CD (GitHub Actions)
 
 ### Workflows
+
 - **pr.yaml** - Build, test, lint, Docker, K6, security scan
 - **deploy.yaml** - Multi-env deployment (dev/staging/prod)
 - **performance.yaml** - Daily scheduled performance tests
@@ -100,6 +110,7 @@ make perf-comprehensive # All tests (~30 min)
 - **dependabot.yml** - Automated dependency updates
 
 ### Features
+
 - Docker image publishing to GHCR
 - Code coverage with Codecov
 - Trivy security scanning
@@ -109,6 +120,7 @@ make perf-comprehensive # All tests (~30 min)
 ## Monitoring
 
 ### Grafana Dashboards
+
 1. **bookstore-performance.json**
    - LLM Requests/sec, P95 latency, error rate
    - Token usage (input/output/total)
@@ -121,12 +133,14 @@ make perf-comprehensive # All tests (~30 min)
    - Kestrel connection pool
 
 ### Prometheus Metrics
+
 - 36+ metric types (runtime, HTTP, custom)
 - Token counters: `claude.tokens.*`, `ollama.tokens.*`
 - Cost histogram: `claude.cost.usd`, `ollama.cost.usd`
 - HTTP duration: `http_server_request_duration_seconds`
 
 ### Example Results
+
 - **540 LLM requests = $0.99** (Claude)
 - **Unlimited requests = $0** (Ollama)
 - P95 latency: 8s (LLM), 50ms (CRUD)
@@ -134,11 +148,13 @@ make perf-comprehensive # All tests (~30 min)
 ## Development
 
 ### Prerequisites
+
 - .NET 8 SDK
 - Docker Desktop
 - K6 (`brew install k6`)
 
 ### Commands
+
 ```bash
 make help               # Show all 40+ commands
 make dev-setup          # Install dependencies
@@ -151,18 +167,19 @@ make docker-clean       # Reset everything
 ```
 
 ### MongoDB Fix
+
 MongoDB volumes auto-clean on startup via `start-aspire.sh` to prevent auth issues.
 
 ## Project Structure
 
-```
-├── BookStore.Service/                 # Main API
-│   ├── Controllers/                   # REST endpoints
-│   ├── Services/                      # Business logic + LLM services
+```yaml
+├── BookStore.Service/                # Main API
+│   ├── Controllers/                  # REST endpoints
+│   ├── Services/                     # Business logic + LLM services
 │   └── appsettings.json              # Configuration
-├── BookStore.Common/                  # Shared models
-├── BookStore.Common.Instrumentation/  # OpenTelemetry setup
-├── BookStore.Performance.Tests/       # K6 tests
+├── BookStore.Common/                 # Shared models
+├── BookStore.Common.Instrumentation/ # OpenTelemetry setup
+├── BookStore.Performance.Tests/      # K6 tests
 │   ├── tests/                        # Test scenarios
 │   ├── scenarios/                    # Load patterns
 │   ├── utils/                        # Helpers
@@ -180,6 +197,7 @@ MongoDB volumes auto-clean on startup via `start-aspire.sh` to prevent auth issu
 ## Key Features vs hub-services-latest
 
 ### Better
+
 - ✅ Prometheus + Grafana (vs expensive Coralogix)
 - ✅ Local monitoring stack
 - ✅ K6 performance testing
@@ -189,12 +207,14 @@ MongoDB volumes auto-clean on startup via `start-aspire.sh` to prevent auth issu
 - ✅ GitHub Actions CI/CD
 
 ### Same
+
 - ✅ OpenTelemetry semantic conventions
 - ✅ TraceLoop integration
 - ✅ Health checks
 - ✅ Multi-provider LLM support
 
 ### Cost Savings
+
 **$200-500/month** - Open-source stack vs Coralogix subscription
 
 ## Documentation
@@ -207,12 +227,14 @@ MongoDB volumes auto-clean on startup via `start-aspire.sh` to prevent auth issu
 ## Troubleshooting
 
 ### MongoDB Auth Issues
+
 ```bash
 # Auto-fixed by start-aspire.sh
 make run-aspire  # Cleans volumes automatically
 ```
 
 ### Services Not Starting
+
 ```bash
 make status       # Check what's running
 make health-check # Test endpoints
@@ -221,6 +243,7 @@ make restart      # Stop and restart
 ```
 
 ### Port Conflicts
+
 ```bash
 lsof -Pi :7002   # Check API port
 lsof -Pi :11434  # Check Ollama port

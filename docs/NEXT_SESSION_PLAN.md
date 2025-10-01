@@ -3,6 +3,7 @@
 ## Project Status Summary
 
 ✅ **COMPLETED** - Enterprise-grade performance testing infrastructure is now fully operational
+
 - K6 Performance Orchestration Service with Docker integration
 - Complete OpenTelemetry observability stack
 - Advanced Docker orchestration with multi-profile support
@@ -13,9 +14,11 @@
 ## Immediate Next Session Goals
 
 ### 🎯 Primary Objective: Test & Validate Complete Setup
-**Time Estimate: 30-45 minutes**
+
+Time Estimate: 30-45 minutes
 
 1. **Quick Validation** (5 minutes)
+
    ```bash
    cd /Users/j.stennett/TAIS/AiHubPerfExample
    make status
@@ -23,6 +26,7 @@
    ```
 
 2. **Full System Smoke Test** (10 minutes)
+
    ```bash
    make run-aspire
    # Wait 30 seconds
@@ -32,6 +36,7 @@
    ```
 
 3. **Performance Service Validation** (10 minutes)
+
    ```bash
    # Test the Performance API
    curl http://localhost:7004/api/v1/performancetest/scenarios
@@ -40,6 +45,7 @@
    ```
 
 4. **Docker Stack Verification** (10 minutes)
+
    ```bash
    make docker-stop  # Clean slate
    make docker-run
@@ -52,7 +58,9 @@
 ### 🚀 Enhancement Priority List
 
 #### **Option A: Multi-Tenant Authentication (High Value)**
-**Time: 45-60 minutes**
+
+Time: 45-60 minutes
+
 - Add JWT middleware similar to hub-services
 - Implement X-Tenant-Name, X-User-Id headers
 - Create authentication test scenarios
@@ -62,7 +70,9 @@
   - Updated K6 tests with auth
 
 #### **Option B: Enhanced MongoDB/Redis (Medium Value)**
-**Time: 30-45 minutes**
+
+Time: 30-45 minutes
+
 - Add connection pooling configuration
 - Implement MongoDB health checks with retry logic
 - Add Redis clustering support
@@ -72,7 +82,9 @@
   - Redis advanced settings
 
 #### **Option C: Management Service (Medium Value)**
-**Time: 45-60 minutes**
+
+Time: 45-60 minutes
+
 - Create `BookStore.Management.Service` to match hub-services architecture
 - Add admin endpoints for system management
 - Implement system health aggregation
@@ -82,7 +94,9 @@
   - System monitoring endpoints
 
 #### **Option D: Advanced K6 Scenarios (Low Value - Already Strong)**
-**Time: 30-45 minutes**
+
+Time: 30-45 minutes
+
 - Add specific performance regression tests
 - Create business-specific test scenarios
 - Add performance alerting thresholds
@@ -92,13 +106,15 @@
 
 ## Potential Issues & Mitigations
 
-### Expected Issues:
+### Expected Issues
+
 1. **Port conflicts** - Solution: `make docker-clean && make status`
 2. **Docker build issues** - Solution: Check Docker Desktop is running
 3. **K6 missing** - Solution: `brew install k6`
 4. **Service startup timing** - Solution: Use `make health-wait`
 
-### Recovery Commands:
+### Recovery Commands
+
 ```bash
 # Complete reset if needed
 make docker-clean
@@ -109,20 +125,23 @@ make run-aspire
 
 ## Success Criteria for Next Session
 
-### ✅ Minimum Success (Must Achieve):
+### ✅ Minimum Success (Must Achieve)
+
 - [ ] All services start successfully with `make run-aspire`
 - [ ] Health checks pass with `make health-check`
 - [ ] Basic smoke test completes with `make perf-smoke`
 - [ ] Performance API responds correctly
 
-### 🎯 Ideal Success (Target):
+### 🎯 Ideal Success (Target)
+
 - [ ] Complete performance test suite runs successfully
 - [ ] Docker orchestration works flawlessly
 - [ ] Real-time monitoring via SignalR functions
 - [ ] Performance results are properly collected and displayed
 - [ ] One enhancement (A, B, C, or D) completed
 
-### 🚀 Exceptional Success (Stretch):
+### 🚀 Exceptional Success (Stretch)
+
 - [ ] Multiple enhancements completed
 - [ ] Full observability stack working (Jaeger, Prometheus, Grafana)
 - [ ] Custom business metrics implemented
@@ -131,29 +150,34 @@ make run-aspire
 ## Session Structure Recommendation
 
 ### Phase 1: Validation (15 minutes)
+
 - Quick setup verification
 - Run basic smoke tests
 - Ensure all services are healthy
 
 ### Phase 2: Choose Enhancement (30-45 minutes)
+
 - Pick ONE from Options A-D based on business value
 - Implement systematically with proper testing
 - Document changes in CLAUDE.md
 
 ### Phase 3: Integration & Testing (15 minutes)
+
 - Full system test with enhancements
 - Update documentation
 - Commit changes
 
 ## Key Files to Reference
 
-### Essential Files:
+### Essential Files
+
 - `CLAUDE.md` - Complete command reference
 - `Makefile` - All automation commands
 - `README.md` - Architecture overview
 - `docker-compose.perf.yml` - Docker orchestration
 
-### Important Directories:
+### Important Directories
+
 - `BookStore.Performance.Service/` - K6 orchestration
 - `BookStore.Common.Instrumentation/` - OpenTelemetry setup
 - `BookStore.Performance.Tests/` - K6 test scenarios
@@ -195,6 +219,6 @@ make clean
 
 ---
 
-**Repository**: https://github.com/JStennett-Tricentis/BookStore.git
+**Repository**: <https://github.com/JStennett-Tricentis/BookStore.git>
 **Local Path**: `/Users/j.stennett/TAIS/AiHubPerfExample`
 **Status**: ✅ Ready for immediate use

@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookStore.Common\BookStore.Common.csproj" />
+    <ProjectReference Include="..\BookStore.Common.Instrumentation\BookStore.Common.Instrumentation.csproj" />
   </ItemGroup>
 
 </Project>

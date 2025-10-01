@@ -3,6 +3,7 @@
 
 .PHONY: help
 help: ## Show this help message
+
 	@echo "╔══════════════════════════════════════════════════════════════════╗"
 	@echo "║       BookStore Performance Testing - Available Commands        ║"
 	@echo "╚══════════════════════════════════════════════════════════════════╝"
@@ -85,10 +86,13 @@ restore: ## Restore NuGet packages
 .PHONY: run-aspire
 run-aspire: ## Start all services with Aspire [RECOMMENDED]
 	@echo "Starting services with .NET Aspire..."
+	@echo "📊 Aspire Dashboard will be available at: http://localhost:15888"
+	@echo "📈 Grafana Dashboard will be available at: http://localhost:3000 (admin/admin123)"
+	@echo "🔍 Prometheus will be available at: http://localhost:9090"
 	@cd BookStore.Aspire.AppHost && \
-		export ASPNETCORE_URLS="http://localhost:15889" && \
-		export DOTNET_DASHBOARD_OTLP_HTTP_ENDPOINT_URL="http://localhost:19999" && \
-		export ASPIRE_ALLOW_UNSECURED_TRANSPORT=true && \
+		ASPNETCORE_URLS="http://localhost:15888" \
+		DOTNET_DASHBOARD_OTLP_HTTP_ENDPOINT_URL="http://localhost:19999" \
+		ASPIRE_ALLOW_UNSECURED_TRANSPORT=true \
 		dotnet run
 
 .PHONY: run-services
@@ -102,14 +106,35 @@ stop-services: ## Stop all running services
 	@./stop-services.sh
 
 .PHONY: run-bookstore
-run-bookstore: ## Run BookStore API only (port 7001)
+run-bookstore: ## Run BookStore API only (port 7002)
 	@echo "Starting BookStore API service..."
-	@cd BookStore.Service && dotnet run
+	@cd BookStore.Service && dotnet run --urls "http://localhost:7002"
 
 .PHONY: run-performance
-run-performance: ## Run Performance service only (port 7003)
+run-performance: ## Run Performance service only (port 7004)
 	@echo "Starting Performance service..."
-	@cd BookStore.Performance.Service && dotnet run
+	@cd BookStore.Performance.Service && dotnet run --urls "http://localhost:7004"
+
+# ==================== Testing Commands ====================
+
+.PHONY: test-smoke
+test-smoke: ## Run smoke tests with Postman (requires Newman)
+	@echo "Running Postman smoke tests..."
+	@command -v newman >/dev/null 2>&1 || { echo "Newman not installed. Install with: npm install -g newman"; exit 1; }
+	newman run tests/postman/BookStore-Smoke-Tests.postman_collection.json \
+		-e tests/postman/BookStore.postman_environment.json
+
+.PHONY: test-integration
+test-integration: ## Run .NET integration tests
+	@echo "Running .NET integration tests..."
+	dotnet test BookStore.Service.Tests.Integration --logger "console;verbosity=normal"
+
+.PHONY: test-all
+test-all: test-integration test-smoke ## Run all tests
+
+.PHONY: test-watch
+test-watch: ## Run .NET tests in watch mode
+	dotnet watch test --project BookStore.Service.Tests.Integration
 
 # ==================== Docker Commands ====================
 
@@ -154,25 +179,25 @@ docker-observability: ## Start monitoring stack (Grafana:3333)
 perf-smoke: ## Quick test - 1 user, 2 min
 	@echo "Running smoke test..."
 	@cd BookStore.Performance.Tests && \
-		k6 run tests/books.js --env TEST_TYPE=smoke --env BASE_URL=http://localhost:7001
+		k6 run tests/books.js --env TEST_TYPE=smoke --env BASE_URL=http://localhost:7002
 
 .PHONY: perf-load
 perf-load: ## Load test - 10 users, 10 min
 	@echo "Running load test..."
 	@cd BookStore.Performance.Tests && \
-		k6 run scenarios/load-test.js --env BASE_URL=http://localhost:7001
+		k6 run scenarios/load-test.js --env BASE_URL=http://localhost:7002
 
 .PHONY: perf-stress
 perf-stress: ## Stress test - 30 users, 15 min
 	@echo "Running stress test..."
 	@cd BookStore.Performance.Tests && \
-		k6 run tests/books.js --env TEST_TYPE=stress --env BASE_URL=http://localhost:7001
+		k6 run tests/books.js --env TEST_TYPE=stress --env BASE_URL=http://localhost:7002
 
 .PHONY: perf-spike
 perf-spike: ## Spike test - burst to 50 users
 	@echo "Running spike test..."
 	@cd BookStore.Performance.Tests && \
-		k6 run tests/books.js --env TEST_TYPE=spike --env BASE_URL=http://localhost:7001
+		k6 run tests/books.js --env TEST_TYPE=spike --env BASE_URL=http://localhost:7002
 
 .PHONY: perf-comprehensive
 perf-comprehensive: ## Run ALL tests (~30 min)
@@ -210,7 +235,7 @@ perf-results: ## View latest performance test results
 .PHONY: health-check
 health-check: ## Quick health status check
 	@echo "Checking service health..."
-	@curl -s http://localhost:7001/health || echo "BookStore API: Not responding"
+	@curl -s http://localhost:7002/health || echo "BookStore API: Not responding"
 	@curl -s http://localhost:7004/health || echo "Performance Service: Not responding"
 	@echo "Health check complete"
 
@@ -218,7 +243,7 @@ health-check: ## Quick health status check
 health-wait: ## Wait for services to start (30s)
 	@echo "Waiting for services to be healthy..."
 	@for i in {1..30}; do \
-		if curl -s http://localhost:7001/health > /dev/null 2>&1; then \
+		if curl -s http://localhost:7002/health > /dev/null 2>&1; then \
 			echo "Services are healthy!"; \
 			break; \
 		fi; \
@@ -231,7 +256,7 @@ status: ## Show all services & container status
 	@echo "=== BookStore Project Status ==="
 	@echo ""
 	@echo "Services:"
-	@curl -s http://localhost:7001/health > /dev/null 2>&1 && echo "✅ BookStore API: Running" || echo "❌ BookStore API: Not running"
+	@curl -s http://localhost:7002/health > /dev/null 2>&1 && echo "✅ BookStore API: Running" || echo "❌ BookStore API: Not running"
 	@curl -s http://localhost:7004/health > /dev/null 2>&1 && echo "✅ Performance Service: Running" || echo "❌ Performance Service: Not running"
 	@echo ""
 	@echo "Infrastructure:"
@@ -258,8 +283,7 @@ seed-data: ## Add sample books to database
 	@echo "Seeding test data..."
 	@cd BookStore.Performance.Tests && node utils/seed-data.js || \
 		(echo "Seeding via API..." && \
-		curl -X POST http://localhost:7001/api/v1/books -H "Content-Type: application/json" \
-		-d '{"title":"Performance Test Book","author":"Test Author","isbn":"978-0-123456-78-9","price":29.99,"genre":"Technology","stockQuantity":100}')
+		curl -X POST http://localhost:7002/seed-data -H "Content-Type: application/json")
 
 .PHONY: reset-db
 reset-db: ## Drop MongoDB database [DATA LOSS]
@@ -287,12 +311,22 @@ watch: ## Run with hot-reload enabled
 .PHONY: swagger
 swagger: ## Open Swagger UI
 	@echo "Opening Swagger UI..."
-	@open http://localhost:7001/swagger || xdg-open http://localhost:7001/swagger
+	@open http://localhost:7002/swagger || xdg-open http://localhost:7002/swagger
 
 .PHONY: aspire-dashboard
 aspire-dashboard: ## Open Aspire Dashboard
 	@echo "Opening Aspire Dashboard..."
 	@open http://localhost:15888 || xdg-open http://localhost:15888
+
+.PHONY: grafana
+grafana: ## Open Grafana Dashboard
+	@echo "Opening Grafana Dashboard..."
+	@open http://localhost:3000 || xdg-open http://localhost:3000
+
+.PHONY: prometheus
+prometheus: ## Open Prometheus
+	@echo "Opening Prometheus..."
+	@open http://localhost:9090 || xdg-open http://localhost:9090
 
 # ==================== Quick Commands ====================
 

@@ -223,8 +223,9 @@ public class K6OrchestrationService : IK6OrchestrationService, IDisposable
 
         try
         {
-            var logs = await _dockerClient.Containers.GetContainerLogsAsync(
+            var logsStream = await _dockerClient.Containers.GetContainerLogsAsync(
                 runningTest.ContainerId,
+                false,
                 new ContainerLogsParameters
                 {
                     ShowStdout = true,
@@ -232,8 +233,21 @@ public class K6OrchestrationService : IK6OrchestrationService, IDisposable
                     Timestamps = true
                 });
 
-            using var reader = new StreamReader(logs);
-            return await reader.ReadToEndAsync();
+            using var multiplexedStream = logsStream;
+            using var stdoutStream = new MemoryStream();
+            using var stderrStream = new MemoryStream();
+            await multiplexedStream.CopyOutputToAsync(null, stdoutStream, stderrStream, CancellationToken.None);
+
+            stdoutStream.Position = 0;
+            stderrStream.Position = 0;
+
+            using var stdoutReader = new StreamReader(stdoutStream);
+            using var stderrReader = new StreamReader(stderrStream);
+
+            var stdout = await stdoutReader.ReadToEndAsync();
+            var stderr = await stderrReader.ReadToEndAsync();
+
+            return stdout + stderr;
         }
         catch (Exception ex)
         {

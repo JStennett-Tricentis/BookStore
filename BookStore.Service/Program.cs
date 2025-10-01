@@ -3,6 +3,7 @@ using BookStore.Common.Instrumentation;
 using BookStore.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using StackExchange.Redis;
 using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +15,35 @@ builder.Services.Configure<RedisSettings>(
     builder.Configuration.GetSection("Redis"));
 
 // MongoDB - Use Aspire or fallback to configuration
-builder.AddMongoDBClient("mongodb");
-var databaseSettings = builder.Configuration.GetSection("Database").Get<DatabaseSettings>()!;
+var mongoConnectionString = builder.Configuration.GetConnectionString("mongodb")
+    ?? builder.Configuration.GetSection("Database")?.GetValue<string>("ConnectionString")
+    ?? "mongodb://localhost:27017";
+
+// Check if running under Aspire orchestration
+var isAspireMongo = builder.Configuration.GetConnectionString("mongodb") != null &&
+                    !builder.Configuration.GetConnectionString("mongodb")!.Contains("localhost");
+
+if (isAspireMongo)
+{
+    try
+    {
+        builder.AddMongoDBClient("mongodb");
+    }
+    catch
+    {
+        // Fallback if Aspire is not available
+        builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(mongoConnectionString));
+    }
+}
+else
+{
+    // Running standalone - skip Aspire integration
+    builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(mongoConnectionString));
+}
+
+var databaseSettings = builder.Configuration.GetSection("Database").Get<DatabaseSettings>()
+    ?? new DatabaseSettings { ConnectionString = "mongodb://localhost:27017", DatabaseName = "bookstore" };
+
 builder.Services.AddScoped(sp =>
 {
     var client = sp.GetRequiredService<IMongoClient>();
@@ -23,13 +51,38 @@ builder.Services.AddScoped(sp =>
 });
 
 // Redis - Use Aspire or fallback to configuration
-builder.AddRedisClient("redis");
-var redisSettings = builder.Configuration.GetSection("Redis").Get<RedisSettings>()!;
+var redisConnectionString = builder.Configuration.GetConnectionString("redis")
+    ?? builder.Configuration.GetSection("Redis")?.GetValue<string>("ConnectionString")
+    ?? "localhost:6379";
+
+// Check if running under Aspire orchestration
+var isAspire = builder.Configuration.GetConnectionString("redis") != null &&
+               !builder.Configuration.GetConnectionString("redis")!.Contains("localhost");
+
+if (isAspire)
+{
+    try
+    {
+        builder.AddRedisClient("redis");
+    }
+    catch
+    {
+        // Fallback if Aspire is not available
+        builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+            ConnectionMultiplexer.Connect(redisConnectionString));
+    }
+}
+else
+{
+    // Running standalone - skip Aspire integration
+    builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+        ConnectionMultiplexer.Connect(redisConnectionString));
+}
 
 // Add distributed cache
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("redis") ?? "localhost:6379";
+    options.Configuration = redisConnectionString;
 });
 
 // Services
@@ -96,6 +149,9 @@ app.UseSwaggerUI(c =>
 app.MapGet("/swagger", () => Results.Redirect("/swagger/index.html"));
 
 app.UseHealthChecks("/health");
+
+// Prometheus metrics scraping endpoint
+app.MapPrometheusScrapingEndpoint();
 
 app.UseCors();
 

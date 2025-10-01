@@ -1,4 +1,5 @@
 using BookStore.Common.Configuration;
+using BookStore.Common.Instrumentation;
 using BookStore.Performance.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry;
@@ -63,17 +64,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// OpenTelemetry
-builder.Services.AddOpenTelemetry()
-    .WithTracing(tracingBuilder =>
-    {
-        tracingBuilder
-            .SetResourceBuilder(ResourceBuilder.CreateDefault()
-                .AddService("BookStore.Performance.Service", "1.0.0"))
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-;
-    });
+// OpenTelemetry - Use shared instrumentation from Common
+builder.Services.AddBookStoreOpenTelemetry(builder.Configuration, "BookStore.Performance.Service");
 
 var app = builder.Build();
 
@@ -89,6 +81,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHealthChecks("/health");
+
+// Prometheus metrics scraping endpoint
+app.MapPrometheusScrapingEndpoint();
 
 app.UseCors();
 

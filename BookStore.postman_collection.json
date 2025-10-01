@@ -391,7 +391,7 @@
                 "generate-summary"
               ]
             },
-            "description": "Generate an AI-powered book summary using Claude"
+            "description": "Generate an AI-powered book summary using configured LLM provider (Ollama/Claude/OpenAI/Bedrock)"
           },
           "response": []
         },
@@ -706,9 +706,211 @@
             "description": "Check if the service is healthy and responding"
           },
           "response": []
+        },
+        {
+          "name": "Seed Sample Data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Data seeded successfully\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Success message returned\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData.message).to.include('seeded');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/seed-data",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seed-data"
+              ]
+            },
+            "description": "Seed database with sample books and authors for testing"
+          },
+          "response": []
+        },
+        {
+          "name": "Prometheus Metrics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Metrics endpoint accessible\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Metrics format is correct\", function () {",
+                  "    pm.expect(pm.response.text()).to.include('# TYPE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/metrics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "metrics"
+              ]
+            },
+            "description": "Prometheus metrics scraping endpoint for OpenTelemetry"
+          },
+          "response": []
         }
       ],
       "description": "Service health and monitoring endpoints"
+    },
+    {
+      "name": "LLM Testing",
+      "item": [
+        {
+          "name": "Test AI Summary Generation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"AI summary generated\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('aiGeneratedSummary');",
+                  "    pm.expect(jsonData.aiGeneratedSummary).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"Response time acceptable for LLM call\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(15000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}/generate-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}",
+                "generate-summary"
+              ]
+            },
+            "description": "Test LLM summary generation - uses provider configured in appsettings.json (Ollama/Claude/OpenAI/Bedrock)"
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Ollama Metrics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Ollama metrics available\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var body = pm.response.text();",
+                  "    pm.expect(body).to.include('ollama_tokens_');",
+                  "});",
+                  "",
+                  "pm.test(\"Ollama cost is zero\", function () {",
+                  "    var body = pm.response.text();",
+                  "    if (body.includes('ollama_cost_usd_USD')) {",
+                  "        // Extract the cost value and verify it's 0",
+                  "        pm.expect(body).to.include('ollama_cost_usd_USD 0');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/metrics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "metrics"
+              ]
+            },
+            "description": "Check Prometheus metrics for Ollama token counts and verify $0 cost"
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Claude Metrics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Claude metrics available\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    var body = pm.response.text();",
+                  "    pm.expect(body).to.include('claude_tokens_');",
+                  "});",
+                  "",
+                  "pm.test(\"Claude cost tracked\", function () {",
+                  "    var body = pm.response.text();",
+                  "    pm.expect(body).to.include('claude_cost_usd_USD');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/metrics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "metrics"
+              ]
+            },
+            "description": "Check Prometheus metrics for Claude token counts and cost tracking"
+          },
+          "response": []
+        }
+      ],
+      "description": "LLM provider testing and metrics validation"
     },
     {
       "name": "Performance Test Scenarios",
@@ -809,6 +1011,46 @@
               ]
             },
             "description": "Test Redis cache performance by repeatedly reading the same book"
+          },
+          "response": []
+        },
+        {
+          "name": "LLM Performance Test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"LLM response time logged\", function () {",
+                  "    console.log('LLM Response Time: ' + pm.response.responseTime + 'ms');",
+                  "    pm.expect(pm.response.responseTime).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}/generate-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}",
+                "generate-summary"
+              ]
+            },
+            "description": "Test LLM performance - measure latency and throughput with concurrent requests"
           },
           "response": []
         }

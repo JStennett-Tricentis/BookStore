@@ -371,6 +371,8 @@ yarn-error.log*
 results/
 *.json
 !monitoring/grafana/dashboards/*.json
+!*.example.json
+!BookStore.postman_collection.json
 
 # Environment variables
 .env

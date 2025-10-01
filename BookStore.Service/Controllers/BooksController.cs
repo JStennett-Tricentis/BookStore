@@ -9,11 +9,13 @@ namespace BookStore.Service.Controllers;
 public class BooksController : ControllerBase
 {
     private readonly IBookService _bookService;
+    private readonly IClaudeService _claudeService;
     private readonly ILogger<BooksController> _logger;
 
-    public BooksController(IBookService bookService, ILogger<BooksController> logger)
+    public BooksController(IBookService bookService, IClaudeService claudeService, ILogger<BooksController> logger)
     {
         _bookService = bookService;
+        _claudeService = claudeService;
         _logger = logger;
     }
 
@@ -152,6 +154,34 @@ public class BooksController : ControllerBase
         {
             _logger.LogError(ex, "Error searching books with query {Query}", query);
             return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpPost("{id}/generate-summary")]
+    public async Task<ActionResult<object>> GenerateBookSummary(string id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var book = await _bookService.GetBookByIdAsync(id);
+            if (book == null)
+            {
+                return NotFound(new { message = "Book not found" });
+            }
+
+            var summary = await _claudeService.GenerateBookSummaryAsync(book.Title, book.Author, book.Description, cancellationToken);
+
+            return Ok(new
+            {
+                bookId = book.Id,
+                title = book.Title,
+                author = book.Author,
+                aiGeneratedSummary = summary
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating summary for book {BookId}", id);
+            return StatusCode(500, new { message = "Internal server error" });
         }
     }
 }

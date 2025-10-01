@@ -69,6 +69,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 // Services
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddSingleton<IClaudeService, ClaudeService>();
 
 // Simplified API setup - remove versioning for now
 

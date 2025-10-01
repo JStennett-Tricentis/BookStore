@@ -88,16 +88,8 @@ restore: ## Restore NuGet packages
 # ==================== Run Services ====================
 
 .PHONY: run-aspire
-run-aspire: ## Start all services with Aspire [RECOMMENDED]
-	@echo "Starting services with .NET Aspire..."
-	@echo "📊 Aspire Dashboard will be available at: http://localhost:15888"
-	@echo "📈 Grafana Dashboard will be available at: http://localhost:3000 (admin/admin123)"
-	@echo "🔍 Prometheus will be available at: http://localhost:9090"
-	@cd BookStore.Aspire.AppHost && \
-		ASPNETCORE_URLS="http://localhost:15888" \
-		DOTNET_DASHBOARD_OTLP_HTTP_ENDPOINT_URL="http://localhost:19999" \
-		ASPIRE_ALLOW_UNSECURED_TRANSPORT=true \
-		dotnet run
+run-aspire: ## Start all services with Aspire [RECOMMENDED - Auto-cleans MongoDB]
+	@./start-aspire.sh
 
 .PHONY: run-services
 run-services: ## Start all services (alternative to Aspire)
@@ -217,8 +209,11 @@ perf-comprehensive: ## Run ALL tests (~30 min)
 .PHONY: perf-ai-smoke
 perf-ai-smoke: ## Quick AI summary test (1-2 users, 3 min)
 	@echo "Running AI summary smoke test..."
-	cd BookStore.Performance.Tests && \
-		k6 run tests/ai-summary.js --env SCENARIO=llm_smoke --env BASE_URL=http://localhost:7002
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run tests/ai-summary.js --env SCENARIO=llm_smoke --env BASE_URL=http://localhost:7002 \
+		--out json=results/ai-smoke-$(shell date +%Y%m%d-%H%M%S).json
+	@echo "✓ Test complete. Run 'make perf-report' to view HTML report"
 
 .PHONY: perf-ai-load
 perf-ai-load: ## AI load test (3-5 users, 12 min)
@@ -283,7 +278,26 @@ perf-list-tests: ## List running performance tests
 .PHONY: perf-results
 perf-results: ## View latest performance test results
 	@echo "Latest performance test results:"
-	@ls -la BookStore.Performance.Tests/results/ 2>/dev/null || echo "No results found"
+	@ls -lht BookStore.Performance.Tests/results/ 2>/dev/null | head -20 || echo "No results found"
+
+.PHONY: perf-report
+perf-report: ## Generate HTML report from latest JSON results
+	@echo "Generating HTML report from latest K6 results..."
+	@cd BookStore.Performance.Tests && \
+		LATEST_JSON=$$(ls -t results/*.json 2>/dev/null | head -1) && \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
+		else \
+			echo "No JSON results found. Run a performance test first."; \
+		fi
+
+.PHONY: perf-clean
+perf-clean: ## Clean old performance test results
+	@echo "Cleaning performance test results..."
+	@rm -rf BookStore.Performance.Tests/results/*.json BookStore.Performance.Tests/results/*.html
+	@echo "✓ Results cleaned"
 
 # ==================== Health & Monitoring ====================
 

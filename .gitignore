@@ -370,6 +370,7 @@ yarn-error.log*
 # K6 test results
 results/
 *.json
+!monitoring/grafana/dashboards/*.json
 
 # Environment variables
 .env

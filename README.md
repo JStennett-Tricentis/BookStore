@@ -1,238 +1,231 @@
-# BookStore Performance Testing Example
+# BookStore Performance Testing POC
 
-An enterprise-grade .NET 8 application designed to replicate the full infrastructure complexity of production microservices for comprehensive performance testing investigations. This project mirrors the architecture of complex hub-services projects but uses a simple BookStore domain to focus on performance characteristics rather than business logic.
+Enterprise-grade .NET 8 performance testing application demonstrating production-ready monitoring, CI/CD, and multi-LLM support.
 
-## Architecture Overview
+## Quick Start
 
-### Core Services
-- **BookStore.Service** - Main API service with CRUD operations
-- **BookStore.Performance.Service** - K6 orchestration service with Docker integration
-- **BookStore.Common** - Shared models and configurations
-- **BookStore.Common.Instrumentation** - OpenTelemetry integration library
+```bash
+# Setup and start (auto-cleans MongoDB, starts all services)
+make run-aspire
+
+# Run smoke test
+make perf-smoke
+
+# Generate HTML report
+make perf-report
+```
+
+**Access:**
+- API: http://localhost:7002/swagger
+- Aspire Dashboard: http://localhost:15888
+- Grafana: http://localhost:3000 (admin/admin123)
+- Prometheus: http://localhost:9090
+
+## Architecture
+
+### Services
+- **BookStore.Service** - REST API with CRUD + AI summaries
+- **BookStore.Performance.Service** - K6 test orchestration
 - **BookStore.Aspire.AppHost** - .NET Aspire orchestration
 
-### Enterprise Infrastructure
-- **MongoDB** - Primary database with connection pooling and instrumentation
-- **Redis** - Distributed caching with advanced configuration
-- **OpenTelemetry** - Full observability stack (tracing, metrics, logging)
-- **K6** - Performance testing with Docker orchestration
-- **Docker** - Container orchestration with multi-profile support
-- **SignalR** - Real-time performance test monitoring
+### Infrastructure
+- **MongoDB** - Primary database
+- **Redis** - Distributed caching
+- **Ollama** - Free local LLM (default, $0 cost)
+- **Prometheus** - Metrics collection
+- **Grafana** - Dashboards & visualization
+- **K6** - Load testing
 
-### API Endpoints
-- `GET /api/v1/books` - List books with filtering and pagination
-- `GET /api/v1/books/{id}` - Get specific book
-- `POST /api/v1/books` - Create new book
-- `PUT /api/v1/books/{id}` - Update existing book
-- `PATCH /api/v1/books/{id}` - Partial update book
-- `DELETE /api/v1/books/{id}` - Delete book
-- `GET /api/v1/books/search` - Search books
-- `GET /api/v1/authors` - List authors
-- `POST /api/v1/authors` - Create new author
+### Observability Stack
+- **OpenTelemetry** - Traces, metrics, logs
+- **TraceLoop** - LLM-specific observability
+- **Semantic Conventions** - Standard gen_ai.*, llm.* tags
+- **Real-time Cost Tracking** - Token usage & API costs
 
-## Enterprise Features
+## LLM Support (Multi-Provider)
 
-### Performance Orchestration Service
-- **Docker-based K6 orchestration** - Run performance tests in isolated containers
-- **Real-time test monitoring** - SignalR-based live updates
-- **Multiple test scenarios** - Smoke, Load, Stress, Spike testing
-- **Result aggregation** - Comprehensive metrics collection and analysis
-- **RESTful API** - Programmatic test execution and monitoring
+### Providers
+1. **Ollama** (default) - Free unlimited local models
+   - llama3.2, mistral, phi3, etc.
+   - Zero cost for performance testing
+   - Full OpenTelemetry instrumentation
 
-### OpenTelemetry Integration
-- **Distributed tracing** - Full request tracing across services
-- **Custom metrics** - Business-specific performance indicators
-- **Structured logging** - Correlated logs with trace context
-- **Multiple exporters** - Console, OTLP, Prometheus support
-- **Activity tracking** - Detailed span creation in business logic
+2. **Claude** - Anthropic direct API
+   - claude-3-5-sonnet-20241022
+   - $3/M input, $15/M output tokens
 
-### Docker Orchestration
-- **Multi-profile support** - Development, performance, observability stacks
-- **Health checks** - Proper service dependency management
-- **Volume management** - Persistent data and shared results
-- **Network isolation** - Secure inter-service communication
+3. **OpenAI** - GPT models (SDK ready)
+   - gpt-4o, gpt-4.1-mini
 
-## Getting Started
+4. **Bedrock** - AWS-hosted models (SDK ready)
+   - us.anthropic.claude-sonnet-4-*
+
+### Switch Provider
+Edit `appsettings.json`:
+```json
+{
+  "LLM": {
+    "Provider": "Ollama"  // or "Claude", "OpenAI", "Bedrock"
+  }
+}
+```
+
+## Performance Testing
+
+### K6 Scenarios
+```bash
+make perf-smoke         # 1-2 users, 2 min
+make perf-load          # 10 users, 10 min
+make perf-stress        # 30 users, 15 min
+make perf-spike         # Burst to 50 users
+make perf-ai-smoke      # LLM endpoint test
+make perf-errors        # Error handling validation
+make perf-comprehensive # All tests (~30 min)
+```
+
+### Test Features
+- Multiple user profiles (reader, librarian, manager)
+- Mixed workloads (CRUD + AI operations)
+- Error scenario testing
+- HTML reports with percentiles
+- Real-time Grafana dashboards
+
+## CI/CD (GitHub Actions)
+
+### Workflows
+- **pr.yaml** - Build, test, lint, Docker, K6, security scan
+- **deploy.yaml** - Multi-env deployment (dev/staging/prod)
+- **performance.yaml** - Daily scheduled performance tests
+- **codeql.yaml** - Security scanning (C# + JS)
+- **dependabot.yml** - Automated dependency updates
+
+### Features
+- Docker image publishing to GHCR
+- Code coverage with Codecov
+- Trivy security scanning
+- Parallel job execution
+- Environment-specific approvals
+
+## Monitoring
+
+### Grafana Dashboards
+1. **bookstore-performance.json**
+   - LLM Requests/sec, P95 latency, error rate
+   - Token usage (input/output/total)
+   - API cost tracking ($)
+   - LLM vs non-LLM traffic
+
+2. **bookstore-system-health.json**
+   - CPU, memory, threads
+   - GC collections, HTTP metrics
+   - Kestrel connection pool
+
+### Prometheus Metrics
+- 36+ metric types (runtime, HTTP, custom)
+- Token counters: `claude.tokens.*`, `ollama.tokens.*`
+- Cost histogram: `claude.cost.usd`, `ollama.cost.usd`
+- HTTP duration: `http_server_request_duration_seconds`
+
+### Example Results
+- **540 LLM requests = $0.99** (Claude)
+- **Unlimited requests = $0** (Ollama)
+- P95 latency: 8s (LLM), 50ms (CRUD)
+
+## Development
 
 ### Prerequisites
 - .NET 8 SDK
 - Docker Desktop
-- K6 (install via homebrew: `brew install k6`)
-- Make (for using Makefile commands)
+- K6 (`brew install k6`)
 
-### Quick Start (Recommended)
-
-1. **Setup development environment**:
-   ```bash
-   make dev-setup
-   ```
-
-2. **Start with .NET Aspire**:
-   ```bash
-   make run-aspire
-   ```
-   This automatically starts MongoDB, Redis, BookStore service, and Performance service.
-
-3. **Access the applications**:
-   - BookStore API: http://localhost:7002
-   - Performance Service: http://localhost:7004
-   - Swagger UI: http://localhost:7002/swagger
-   - Aspire Dashboard: http://localhost:15889
-
-4. **Run your first performance test**:
-   ```bash
-   make perf-smoke
-   ```
-
-### Alternative: Docker Compose
-
-1. **Start full stack with Docker**:
-   ```bash
-   make docker-run
-   ```
-
-2. **Start with observability stack**:
-   ```bash
-   make docker-observability
-   ```
-   Includes Jaeger, Prometheus, and Grafana.
-
-### Performance Testing
-
-1. **Install K6**:
-   ```bash
-   npm install -g k6
-   # or
-   brew install k6
-   ```
-
-2. **Run performance tests**:
-   ```bash
-   cd BookStore.Performance.Tests
-
-   # Smoke test (1 user)
-   npm run test:smoke
-
-   # Load test (5-10 users)
-   npm run test:load
-
-   # Stress test (up to 30 users)
-   npm run test:stress
-
-   # Spike test (burst to 50 users)
-   npm run test:spike
-   ```
-
-### Manual Testing
-
-Test the API endpoints:
-
+### Commands
 ```bash
-# List books
-curl http://localhost:7002/api/v1/books
-
-# Get specific book
-curl http://localhost:7002/api/v1/books/{book-id}
-
-# Create a book
-curl -X POST http://localhost:7002/api/v1/books \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Test Book",
-    "author": "Test Author",
-    "isbn": "978-1-234-56789-0",
-    "price": 19.99,
-    "genre": "Fiction",
-    "description": "A test book",
-    "stockQuantity": 10,
-    "publishedDate": "2024-01-01"
-  }'
+make help               # Show all 40+ commands
+make dev-setup          # Install dependencies
+make build              # Build solution
+make test               # Run tests
+make format             # Format code
+make status             # Check service health
+make logs-bookstore     # View logs
+make docker-clean       # Reset everything
 ```
 
-## Performance Testing Features
-
-The K6 performance tests include:
-- **Multiple user profiles** (reader, librarian, manager) with different operation patterns
-- **Realistic load patterns** with proper think times
-- **Comprehensive metrics** tracking response times, error rates, and throughput
-- **Different scenarios** (smoke, load, stress, spike testing)
-- **Caching validation** to test Redis performance impact
-- **Database load simulation** with MongoDB operations
+### MongoDB Fix
+MongoDB volumes auto-clean on startup via `start-aspire.sh` to prevent auth issues.
 
 ## Project Structure
 
 ```
-BookStore.sln
-├── BookStore.Common/              # Shared models and configuration
-├── BookStore.Service/             # Main API service
-├── BookStore.Aspire.AppHost/      # .NET Aspire orchestration
-├── BookStore.Performance.Tests/   # K6 performance tests
-│   ├── config/                    # Environment and threshold configs
-│   ├── tests/                     # Test scenarios
-│   ├── utils/                     # Helper functions
-│   └── package.json               # NPM scripts for testing
-└── README.md
+├── BookStore.Service/                 # Main API
+│   ├── Controllers/                   # REST endpoints
+│   ├── Services/                      # Business logic + LLM services
+│   └── appsettings.json              # Configuration
+├── BookStore.Common/                  # Shared models
+├── BookStore.Common.Instrumentation/  # OpenTelemetry setup
+├── BookStore.Performance.Tests/       # K6 tests
+│   ├── tests/                        # Test scenarios
+│   ├── scenarios/                    # Load patterns
+│   ├── utils/                        # Helpers
+│   └── generate-html-report.js       # Report generator
+├── BookStore.Aspire.AppHost/         # Aspire orchestration
+├── monitoring/
+│   ├── grafana/dashboards/           # 2 dashboards
+│   └── prometheus/prometheus.yml     # Scrape config
+├── .github/workflows/                # CI/CD (5 workflows)
+├── Makefile                          # 40+ automation commands
+├── MONITORING_COMPARISON.md          # vs hub-services-latest
+└── docker-compose.perf.yml           # Full stack + Ollama
 ```
 
-## Development Workflow
+## Key Features vs hub-services-latest
 
-### Available Commands (Use Makefile)
+### Better
+- ✅ Prometheus + Grafana (vs expensive Coralogix)
+- ✅ Local monitoring stack
+- ✅ K6 performance testing
+- ✅ HTML test reports
+- ✅ Ollama for free testing
+- ✅ Cost tracking dashboards
+- ✅ GitHub Actions CI/CD
+
+### Same
+- ✅ OpenTelemetry semantic conventions
+- ✅ TraceLoop integration
+- ✅ Health checks
+- ✅ Multi-provider LLM support
+
+### Cost Savings
+**$200-500/month** - Open-source stack vs Coralogix subscription
+
+## Documentation
+
+- **CLAUDE.md** - Project instructions for AI assistants
+- **MONITORING_COMPARISON.md** - Detailed comparison with hub-services-latest
+- **LLM_TESTING.md** - LLM performance testing guide
+- **Makefile help** - `make help` for all commands
+
+## Troubleshooting
+
+### MongoDB Auth Issues
 ```bash
-# Get all available commands
-make help
-
-# Development workflow
-make dev-setup          # Setup development environment
-make run-aspire         # Start all services with .NET Aspire
-make health-check       # Check service health
-make seed-data         # Populate with test data
-
-# Performance testing
-make perf-smoke         # Quick 2-minute smoke test
-make perf-load          # Realistic 10-minute load test
-make perf-stress        # High-load 15-minute stress test
-make perf-comprehensive # Run all tests sequentially
-
-# Docker operations
-make docker-run                # Full stack with Docker
-make docker-observability      # With monitoring stack
-make docker-clean             # Clean Docker resources
-
-# Debugging & monitoring
-make logs-bookstore    # View service logs
-make status           # Complete project status
-make perf-results     # View performance test results
+# Auto-fixed by start-aspire.sh
+make run-aspire  # Cleans volumes automatically
 ```
 
-### Manual Development
+### Services Not Starting
 ```bash
-# Build solution
-dotnet build
-
-# Run individual services (requires dependencies)
-cd BookStore.Service && dotnet run
-cd BookStore.Performance.Service && dotnet run
+make status       # Check what's running
+make health-check # Test endpoints
+make logs-bookstore  # View logs
+make restart      # Stop and restart
 ```
 
-### Configuration Files
-- `appsettings.json` - Service configuration with telemetry settings
-- `docker-compose.perf.yml` - Docker orchestration with multiple profiles
-- `BookStore.Performance.Tests/config/environments.js` - Test environments
-- `BookStore.Performance.Tests/config/thresholds.js` - Performance thresholds
-- `Makefile` - Development automation with 40+ commands
+### Port Conflicts
+```bash
+lsof -Pi :7002   # Check API port
+lsof -Pi :11434  # Check Ollama port
+```
 
-## Performance Characteristics
+## License
 
-This application is designed to simulate the performance characteristics of complex enterprise applications:
-- **Database operations** with MongoDB document queries
-- **Caching layers** with Redis for improved response times
-- **Multiple service endpoints** with varying complexity
-- **Realistic data models** with relationships and indexes
-- **Distributed tracing** for observability
-
-Use this project to:
-- Test performance monitoring tools
-- Validate load testing strategies
-- Experiment with caching optimizations
-- Practice performance troubleshooting
-- Benchmark different deployment configurations
+Enterprise POC for performance testing research.

@@ -694,7 +694,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "rate(process_cpu_usage{service=\"bookstore-api\"}[1m]) * 100",
+          "expr": "rate(process_cpu_time_seconds_total{service=\"bookstore-api\"}[1m]) * 100",
           "legendFormat": "CPU Usage",
           "refId": "A"
         }
@@ -783,7 +783,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "process_working_set{service=\"bookstore-api\"}",
+          "expr": "process_memory_usage_bytes{service=\"bookstore-api\"}",
           "legendFormat": "Working Set",
           "refId": "A"
         },
@@ -791,7 +791,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "dotnet_total_memory_bytes{service=\"bookstore-api\"}",
+          "expr": "process_runtime_dotnet_gc_objects_size_bytes{service=\"bookstore-api\"}",
           "legendFormat": "GC Total Memory",
           "refId": "B"
         }
@@ -880,7 +880,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "rate(dotnet_gc_collections_count{service=\"bookstore-api\"}[1m])",
+          "expr": "rate(process_runtime_dotnet_gc_collections_count_total{service=\"bookstore-api\"}[1m])",
           "legendFormat": "Gen {{generation}}",
           "refId": "A"
         }

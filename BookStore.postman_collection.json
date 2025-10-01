@@ -65,9 +65,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/books?page=1&pageSize=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "books"],
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books?page=1&pageSize=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books"
+              ],
               "query": [
                 {
                   "key": "genre",
@@ -121,9 +127,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/books/{{bookId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "books", "{{bookId}}"]
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}"
+              ]
             },
             "description": "Retrieve a specific book by its ID"
           },
@@ -186,9 +199,15 @@
               "raw": "{\n  \"title\": \"The Great Gatsby\",\n  \"author\": \"F. Scott Fitzgerald\",\n  \"isbn\": \"{{randomISBN}}\",\n  \"price\": {{randomPrice}},\n  \"publishedDate\": \"1925-04-10T00:00:00Z\",\n  \"genre\": \"Fiction\",\n  \"description\": \"A classic American novel set in the Jazz Age, exploring themes of wealth, love, and the American Dream.\",\n  \"stockQuantity\": {{randomStock}}\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/books",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "books"]
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books"
+              ]
             },
             "description": "Create a new book in the catalog"
           },
@@ -227,9 +246,16 @@
               "raw": "{\n  \"title\": \"Updated Book Title\",\n  \"author\": \"Updated Author\",\n  \"isbn\": \"978-0-123456-78-9\",\n  \"price\": 34.99,\n  \"publishedDate\": \"2024-01-01T00:00:00Z\",\n  \"genre\": \"Technology\",\n  \"description\": \"An updated description for the book.\",\n  \"stockQuantity\": 150\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/books/{{bookId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "books", "{{bookId}}"]
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}"
+              ]
             },
             "description": "Update an existing book completely"
           },
@@ -268,9 +294,16 @@
               "raw": "{\n  \"price\": 19.99,\n  \"stockQuantity\": 75\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/books/{{bookId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "books", "{{bookId}}"]
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}"
+              ]
             },
             "description": "Partially update a book (only specified fields)"
           },
@@ -300,9 +333,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/books/search?query=gatsby",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "books", "search"],
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/search?query=gatsby",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "search"
+              ],
               "query": [
                 {
                   "key": "query",
@@ -337,9 +377,16 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/books/{{bookId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "books", "{{bookId}}"]
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}"
+              ]
             },
             "description": "Delete a book from the catalog"
           },
@@ -380,9 +427,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/authors?page=1&pageSize=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "authors"],
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Authors?page=1&pageSize=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Authors"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -423,9 +476,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/authors/{{authorId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "authors", "{{authorId}}"]
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Authors/{{authorId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Authors",
+                "{{authorId}}"
+              ]
             },
             "description": "Retrieve a specific author by ID"
           },
@@ -465,9 +525,15 @@
               "raw": "{\n  \"name\": \"Stephen King\",\n  \"biography\": \"Stephen Edwin King is an American author of horror, supernatural fiction, suspense, crime, science-fiction, and fantasy novels.\",\n  \"birthDate\": \"1947-09-21T00:00:00Z\",\n  \"nationality\": \"American\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/authors",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "authors"]
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Authors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Authors"
+              ]
             },
             "description": "Create a new author"
           },
@@ -506,9 +572,16 @@
               "raw": "{\n  \"name\": \"Stephen King (Updated)\",\n  \"biography\": \"Updated biography - Stephen Edwin King is an American author known for his prolific writing career.\",\n  \"birthDate\": \"1947-09-21T00:00:00Z\",\n  \"nationality\": \"American\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/authors/{{authorId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "authors", "{{authorId}}"]
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Authors/{{authorId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Authors",
+                "{{authorId}}"
+              ]
             },
             "description": "Update an existing author"
           },
@@ -537,9 +610,16 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/authors/{{authorId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "authors", "{{authorId}}"]
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Authors/{{authorId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Authors",
+                "{{authorId}}"
+              ]
             },
             "description": "Delete an author"
           },
@@ -575,8 +655,12 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/health",
-              "host": ["{{baseUrl}}"],
-              "path": ["health"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
             },
             "description": "Check if the service is healthy and responding"
           },
@@ -622,9 +706,15 @@
               "raw": "{\n  \"title\": \"Performance Test Book {{testNumber}}\",\n  \"author\": \"Test Author {{testNumber}}\",\n  \"isbn\": \"978-0-{{testNumber}}-00-0\",\n  \"price\": 29.99,\n  \"publishedDate\": \"2024-01-01T00:00:00Z\",\n  \"genre\": \"{{testGenre}}\",\n  \"description\": \"This is a test book created for performance testing scenario {{testNumber}}\",\n  \"stockQuantity\": 100\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/books",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "books"]
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books"
+              ]
             },
             "description": "Create books in bulk for performance testing"
           },
@@ -636,9 +726,15 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/books?page=1&pageSize=50",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "books"],
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books?page=1&pageSize=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -660,9 +756,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v{{apiVersion}}/books/{{bookId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v{{apiVersion}}", "books", "{{bookId}}"]
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}"
+              ]
             },
             "description": "Test Redis cache performance by repeatedly reading the same book"
           },

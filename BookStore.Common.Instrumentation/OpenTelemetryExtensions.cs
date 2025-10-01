@@ -144,8 +144,17 @@ public static class OpenTelemetryExtensions
         // Add HTTP client metrics
         metrics.AddHttpClientInstrumentation();
 
-        // Runtime and process instrumentation not available in current OpenTelemetry version
-        // TODO: Add back when available in newer versions
+        // Add .NET runtime metrics (GC, exceptions, thread pool, etc.)
+        if (settings.Metrics.EnableRuntimeInstrumentation)
+        {
+            metrics.AddRuntimeInstrumentation();
+        }
+
+        // Add process metrics (CPU, memory)
+        if (settings.Metrics.EnableProcessInstrumentation)
+        {
+            metrics.AddProcessInstrumentation();
+        }
 
         // Add exporters
         ConfigureMetricsExporters(metrics, settings);
@@ -189,6 +198,7 @@ public static class OpenTelemetryExtensions
             {
                 options.Endpoint = new Uri(settings.Exporters.Otlp.Endpoint);
                 options.TimeoutMilliseconds = settings.Exporters.Otlp.TimeoutSeconds * 1000;
+                options.Protocol = settings.Exporters.Otlp.Protocol;
 
                 if (!string.IsNullOrEmpty(settings.Exporters.Otlp.ApiKey))
                 {
@@ -200,6 +210,27 @@ public static class OpenTelemetryExtensions
                     if (!string.IsNullOrEmpty(options.Headers))
                         options.Headers += ",";
                     options.Headers += $"{header.Key}={header.Value}";
+                }
+            });
+        }
+
+        // Traceloop exporter (OTLP with specific endpoint)
+        if (settings.TraceLoop.Enabled && !string.IsNullOrEmpty(settings.TraceLoop.Endpoint))
+        {
+            tracing.AddOtlpExporter(options =>
+            {
+                var endpoint = settings.TraceLoop.Endpoint;
+                if (!endpoint.EndsWith("v1/traces"))
+                {
+                    endpoint = endpoint.TrimEnd('/') + "/v1/traces";
+                }
+
+                options.Endpoint = new Uri(endpoint);
+                options.Protocol = OtlpExportProtocol.HttpProtobuf;
+
+                if (!string.IsNullOrEmpty(settings.TraceLoop.ApiKey))
+                {
+                    options.Headers = $"Authorization=Bearer {settings.TraceLoop.ApiKey}";
                 }
             });
         }

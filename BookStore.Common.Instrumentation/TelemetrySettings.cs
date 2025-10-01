@@ -21,6 +21,9 @@ public class TelemetrySettings
 
     // Exporters
     public ExporterSettings Exporters { get; set; } = new();
+
+    // Traceloop
+    public TraceLoopSettings TraceLoop { get; set; } = new();
 }
 
 public class TracingSettings
@@ -77,6 +80,14 @@ public class OtlpExporterSettings
     public string ApiKey { get; set; } = string.Empty;
     public Dictionary<string, string> Headers { get; set; } = new();
     public int TimeoutSeconds { get; set; } = 30;
+    public OtlpExportProtocol Protocol { get; set; } = OtlpExportProtocol.Grpc;
+}
+
+public class TraceLoopSettings
+{
+    public bool Enabled { get; set; } = false;
+    public string Endpoint { get; set; } = string.Empty;
+    public string ApiKey { get; set; } = string.Empty;
 }
 
 public class ConsoleExporterSettings

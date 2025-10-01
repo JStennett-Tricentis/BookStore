@@ -786,7 +786,49 @@
       "name": "LLM Testing",
       "item": [
         {
-          "name": "Test AI Summary Generation",
+          "name": "Get LLM Providers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Available providers returned\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('availableProviders');",
+                  "    pm.expect(jsonData).to.have.property('defaultProvider');",
+                  "    pm.expect(jsonData.availableProviders).to.be.an('array');",
+                  "    pm.expect(jsonData.availableProviders.length).to.be.at.least(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/llm-providers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "llm-providers"
+              ]
+            },
+            "description": "Get list of available LLM providers and the default provider"
+          },
+          "response": []
+        },
+        {
+          "name": "Test AI Summary - Default Provider",
           "event": [
             {
               "listen": "test",
@@ -799,6 +841,7 @@
                   "pm.test(\"AI summary generated\", function () {",
                   "    var jsonData = pm.response.json();",
                   "    pm.expect(jsonData).to.have.property('aiGeneratedSummary');",
+                  "    pm.expect(jsonData).to.have.property('provider');",
                   "    pm.expect(jsonData.aiGeneratedSummary).to.not.be.empty;",
                   "});",
                   "",
@@ -826,7 +869,274 @@
                 "generate-summary"
               ]
             },
-            "description": "Test LLM summary generation - uses provider configured in appsettings.json (Ollama/Claude/OpenAI/Bedrock)"
+            "description": "Test LLM summary generation with default provider (configured in appsettings.json)"
+          },
+          "response": []
+        },
+        {
+          "name": "Test AI Summary - Ollama",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"AI summary generated with Ollama\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('aiGeneratedSummary');",
+                  "    pm.expect(jsonData).to.have.property('provider');",
+                  "    pm.expect(jsonData.provider).to.eql('ollama');",
+                  "    pm.expect(jsonData.aiGeneratedSummary).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"Response time acceptable for Ollama\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(15000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}/generate-summary?provider=ollama",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}",
+                "generate-summary"
+              ],
+              "query": [
+                {
+                  "key": "provider",
+                  "value": "ollama"
+                }
+              ]
+            },
+            "description": "Test LLM summary generation with Ollama (free local LLM)"
+          },
+          "response": []
+        },
+        {
+          "name": "Test AI Summary - Claude",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 503\", function () {",
+                  "    pm.expect([200, 503]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test(\"AI summary generated with Claude\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData).to.have.property('aiGeneratedSummary');",
+                  "        pm.expect(jsonData).to.have.property('provider');",
+                  "        pm.expect(jsonData.provider).to.eql('claude');",
+                  "        pm.expect(jsonData.aiGeneratedSummary).to.not.be.empty;",
+                  "    });",
+                  "} else {",
+                  "    pm.test(\"Claude not configured (expected)\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData.message).to.include('not configured');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}/generate-summary?provider=claude",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}",
+                "generate-summary"
+              ],
+              "query": [
+                {
+                  "key": "provider",
+                  "value": "claude"
+                }
+              ]
+            },
+            "description": "Test LLM summary generation with Claude (requires API key in appsettings.json)"
+          },
+          "response": []
+        },
+        {
+          "name": "Test AI Summary - OpenAI",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 503\", function () {",
+                  "    pm.expect([200, 503]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test(\"AI summary generated with OpenAI\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData).to.have.property('aiGeneratedSummary');",
+                  "        pm.expect(jsonData).to.have.property('provider');",
+                  "        pm.expect(jsonData.provider).to.eql('openai');",
+                  "        pm.expect(jsonData.aiGeneratedSummary).to.not.be.empty;",
+                  "    });",
+                  "} else {",
+                  "    pm.test(\"OpenAI not configured (expected)\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData.message).to.include('not configured');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}/generate-summary?provider=openai",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}",
+                "generate-summary"
+              ],
+              "query": [
+                {
+                  "key": "provider",
+                  "value": "openai"
+                }
+              ]
+            },
+            "description": "Test LLM summary generation with OpenAI GPT (requires API key in appsettings.json)"
+          },
+          "response": []
+        },
+        {
+          "name": "Test AI Summary - Bedrock",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 503\", function () {",
+                  "    pm.expect([200, 503]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    pm.test(\"AI summary generated with Bedrock\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData).to.have.property('aiGeneratedSummary');",
+                  "        pm.expect(jsonData).to.have.property('provider');",
+                  "        pm.expect(jsonData.provider).to.eql('bedrock');",
+                  "        pm.expect(jsonData.aiGeneratedSummary).to.not.be.empty;",
+                  "    });",
+                  "} else {",
+                  "    pm.test(\"Bedrock not configured (expected)\", function () {",
+                  "        var jsonData = pm.response.json();",
+                  "        pm.expect(jsonData.message).to.include('not configured');",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}/generate-summary?provider=bedrock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}",
+                "generate-summary"
+              ],
+              "query": [
+                {
+                  "key": "provider",
+                  "value": "bedrock"
+                }
+              ]
+            },
+            "description": "Test LLM summary generation with AWS Bedrock (requires AWS credentials)"
+          },
+          "response": []
+        },
+        {
+          "name": "Test Invalid Provider",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message mentions available providers\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('Available providers');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/{{bookId}}/generate-summary?provider=invalid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v{{apiVersion}}",
+                "Books",
+                "{{bookId}}",
+                "generate-summary"
+              ],
+              "query": [
+                {
+                  "key": "provider",
+                  "value": "invalid"
+                }
+              ]
+            },
+            "description": "Test error handling for invalid provider name"
           },
           "response": []
         },

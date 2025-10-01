@@ -70,18 +70,28 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 
-// LLM Service registration - select provider based on configuration
-var llmProvider = builder.Configuration["LLM:Provider"] ?? "Claude";
-switch (llmProvider.ToLowerInvariant())
+// LLM Service registration - register all providers
+builder.Services.AddSingleton<ClaudeService>();
+builder.Services.AddSingleton<OllamaService>();
+builder.Services.AddSingleton<OpenAIService>();
+builder.Services.AddSingleton<BedrockService>();
+
+// Register default provider based on configuration (for backwards compatibility)
+var llmProvider = builder.Configuration["LLM:Provider"] ?? "Ollama";
+builder.Services.AddSingleton<ILLMService>(sp =>
 {
-    case "ollama":
-        builder.Services.AddSingleton<IClaudeService, OllamaService>();
-        break;
-    case "claude":
-    default:
-        builder.Services.AddSingleton<IClaudeService, ClaudeService>();
-        break;
-}
+    return llmProvider.ToLowerInvariant() switch
+    {
+        "claude" => sp.GetRequiredService<ClaudeService>(),
+        "openai" => sp.GetRequiredService<OpenAIService>(),
+        "bedrock" => sp.GetRequiredService<BedrockService>(),
+        "ollama" => sp.GetRequiredService<OllamaService>(),
+        _ => sp.GetRequiredService<OllamaService>() // Default to Ollama
+    };
+});
+
+// Register factory for provider selection
+builder.Services.AddSingleton<ILLMServiceFactory, LLMServiceFactory>();
 
 // Simplified API setup - remove versioning for now
 

@@ -1,0 +1,59 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# All files
+[*]
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Code files
+[*.{cs,csx,vb,vbx}]
+indent_size = 4
+indent_style = space
+tab_width = 4
+
+# JSON files
+[*.json]
+indent_size = 4
+indent_style = space
+tab_width = 4
+
+# XML files
+[*.{xml,csproj,props,targets}]
+indent_size = 4
+indent_style = space
+tab_width = 4
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+indent_style = space
+tab_width = 4
+
+# Markdown files
+[*.md]
+indent_size = 4
+indent_style = space
+tab_width = 4
+trim_trailing_whitespace = false
+
+# Shell scripts
+[*.sh]
+indent_size = 4
+indent_style = space
+tab_width = 4
+end_of_line = lf
+
+# JavaScript/TypeScript
+[*.{js,ts,jsx,tsx}]
+indent_size = 4
+indent_style = space
+tab_width = 4
+
+# Makefile
+[Makefile]
+indent_style = tab
+tab_width = 4

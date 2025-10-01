@@ -10,7 +10,7 @@ namespace BookStore.Service.Services;
 /// Service for generating book summaries using Ollama (local LLM models).
 /// Provides free, unlimited API calls for performance testing without cost concerns.
 /// </summary>
-public class OllamaService : IClaudeService
+public class OllamaService : ILLMService
 {
     private readonly OllamaApiClient _client;
     private readonly ILogger<OllamaService> _logger;
@@ -21,14 +21,16 @@ public class OllamaService : IClaudeService
     private readonly Histogram<double> _costHistogram;
     private readonly string _model;
 
+    public string ProviderName => "ollama";
+
     public OllamaService(
         IConfiguration configuration,
         ILogger<OllamaService> logger,
         ActivitySource activitySource,
         IMeterFactory meterFactory)
     {
-        var ollamaUrl = configuration["Ollama:Url"] ?? "http://localhost:11434";
-        _model = configuration["Ollama:Model"] ?? "llama3.2";  // Default model
+        var ollamaUrl = configuration["LLM:Providers:Ollama:Url"] ?? configuration["Ollama:Url"] ?? configuration["Ollama:BaseUrl"] ?? "http://localhost:11434";
+        _model = configuration["LLM:Providers:Ollama:Model"] ?? configuration["Ollama:Model"] ?? "llama3.2";  // Default model
         _client = new OllamaApiClient(new Uri(ollamaUrl), _model);
         _logger = logger;
         _activitySource = activitySource;

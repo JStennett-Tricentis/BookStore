@@ -174,26 +174,70 @@ docker-observability: ## Start monitoring stack (Grafana:3333)
 .PHONY: perf-smoke
 perf-smoke: ## Quick test - 1 user, 2 min
 	@echo "Running smoke test..."
+	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
-		k6 run tests/books.js --env TEST_TYPE=smoke --env BASE_URL=http://localhost:7002
+		k6 run tests/books.js --env TEST_TYPE=smoke --env BASE_URL=http://localhost:7002 \
+		--out json=results/smoke-test-$(shell date +%Y%m%d-%H%M%S).json
+	@echo "✓ Test complete. Generating HTML report..."
+	@cd BookStore.Performance.Tests && \
+		LATEST_JSON=$$(ls -t results/smoke-test-*.json 2>/dev/null | head -1) && \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
+		fi
 
 .PHONY: perf-load
 perf-load: ## Load test - 10 users, 10 min
 	@echo "Running load test..."
+	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
-		k6 run scenarios/load-test.js --env BASE_URL=http://localhost:7002
+		k6 run scenarios/load-test.js --env BASE_URL=http://localhost:7002 \
+		--out json=results/load-test-$(shell date +%Y%m%d-%H%M%S).json
+	@echo "✓ Test complete. Generating HTML report..."
+	@cd BookStore.Performance.Tests && \
+		LATEST_JSON=$$(ls -t results/load-test-*.json 2>/dev/null | head -1) && \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
+		fi
 
 .PHONY: perf-stress
 perf-stress: ## Stress test - 30 users, 15 min
 	@echo "Running stress test..."
+	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
-		k6 run tests/books.js --env TEST_TYPE=stress --env BASE_URL=http://localhost:7002
+		k6 run tests/books.js --env TEST_TYPE=stress --env BASE_URL=http://localhost:7002 \
+		--out json=results/stress-test-$(shell date +%Y%m%d-%H%M%S).json
+	@echo "✓ Test complete. Generating HTML report..."
+	@cd BookStore.Performance.Tests && \
+		LATEST_JSON=$$(ls -t results/stress-test-*.json 2>/dev/null | head -1) && \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
+		fi
 
 .PHONY: perf-spike
 perf-spike: ## Spike test - burst to 50 users
 	@echo "Running spike test..."
+	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
-		k6 run tests/books.js --env TEST_TYPE=spike --env BASE_URL=http://localhost:7002
+		k6 run tests/books.js --env TEST_TYPE=spike --env BASE_URL=http://localhost:7002 \
+		--out json=results/spike-test-$(shell date +%Y%m%d-%H%M%S).json
+	@echo "✓ Test complete. Generating HTML report..."
+	@cd BookStore.Performance.Tests && \
+		LATEST_JSON=$$(ls -t results/spike-test-*.json 2>/dev/null | head -1) && \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
+		fi
 
 .PHONY: perf-comprehensive
 perf-comprehensive: ## Run ALL tests (~30 min)
@@ -218,34 +262,89 @@ perf-ai-smoke: ## Quick AI summary test (1-2 users, 3 min)
 .PHONY: perf-ai-load
 perf-ai-load: ## AI load test (3-5 users, 12 min)
 	@echo "Running AI summary load test..."
-	cd BookStore.Performance.Tests && \
-		k6 run tests/ai-summary.js --env SCENARIO=llm_load --env BASE_URL=http://localhost:7002
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run tests/ai-summary.js --env SCENARIO=llm_load --env BASE_URL=http://localhost:7002 \
+		--out json=results/ai-load-$(shell date +%Y%m%d-%H%M%S).json
+	@echo "✓ Test complete. Generating HTML report..."
+	@cd BookStore.Performance.Tests && \
+		LATEST_JSON=$$(ls -t results/ai-load-*.json 2>/dev/null | head -1) && \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
+		fi
 
 .PHONY: perf-ai-stress
 perf-ai-stress: ## AI stress test (5-15 users, 17 min)
 	@echo "Running AI summary stress test..."
-	cd BookStore.Performance.Tests && \
-		k6 run tests/ai-summary.js --env SCENARIO=llm_stress --env BASE_URL=http://localhost:7002
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run tests/ai-summary.js --env SCENARIO=llm_stress --env BASE_URL=http://localhost:7002 \
+		--out json=results/ai-stress-$(shell date +%Y%m%d-%H%M%S).json
+	@echo "✓ Test complete. Generating HTML report..."
+	@cd BookStore.Performance.Tests && \
+		LATEST_JSON=$$(ls -t results/ai-stress-*.json 2>/dev/null | head -1) && \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
+		fi
 
 .PHONY: perf-ai-spike
 perf-ai-spike: ## AI spike test (2 → 20 users, 8 min)
 	@echo "Running AI summary spike test..."
-	cd BookStore.Performance.Tests && \
-		k6 run tests/ai-summary.js --env SCENARIO=llm_spike --env BASE_URL=http://localhost:7002
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run tests/ai-summary.js --env SCENARIO=llm_spike --env BASE_URL=http://localhost:7002 \
+		--out json=results/ai-spike-$(shell date +%Y%m%d-%H%M%S).json
+	@echo "✓ Test complete. Generating HTML report..."
+	@cd BookStore.Performance.Tests && \
+		LATEST_JSON=$$(ls -t results/ai-spike-*.json 2>/dev/null | head -1) && \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
+		fi
 
 .PHONY: perf-mixed
 perf-mixed: ## Mixed workload test (CRUD + AI, 20% LLM traffic)
 	@echo "Running mixed workload test (80% CRUD / 20% AI)..."
-	cd BookStore.Performance.Tests && \
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
 		k6 run scenarios/mixed-workload.js --env BASE_URL=http://localhost:7002 \
-			--env LLM_PERCENTAGE=20 --env AI_USERS=30
+			--env LLM_PERCENTAGE=20 --env AI_USERS=30 \
+			--out json=results/mixed-$(shell date +%Y%m%d-%H%M%S).json
+	@echo "✓ Test complete. Generating HTML report..."
+	@cd BookStore.Performance.Tests && \
+		LATEST_JSON=$$(ls -t results/mixed-*.json 2>/dev/null | head -1) && \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
+		fi
 
 .PHONY: perf-mixed-heavy
 perf-mixed-heavy: ## Mixed workload test (50% LLM traffic)
 	@echo "Running heavy AI mixed workload test (50% CRUD / 50% AI)..."
-	cd BookStore.Performance.Tests && \
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
 		k6 run scenarios/mixed-workload.js --env BASE_URL=http://localhost:7002 \
-			--env LLM_PERCENTAGE=50 --env AI_USERS=60
+			--env LLM_PERCENTAGE=50 --env AI_USERS=60 \
+			--out json=results/mixed-heavy-$(shell date +%Y%m%d-%H%M%S).json
+	@echo "✓ Test complete. Generating HTML report..."
+	@cd BookStore.Performance.Tests && \
+		LATEST_JSON=$$(ls -t results/mixed-heavy-*.json 2>/dev/null | head -1) && \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
+		fi
 
 .PHONY: perf-ai-all
 perf-ai-all: ## Run all AI performance tests (~40 min)

@@ -1,6 +1,6 @@
 // Comprehensive load testing scenario for BookStore API
 
-import { check, group } from "k6";
+import { check, group, sleep } from "k6";
 import http from "k6/http";
 import { Rate, Trend, Counter, Gauge } from "k6/metrics";
 import { randomIntBetween, randomItem } from "https://jslib.k6.io/k6-utils/1.2.0/index.js";
@@ -100,8 +100,8 @@ export default function(data) {
         executeUserScenario(baseUrl, userProfile);
     });
 
-    // Think time - simulate real user behavior
-    sleep(getThinkTime(userProfile.usagePattern));
+    // Think time - simulate real user behavior (convert ms to seconds)
+    sleep(getThinkTime(userProfile.usagePattern) / 1000);
 
     activeUsers.add(-1);
 }
@@ -307,16 +307,17 @@ function executeManagerScenario(baseUrl, userProfile) {
 }
 
 function recordMetrics(response, success, operation) {
-    responseTime.add(response.timings.duration);
-    operationsExecuted.add(1);
-    errorRate.add(!success);
-
-    // Tag the response for better metrics
-    response.tags = {
-        ...response.tags,
+    responseTime.add(response.timings.duration, {
         operation: operation,
         success: success.toString()
-    };
+    });
+    operationsExecuted.add(1, {
+        operation: operation,
+        success: success.toString()
+    });
+    errorRate.add(!success, {
+        operation: operation
+    });
 }
 
 function getThinkTime(usagePattern) {
@@ -329,9 +330,9 @@ function getThinkTime(usagePattern) {
     return patterns[usagePattern] || patterns.light;
 }
 
-function sleep(ms) {
+function sleepMs(ms) {
     // K6 sleep function expects seconds
-    require('k6').sleep(ms / 1000);
+    sleep(ms / 1000);
 }
 
 export function teardown(data) {

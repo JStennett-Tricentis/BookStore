@@ -1,0 +1,637 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "prometheus"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": null,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "tooltip": false,
+                            "viz": false,
+                            "legend": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "tokens"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "legend": {
+                    "calcs": ["mean", "lastNotNull", "max"],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(ollama_tokens_input_total[1m]) or vector(0)",
+                    "legendFormat": "Ollama Input - {{model}}",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(ollama_tokens_output_total[1m]) or vector(0)",
+                    "legendFormat": "Ollama Output - {{model}}",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(claude_tokens_input_total[1m]) or vector(0)",
+                    "legendFormat": "Claude Input - {{model}}",
+                    "refId": "C"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(claude_tokens_output_total[1m]) or vector(0)",
+                    "legendFormat": "Claude Output - {{model}}",
+                    "refId": "D"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(openai_tokens_input_total[1m]) or vector(0)",
+                    "legendFormat": "OpenAI Input - {{model}}",
+                    "refId": "E"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(openai_tokens_output_total[1m]) or vector(0)",
+                    "legendFormat": "OpenAI Output - {{model}}",
+                    "refId": "F"
+                }
+            ],
+            "title": "LLM Token Usage (per second)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 0.01
+                            },
+                            {
+                                "color": "red",
+                                "value": 0.1
+                            }
+                        ]
+                    },
+                    "unit": "currencyUSD"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
+            "id": 2,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "values": false,
+                    "calcs": ["sum"],
+                    "fields": ""
+                },
+                "textMode": "auto"
+            },
+            "pluginVersion": "10.2.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "sum(increase(claude_cost_usd_USD_sum[1h])) or vector(0)",
+                    "legendFormat": "Claude (1h)",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "sum(increase(openai_cost_usd_USD_sum[1h])) or vector(0)",
+                    "legendFormat": "OpenAI (1h)",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)",
+                    "legendFormat": "Bedrock (1h)",
+                    "refId": "C"
+                }
+            ],
+            "title": "LLM Cost (Last Hour)",
+            "type": "stat",
+            "noValue": "0"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "tooltip": false,
+                            "viz": false,
+                            "legend": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "ms"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 8
+            },
+            "id": 3,
+            "options": {
+                "legend": {
+                    "calcs": ["mean", "max", "min"],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "(rate(ollama_tokens_total[5m]) or vector(0)) * 1000",
+                    "legendFormat": "Ollama tokens/sec",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "(rate(claude_tokens_total[5m]) or vector(0)) * 1000",
+                    "legendFormat": "Claude tokens/sec",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "(rate(openai_tokens_total[5m]) or vector(0)) * 1000",
+                    "legendFormat": "OpenAI tokens/sec",
+                    "refId": "C"
+                }
+            ],
+            "title": "LLM Token Throughput",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 8,
+                "x": 0,
+                "y": 16
+            },
+            "id": 4,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "values": false,
+                    "calcs": ["sum"],
+                    "fields": ""
+                },
+                "textMode": "auto"
+            },
+            "pluginVersion": "10.2.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "sum(ollama_tokens_total) or vector(0)",
+                    "legendFormat": "Ollama Total",
+                    "refId": "A"
+                }
+            ],
+            "title": "Ollama Total Tokens",
+            "type": "stat",
+            "noValue": "0"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 8,
+                "x": 8,
+                "y": 16
+            },
+            "id": 5,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "values": false,
+                    "calcs": ["sum"],
+                    "fields": ""
+                },
+                "textMode": "auto"
+            },
+            "pluginVersion": "10.2.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "sum(claude_tokens_total) or vector(0)",
+                    "legendFormat": "Claude Total",
+                    "refId": "A"
+                }
+            ],
+            "title": "Claude Total Tokens",
+            "type": "stat",
+            "noValue": "0"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 8,
+                "x": 16,
+                "y": 16
+            },
+            "id": 6,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "values": false,
+                    "calcs": ["sum"],
+                    "fields": ""
+                },
+                "textMode": "auto"
+            },
+            "pluginVersion": "10.2.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "sum(openai_tokens_total) or vector(0)",
+                    "legendFormat": "OpenAI Total",
+                    "refId": "A"
+                }
+            ],
+            "title": "OpenAI Total Tokens",
+            "type": "stat",
+            "noValue": "0"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "tooltip": false,
+                            "viz": false,
+                            "legend": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "currencyUSD"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 22
+            },
+            "id": 7,
+            "options": {
+                "legend": {
+                    "calcs": ["sum"],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(claude_cost_usd_USD_sum[5m]) or vector(0)",
+                    "legendFormat": "Claude",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(openai_cost_usd_USD_sum[5m]) or vector(0)",
+                    "legendFormat": "OpenAI",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(bedrock_cost_usd_USD_sum[5m]) or vector(0)",
+                    "legendFormat": "Bedrock",
+                    "refId": "C"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(ollama_cost_usd_USD_sum[5m]) or vector(0)",
+                    "legendFormat": "Ollama (FREE)",
+                    "refId": "D"
+                }
+            ],
+            "title": "LLM Cost Over Time (USD per second)",
+            "type": "timeseries",
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "spanNulls": true
+                    },
+                    "noValue": "0"
+                }
+            }
+        }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": ["bookstore", "llm", "ai", "metrics"],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-1h",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "BookStore LLM Metrics",
+    "uid": "bookstore-llm",
+    "version": 1,
+    "weekStart": ""
+}

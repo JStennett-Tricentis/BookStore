@@ -75,7 +75,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\"}[1m]))",
+          "expr": "sum(rate(http_server_request_duration_seconds_count[1m])) or vector(0)",
           "refId": "A"
         }
       ],
@@ -140,7 +140,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket{service=\"bookstore-api\"}[1m])) by (le)) * 1000",
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
           "refId": "A"
         }
       ],
@@ -205,7 +205,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_response_status_code=~\"5..\"}[1m])) / sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\"}[1m]))",
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~\"5..\"}[1m])) / sum(rate(http_server_request_duration_seconds_count[1m])) or vector(0)",
           "refId": "A"
         }
       ],
@@ -262,7 +262,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\"}[5m])) * 300",
+          "expr": "sum(rate(http_server_request_duration_seconds_count[5m])) * 300 or vector(0)",
           "refId": "A"
         }
       ],
@@ -292,14 +292,14 @@
               "viz": false,
               "legend": false
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -341,7 +341,7 @@
         },
         "tooltip": {
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "pluginVersion": "10.2.0",
@@ -350,7 +350,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\"}[1m])) by (http_route)",
+          "expr": "sum(rate(http_server_request_duration_seconds_count[1m])) by (http_route) or vector(0)",
           "legendFormat": "{{http_route}}",
           "refId": "A"
         }
@@ -381,14 +381,14 @@
               "viz": false,
               "legend": false
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -430,7 +430,7 @@
         },
         "tooltip": {
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "pluginVersion": "10.2.0",
@@ -439,7 +439,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "histogram_quantile(0.50, sum(rate(http_server_request_duration_seconds_bucket{service=\"bookstore-api\"}[1m])) by (le, http_route)) * 1000",
+          "expr": "histogram_quantile(0.50, sum(rate(http_server_request_duration_seconds_bucket[1m])) by (le, http_route)) * 1000 or vector(0)",
           "legendFormat": "P50 - {{http_route}}",
           "refId": "A"
         },
@@ -447,7 +447,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket{service=\"bookstore-api\"}[1m])) by (le, http_route)) * 1000",
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket[1m])) by (le, http_route)) * 1000 or vector(0)",
           "legendFormat": "P95 - {{http_route}}",
           "refId": "B"
         },
@@ -455,7 +455,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "histogram_quantile(0.99, sum(rate(http_server_request_duration_seconds_bucket{service=\"bookstore-api\"}[1m])) by (le, http_route)) * 1000",
+          "expr": "histogram_quantile(0.99, sum(rate(http_server_request_duration_seconds_bucket[1m])) by (le, http_route)) * 1000 or vector(0)",
           "legendFormat": "P99 - {{http_route}}",
           "refId": "C"
         }
@@ -486,14 +486,14 @@
               "viz": false,
               "legend": false
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "normal"
@@ -564,7 +564,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 12
       },
@@ -580,7 +580,7 @@
         },
         "tooltip": {
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "pluginVersion": "10.2.0",
@@ -589,7 +589,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_response_status_code=~\"2..\"}[1m]))",
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~\"2..\"}[1m])) or vector(0)",
           "legendFormat": "2xx Success",
           "refId": "A"
         },
@@ -597,7 +597,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_response_status_code=~\"4..\"}[1m]))",
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~\"4..\"}[1m])) or vector(0)",
           "legendFormat": "4xx Client Error",
           "refId": "B"
         },
@@ -605,7 +605,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_response_status_code=~\"5..\"}[1m]))",
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~\"5..\"}[1m])) or vector(0)",
           "legendFormat": "5xx Server Error",
           "refId": "C"
         }
@@ -636,14 +636,14 @@
               "viz": false,
               "legend": false
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -669,8 +669,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 12
+        "x": 0,
+        "y": 20
       },
       "id": 8,
       "options": {
@@ -685,7 +685,7 @@
         },
         "tooltip": {
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "pluginVersion": "10.2.0",
@@ -694,7 +694,7 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "rate(process_cpu_time_seconds_total{service=\"bookstore-api\"}[1m]) * 100",
+          "expr": "rate(process_cpu_time_seconds_total[1m]) * 100 or vector(0)",
           "legendFormat": "CPU Usage",
           "refId": "A"
         }
@@ -725,14 +725,14 @@
               "viz": false,
               "legend": false
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -758,7 +758,7 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
+        "x": 12,
         "y": 20
       },
       "id": 9,
@@ -774,7 +774,7 @@
         },
         "tooltip": {
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "pluginVersion": "10.2.0",
@@ -783,996 +783,20 @@
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "process_memory_usage_bytes{service=\"bookstore-api\"}",
-          "legendFormat": "Working Set",
+          "expr": "process_runtime_dotnet_gc_committed_memory_size_bytes or vector(0)",
+          "legendFormat": "GC Committed Memory",
           "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus"
           },
-          "expr": "process_runtime_dotnet_gc_objects_size_bytes{service=\"bookstore-api\"}",
-          "legendFormat": "GC Total Memory",
+          "expr": "process_runtime_dotnet_gc_objects_size_bytes or vector(0)",
+          "legendFormat": "GC Objects Size",
           "refId": "B"
         }
       ],
       "title": "Memory Usage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 20
-      },
-      "id": 10,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "rate(process_runtime_dotnet_gc_collections_count_total{service=\"bookstore-api\"}[1m])",
-          "legendFormat": "Gen {{generation}}",
-          "refId": "A"
-        }
-      ],
-      "title": "GC Collections per Second",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 0.1
-              },
-              {
-                "color": "red",
-                "value": 0.5
-              }
-            ]
-          },
-          "unit": "reqps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 0,
-        "y": 28
-      },
-      "id": 11,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_route=~\".*generate-summary.*\"}[1m]))",
-          "refId": "A"
-        }
-      ],
-      "title": "LLM Requests per Second",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 2000
-              },
-              {
-                "color": "red",
-                "value": 5000
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 6,
-        "y": 28
-      },
-      "id": 12,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket{service=\"bookstore-api\",http_route=~\".*generate-summary.*\"}[1m])) by (le)) * 1000",
-          "refId": "A"
-        }
-      ],
-      "title": "LLM P95 Latency",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 0.01
-              },
-              {
-                "color": "red",
-                "value": 0.05
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 12,
-        "y": 28
-      },
-      "id": 13,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_route=~\".*generate-summary.*\",http_response_status_code=~\"5..\"}[1m])) / sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_route=~\".*generate-summary.*\"}[1m]))",
-          "refId": "A"
-        }
-      ],
-      "title": "LLM Error Rate",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 18,
-        "y": 28
-      },
-      "id": 14,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_route=~\".*generate-summary.*\"}[5m])) * 300",
-          "refId": "A"
-        }
-      ],
-      "title": "Total LLM Requests (5m)",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 32
-      },
-      "id": 15,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "histogram_quantile(0.50, sum(rate(http_server_request_duration_seconds_bucket{service=\"bookstore-api\",http_route=~\".*generate-summary.*\"}[1m])) by (le)) * 1000",
-          "legendFormat": "P50",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket{service=\"bookstore-api\",http_route=~\".*generate-summary.*\"}[1m])) by (le)) * 1000",
-          "legendFormat": "P95",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "histogram_quantile(0.99, sum(rate(http_server_request_duration_seconds_bucket{service=\"bookstore-api\",http_route=~\".*generate-summary.*\"}[1m])) by (le)) * 1000",
-          "legendFormat": "P99",
-          "refId": "C"
-        }
-      ],
-      "title": "LLM Endpoint Latency Percentiles",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "reqps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 32
-      },
-      "id": 16,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_route=~\".*generate-summary.*\"}[1m]))",
-          "legendFormat": "LLM Requests",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_route!~\".*generate-summary.*\"}[1m]))",
-          "legendFormat": "Non-LLM Requests",
-          "refId": "B"
-        }
-      ],
-      "title": "LLM vs Non-LLM Traffic",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "2.."
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "5.."
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 40
-      },
-      "id": 17,
-      "options": {
-        "legend": {
-          "calcs": [
-            "sum",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_route=~\".*generate-summary.*\",http_response_status_code=~\"2..\"}[1m]))",
-          "legendFormat": "2xx Success",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "sum(rate(http_server_request_duration_seconds_count{service=\"bookstore-api\",http_route=~\".*generate-summary.*\",http_response_status_code=~\"5..\"}[1m]))",
-          "legendFormat": "5xx Error",
-          "refId": "B"
-        }
-      ],
-      "title": "LLM Request Status Codes",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "description": "Real-time token consumption from Claude API. Input and output tokens tracked separately.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 40
-      },
-      "id": 18,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "rate(claude_tokens_input_total{service=\"bookstore-api\"}[1m])",
-          "legendFormat": "Input Tokens/sec",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "rate(claude_tokens_output_total{service=\"bookstore-api\"}[1m])",
-          "legendFormat": "Output Tokens/sec",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "rate(claude_tokens_total_total{service=\"bookstore-api\"}[1m])",
-          "legendFormat": "Total Tokens/sec",
-          "refId": "C"
-        }
-      ],
-      "title": "LLM Token Usage per Second",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "description": "Cumulative token usage over time. Useful for cost tracking and usage analysis.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 48
-      },
-      "id": 19,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "sum(increase(claude_tokens_input_total{service=\"bookstore-api\"}[5m]))",
-          "legendFormat": "Input Tokens (5m)",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "sum(increase(claude_tokens_output_total{service=\"bookstore-api\"}[5m]))",
-          "legendFormat": "Output Tokens (5m)",
-          "refId": "B"
-        }
-      ],
-      "title": "Token Usage (5m window)",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "description": "Estimated cost in USD based on Claude 3.5 Sonnet pricing ($3/M input, $15/M output tokens)",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "currencyUSD"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 48
-      },
-      "id": 20,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "sum",
-            "last"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.2.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "sum(rate(claude_cost_usd_USD_sum{service=\"bookstore-api\"}[1m]))",
-          "legendFormat": "Cost per Second",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus"
-          },
-          "expr": "sum(increase(claude_cost_usd_USD_sum{service=\"bookstore-api\"}[5m]))",
-          "legendFormat": "Total Cost (5m)",
-          "refId": "B"
-        }
-      ],
-      "title": "LLM API Cost",
       "type": "timeseries"
     }
   ],
@@ -1782,8 +806,7 @@
   "tags": [
     "bookstore",
     "performance",
-    "k6",
-    "llm"
+    "k6"
   ],
   "templating": {
     "list": []
@@ -1796,6 +819,6 @@
   "timezone": "",
   "title": "BookStore Performance Testing",
   "uid": "bookstore-perf",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

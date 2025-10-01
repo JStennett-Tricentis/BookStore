@@ -1,6 +1,6 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-// MongoDB - use Aspire default configuration (matches hub-services-latest)
+// MongoDB - Aspire manages credentials automatically via data volumes
 var mongodb = builder.AddMongoDB("mongodb")
     .WithDataVolume();
 

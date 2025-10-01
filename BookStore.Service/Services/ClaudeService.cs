@@ -6,12 +6,7 @@ using BookStore.Common.Instrumentation;
 
 namespace BookStore.Service.Services;
 
-public interface IClaudeService
-{
-    Task<string> GenerateBookSummaryAsync(string title, string author, string? description, CancellationToken cancellationToken = default);
-}
-
-public class ClaudeService : IClaudeService
+public class ClaudeService : ILLMService
 {
     private readonly AnthropicClient _client;
     private readonly ILogger<ClaudeService> _logger;
@@ -21,9 +16,11 @@ public class ClaudeService : IClaudeService
     private readonly Counter<long> _totalTokensCounter;
     private readonly Histogram<double> _costHistogram;
 
+    public string ProviderName => "claude";
+
     public ClaudeService(IConfiguration configuration, ILogger<ClaudeService> logger, ActivitySource activitySource, IMeterFactory meterFactory)
     {
-        var apiKey = configuration["Claude:ApiKey"] ?? throw new InvalidOperationException("Claude API key not configured");
+        var apiKey = configuration["LLM:Providers:Claude:ApiKey"] ?? configuration["Claude:ApiKey"] ?? throw new InvalidOperationException("Claude API key not configured");
         _client = new AnthropicClient(new APIAuthentication(apiKey));
         _logger = logger;
         _activitySource = activitySource;

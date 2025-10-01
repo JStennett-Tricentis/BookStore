@@ -258,6 +258,17 @@ perf-ai-all: ## Run all AI performance tests (~40 min)
 	@sleep 30
 	@$(MAKE) perf-ai-spike
 
+.PHONY: perf-errors
+perf-errors: ## Error handling test (intentionally generates errors)
+	@echo "Running error scenario test..."
+	@echo "⚠️  This test intentionally generates errors to validate error handling"
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run scenarios/error-scenarios.js --env BASE_URL=http://localhost:7002 \
+		--out json=results/errors-$(shell date +%Y%m%d-%H%M%S).json
+	@echo "✓ Test complete. Run 'make perf-report' to view HTML report"
+	@echo "📊 Check Grafana for error metrics and traces in Traceloop"
+
 .PHONY: docker-perf
 docker-perf: ## Run performance test via Docker
 	@echo "Running performance test in Docker..."

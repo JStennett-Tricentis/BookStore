@@ -8,6 +8,10 @@ import { randomIntBetween, randomItem } from "https://jslib.k6.io/k6-utils/1.2.0
 
 import { getEnvironment } from "../config/environments.js";
 import { getThresholds } from "../config/thresholds.js";
+import {
+    getStages,
+    getGracefulRampDown,
+} from "../config/test-scenarios.js";
 import { checkResponse } from "../utils/assertions.js";
 
 // Custom metrics specific to LLM operations
@@ -20,66 +24,18 @@ const llmLatencyP95 = new Trend("llm_latency_p95");
 
 // Configuration
 const environment = getEnvironment();
-const scenario = __ENV.SCENARIO || "llm_smoke";
+const scenario = __ENV.SCENARIO || "llmSmoke";
 
 export const options = {
     scenarios: {
-        llm_smoke: {
+        llm_operations: {
             executor: "ramping-vus",
             startVUs: 0,
-            stages: [
-                { duration: "30s", target: 1 },
-                { duration: "2m", target: 2 },
-                { duration: "30s", target: 0 },
-            ],
-            gracefulRampDown: "30s",
-        },
-        llm_load: {
-            executor: "ramping-vus",
-            startVUs: 0,
-            stages: [
-                { duration: "1m", target: 3 },
-                { duration: "5m", target: 5 },
-                { duration: "5m", target: 5 },
-                { duration: "1m", target: 0 },
-            ],
-            gracefulRampDown: "30s",
-        },
-        llm_stress: {
-            executor: "ramping-vus",
-            startVUs: 0,
-            stages: [
-                { duration: "2m", target: 5 },
-                { duration: "5m", target: 10 },
-                { duration: "5m", target: 15 },
-                { duration: "3m", target: 15 },
-                { duration: "2m", target: 0 },
-            ],
-            gracefulRampDown: "30s",
-        },
-        llm_spike: {
-            executor: "ramping-vus",
-            startVUs: 0,
-            stages: [
-                { duration: "30s", target: 2 },
-                { duration: "1m", target: 2 },
-                { duration: "10s", target: 20 },
-                { duration: "2m", target: 20 },
-                { duration: "10s", target: 2 },
-                { duration: "1m", target: 2 },
-                { duration: "30s", target: 0 },
-            ],
-            gracefulRampDown: "30s",
+            stages: getStages(scenario),
+            gracefulRampDown: getGracefulRampDown(scenario),
         },
     },
-    thresholds: {
-        // LLM-specific thresholds (more lenient due to API latency)
-        llm_response_time: ["p(95)<8000", "p(99)<12000"],
-        llm_errors: ["rate<0.05"], // Max 5% error rate
-        llm_operations: ["count>10"], // At least 10 operations
-        http_req_duration: ["p(95)<8000", "p(99)<12000"],
-        http_req_failed: ["rate<0.05"],
-    },
+    thresholds: getThresholds(scenario),
     summaryTrendStats: ["avg", "min", "med", "max", "p(90)", "p(95)", "p(99)"],
 };
 

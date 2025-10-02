@@ -8,6 +8,13 @@ import { randomIntBetween, randomItem } from "https://jslib.k6.io/k6-utils/1.2.0
 
 import { getEnvironment } from "../config/environments.js";
 import { getThresholds } from "../config/thresholds.js";
+import {
+    getStages,
+    getGracefulRampDown,
+    getLLMPercentage,
+    getAIEnabledUsers,
+    getScenarioThresholds,
+} from "../config/test-scenarios.js";
 import { generateBookData, generateUserProfile } from "../utils/data-generators.js";
 import { checkResponse, checkCreateResponse } from "../utils/assertions.js";
 
@@ -26,9 +33,9 @@ const systemLoad = new Gauge("system_load");
 const environment = getEnvironment();
 const scenario = __ENV.SCENARIO || "mixed";
 
-// Workload distribution (adjustable via environment variables)
-const LLM_TRAFFIC_PERCENTAGE = parseFloat(__ENV.LLM_PERCENTAGE || "20"); // 20% LLM by default
-const AI_ENABLED_USER_PERCENTAGE = parseFloat(__ENV.AI_USERS || "30"); // 30% of users use AI
+// Workload distribution (from config or environment variables)
+const LLM_TRAFFIC_PERCENTAGE = parseFloat(__ENV.LLM_PERCENTAGE) || getLLMPercentage(scenario);
+const AI_ENABLED_USER_PERCENTAGE = parseFloat(__ENV.AI_USERS) || getAIEnabledUsers(scenario);
 
 export const options = {
     scenarios: {
@@ -36,27 +43,16 @@ export const options = {
         mixed_workload: {
             executor: "ramping-vus",
             startVUs: 0,
-            stages: [
-                { duration: "1m", target: 5 }, // Warm up
-                { duration: "3m", target: 10 }, // Ramp to steady load
-                { duration: "10m", target: 10 }, // Sustained mixed load
-                { duration: "2m", target: 15 }, // Peak traffic
-                { duration: "5m", target: 15 }, // Hold peak
-                { duration: "2m", target: 0 }, // Ramp down
-            ],
-            gracefulRampDown: "30s",
+            stages: getStages(scenario),
+            gracefulRampDown: getGracefulRampDown(scenario),
         },
     },
-    thresholds: {
-        // CRUD operations should be fast
+    thresholds: getScenarioThresholds(scenario) || {
+        // Default mixed workload thresholds if not in config
         crud_response_time: ["p(95)<1000", "p(99)<2000"],
         crud_errors: ["rate<0.01"],
-
-        // LLM operations can be slower
         llm_response_time: ["p(95)<8000", "p(99)<12000"],
         llm_errors: ["rate<0.05"],
-
-        // Overall system thresholds
         http_req_duration: ["p(95)<5000", "p(99)<10000"],
         http_req_failed: ["rate<0.02"],
     },

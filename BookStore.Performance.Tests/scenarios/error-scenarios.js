@@ -7,6 +7,11 @@ import { Rate, Trend, Counter, Gauge } from "k6/metrics";
 import { randomIntBetween, randomItem } from "https://jslib.k6.io/k6-utils/1.2.0/index.js";
 
 import { getEnvironment } from "../config/environments.js";
+import {
+    getStages,
+    getGracefulRampDown,
+    getScenarioThresholds,
+} from "../config/test-scenarios.js";
 
 // Custom metrics for error tracking
 const errorRate = new Rate("errors");
@@ -21,26 +26,23 @@ const activeRequests = new Gauge("active_requests");
 
 // Configuration
 const environment = getEnvironment();
+const scenario = __ENV.SCENARIO || "errorTest";
 
 export const options = {
     scenarios: {
         error_testing: {
             executor: "ramping-vus",
             startVUs: 0,
-            stages: [
-                { duration: "30s", target: 2 }, // Warm up
-                { duration: "2m", target: 5 }, // Steady state
-                { duration: "1m", target: 0 }, // Ramp down
-            ],
-            gracefulRampDown: "15s",
+            stages: getStages(scenario),
+            gracefulRampDown: getGracefulRampDown(scenario),
         },
     },
-    thresholds: {
-        // We EXPECT errors in this test, so thresholds are more lenient
-        errors: ["rate<0.5"], // Allow up to 50% errors (we're testing error handling)
+    thresholds: getScenarioThresholds(scenario) || {
+        // Default error test thresholds if not in config
+        errors: ["rate<0.5"],
         errors_4xx: ["rate<0.3"],
         errors_5xx: ["rate<0.2"],
-        http_req_duration: ["p(95)<10000"], // Higher threshold for error scenarios
+        http_req_duration: ["p(95)<10000"],
     },
     summaryTrendStats: ["avg", "min", "med", "max", "p(90)", "p(95)", "p(99)"],
 };

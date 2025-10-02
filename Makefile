@@ -274,7 +274,7 @@ perf-ai-smoke: ## Quick AI summary test (1-2 users, 3 min)
 	@echo "Running AI summary smoke test..."
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
-		k6 run tests/ai-summary.js --env SCENARIO=llm_smoke --env BASE_URL=http://localhost:7002 \
+		k6 run tests/ai-summary.js --env SCENARIO=llmSmoke --env BASE_URL=http://localhost:7002 \
 		--out json=results/ai-smoke-$(shell date +%Y%m%d-%H%M%S).json
 	@echo "✓ Test complete. Run 'make perf-report' to view HTML report"
 
@@ -283,7 +283,7 @@ perf-ai-load: ## AI load test (3-5 users, 12 min)
 	@echo "Running AI summary load test..."
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
-		k6 run tests/ai-summary.js --env SCENARIO=llm_load --env BASE_URL=http://localhost:7002 \
+		k6 run tests/ai-summary.js --env SCENARIO=llmLoad --env BASE_URL=http://localhost:7002 \
 		--out json=results/ai-load-$(shell date +%Y%m%d-%H%M%S).json
 	@echo "✓ Test complete. Generating HTML report..."
 	@cd BookStore.Performance.Tests && \
@@ -300,7 +300,7 @@ perf-ai-stress: ## AI stress test (5-15 users, 17 min)
 	@echo "Running AI summary stress test..."
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
-		k6 run tests/ai-summary.js --env SCENARIO=llm_stress --env BASE_URL=http://localhost:7002 \
+		k6 run tests/ai-summary.js --env SCENARIO=llmStress --env BASE_URL=http://localhost:7002 \
 		--out json=results/ai-stress-$(shell date +%Y%m%d-%H%M%S).json
 	@echo "✓ Test complete. Generating HTML report..."
 	@cd BookStore.Performance.Tests && \
@@ -317,7 +317,7 @@ perf-ai-spike: ## AI spike test (2 → 20 users, 8 min)
 	@echo "Running AI summary spike test..."
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
-		k6 run tests/ai-summary.js --env SCENARIO=llm_spike --env BASE_URL=http://localhost:7002 \
+		k6 run tests/ai-summary.js --env SCENARIO=llmSpike --env BASE_URL=http://localhost:7002 \
 		--out json=results/ai-spike-$(shell date +%Y%m%d-%H%M%S).json
 	@echo "✓ Test complete. Generating HTML report..."
 	@cd BookStore.Performance.Tests && \
@@ -382,7 +382,7 @@ perf-errors: ## Error handling test (intentionally generates errors)
 	@echo "⚠️  This test intentionally generates errors to validate error handling"
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
-		k6 run scenarios/error-scenarios.js --env BASE_URL=http://localhost:7002 \
+		k6 run scenarios/error-scenarios.js --env SCENARIO=errorTest --env BASE_URL=http://localhost:7002 \
 		--out json=results/errors-$(shell date +%Y%m%d-%H%M%S).json
 	@echo "✓ Test complete. Run 'make perf-report' to view HTML report"
 	@echo "📊 Check Grafana for error metrics and traces in Traceloop"

@@ -7,6 +7,10 @@ import { Rate, Trend, Counter } from "k6/metrics";
 import { getEnvironment } from "../config/environments.js";
 import { getThresholds } from "../config/thresholds.js";
 import {
+    getStages,
+    getGracefulRampDown,
+} from "../config/test-scenarios.js";
+import {
     generateBookData,
     generateAuthorData,
     generateUserProfile,
@@ -27,47 +31,13 @@ export const options = {
         book_operations: {
             executor: "ramping-vus",
             startVUs: 0,
-            stages: getLoadStages(scenario),
-            gracefulRampDown: "30s",
+            stages: getStages(scenario),
+            gracefulRampDown: getGracefulRampDown(scenario),
         },
     },
     thresholds: getThresholds(scenario),
     summaryTrendStats: ["avg", "min", "med", "max", "p(90)", "p(95)", "p(99)"],
 };
-
-function getLoadStages(scenario) {
-    const stages = {
-        smoke: [
-            { duration: "30s", target: 1 },
-            { duration: "1m", target: 1 },
-            { duration: "30s", target: 0 },
-        ],
-        load: [
-            { duration: "1m", target: 5 },
-            { duration: "3m", target: 10 },
-            { duration: "5m", target: 10 },
-            { duration: "1m", target: 0 },
-        ],
-        stress: [
-            { duration: "2m", target: 10 },
-            { duration: "5m", target: 20 },
-            { duration: "5m", target: 30 },
-            { duration: "5m", target: 30 },
-            { duration: "2m", target: 0 },
-        ],
-        spike: [
-            { duration: "10s", target: 5 },
-            { duration: "1m", target: 5 },
-            { duration: "10s", target: 50 },
-            { duration: "3m", target: 50 },
-            { duration: "10s", target: 5 },
-            { duration: "3m", target: 5 },
-            { duration: "10s", target: 0 },
-        ],
-    };
-
-    return stages[scenario] || stages.load;
-}
 
 export function setup() {
     console.log(`Starting BookStore API load test - Scenario: ${scenario}`);

@@ -482,6 +482,8 @@ test: ## Run unit tests
 format: ## Auto-format all code files
 	@echo "Formatting code..."
 	@dotnet format
+	@echo "Formatting JS/JSON/YAML/MD files..."
+	@npx prettier --write .
 
 .PHONY: watch
 watch: ## Run with hot-reload enabled

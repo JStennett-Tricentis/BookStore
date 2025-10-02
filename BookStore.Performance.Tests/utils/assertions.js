@@ -27,14 +27,13 @@ export function checkBookResponse(response) {
             const data = JSON.parse(response.body);
             return check(data, {
                 "has valid book structure": (d) =>
-                    typeof d === "object" &&
-                    (d.title !== undefined || Array.isArray(d)),
+                    typeof d === "object" && (d.title !== undefined || Array.isArray(d)),
                 "book has required fields": (d) => {
                     if (Array.isArray(d)) {
                         return d.length === 0 || (d[0].title && d[0].author);
                     }
                     return d.title && d.author;
-                }
+                },
             });
         } catch (e) {
             return false;
@@ -52,14 +51,13 @@ export function checkAuthorResponse(response) {
             const data = JSON.parse(response.body);
             return check(data, {
                 "has valid author structure": (d) =>
-                    typeof d === "object" &&
-                    (d.name !== undefined || Array.isArray(d)),
+                    typeof d === "object" && (d.name !== undefined || Array.isArray(d)),
                 "author has required fields": (d) => {
                     if (Array.isArray(d)) {
                         return d.length === 0 || d[0].name;
                     }
                     return d.name;
-                }
+                },
             });
         } catch (e) {
             return false;
@@ -80,7 +78,7 @@ export function checkCreateResponse(response) {
             } catch (e) {
                 return false;
             }
-        }
+        },
     });
 }
 

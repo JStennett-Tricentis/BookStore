@@ -6,7 +6,11 @@ import { Rate, Trend, Counter } from "k6/metrics";
 
 import { getEnvironment } from "../config/environments.js";
 import { getThresholds } from "../config/thresholds.js";
-import { generateBookData, generateAuthorData, generateUserProfile } from "../utils/data-generators.js";
+import {
+    generateBookData,
+    generateAuthorData,
+    generateUserProfile,
+} from "../utils/data-generators.js";
 import { checkResponse, checkPerformance } from "../utils/assertions.js";
 
 // Custom metrics
@@ -72,7 +76,7 @@ export function setup() {
 
     // Verify service is accessible
     const healthCheck = http.get(`${environment.serviceUrl}/health`, {
-        timeout: environment.timeout
+        timeout: environment.timeout,
     });
     if (healthCheck.status !== 200) {
         throw new Error(`BookStore API health check failed: ${healthCheck.status}`);
@@ -132,16 +136,13 @@ function listBooks(operation, userProfile) {
         tags: {
             name: "list_books",
             user_type: userProfile.type,
-            operation_type: operation.type
-        }
+            operation_type: operation.type,
+        },
     };
 
     const startTime = new Date().getTime();
 
-    const response = http.get(
-        `${environment.serviceUrl}/api/v1/books?page=1&pageSize=10`,
-        params
-    );
+    const response = http.get(`${environment.serviceUrl}/api/v1/books?page=1&pageSize=10`, params);
 
     recordOperationMetrics(response, operation, startTime);
 }
@@ -155,16 +156,13 @@ function getBook(operation, userProfile) {
         tags: {
             name: "get_book",
             user_type: userProfile.type,
-            operation_type: operation.type
-        }
+            operation_type: operation.type,
+        },
     };
 
     const startTime = new Date().getTime();
 
-    const response = http.get(
-        `${environment.serviceUrl}/api/v1/books/${bookId}`,
-        params
-    );
+    const response = http.get(`${environment.serviceUrl}/api/v1/books/${bookId}`, params);
 
     recordOperationMetrics(response, operation, startTime);
 }
@@ -180,8 +178,8 @@ function createBook(operation, userProfile) {
         tags: {
             name: "create_book",
             user_type: userProfile.type,
-            operation_type: operation.type
-        }
+            operation_type: operation.type,
+        },
     };
 
     const startTime = new Date().getTime();
@@ -207,8 +205,8 @@ function updateBook(operation, userProfile) {
         tags: {
             name: "update_book",
             user_type: userProfile.type,
-            operation_type: operation.type
-        }
+            operation_type: operation.type,
+        },
     };
 
     const startTime = new Date().getTime();
@@ -226,7 +224,7 @@ function patchBook(operation, userProfile) {
     const bookId = getKnownBookId();
     const updates = {
         price: (Math.random() * 50 + 10).toFixed(2),
-        stockQuantity: Math.floor(Math.random() * 100)
+        stockQuantity: Math.floor(Math.random() * 100),
     };
 
     const params = {
@@ -237,8 +235,8 @@ function patchBook(operation, userProfile) {
         tags: {
             name: "patch_book",
             user_type: userProfile.type,
-            operation_type: operation.type
-        }
+            operation_type: operation.type,
+        },
     };
 
     const startTime = new Date().getTime();
@@ -260,16 +258,13 @@ function deleteBook(operation, userProfile) {
         tags: {
             name: "delete_book",
             user_type: userProfile.type,
-            operation_type: operation.type
-        }
+            operation_type: operation.type,
+        },
     };
 
     const startTime = new Date().getTime();
 
-    const response = http.del(
-        `${environment.serviceUrl}/api/v1/books/${bookId}`,
-        params
-    );
+    const response = http.del(`${environment.serviceUrl}/api/v1/books/${bookId}`, params);
 
     recordOperationMetrics(response, operation, startTime);
 }
@@ -283,8 +278,8 @@ function searchBooks(operation, userProfile) {
         tags: {
             name: "search_books",
             user_type: userProfile.type,
-            operation_type: operation.type
-        }
+            operation_type: operation.type,
+        },
     };
 
     const startTime = new Date().getTime();
@@ -303,8 +298,8 @@ function listAuthors(operation, userProfile) {
         tags: {
             name: "list_authors",
             user_type: userProfile.type,
-            operation_type: operation.type
-        }
+            operation_type: operation.type,
+        },
     };
 
     const startTime = new Date().getTime();
@@ -334,7 +329,7 @@ function recordOperationMetrics(response, operation, startTime) {
     checkPerformance(response, {
         maxDuration: 5000,
         maxTTFB: 2000,
-        maxDownload: 1000
+        maxDownload: 1000,
     });
 
     errorRate.add(!success);
@@ -346,22 +341,22 @@ function getOperationForUser(userProfile) {
             { type: "list_books", expectedStatus: 200, weight: 5 },
             { type: "get_book", expectedStatus: 200, weight: 4 },
             { type: "search_books", expectedStatus: 200, weight: 3 },
-            { type: "list_authors", expectedStatus: 200, weight: 2 }
+            { type: "list_authors", expectedStatus: 200, weight: 2 },
         ],
         librarian: [
             { type: "list_books", expectedStatus: 200, weight: 3 },
             { type: "create_book", expectedStatus: 201, weight: 2 },
             { type: "update_book", expectedStatus: 200, weight: 2 },
             { type: "patch_book", expectedStatus: 200, weight: 3 },
-            { type: "get_book", expectedStatus: 200, weight: 2 }
+            { type: "get_book", expectedStatus: 200, weight: 2 },
         ],
         manager: [
             { type: "list_books", expectedStatus: 200, weight: 3 },
             { type: "delete_book", expectedStatus: 204, weight: 1 },
             { type: "update_book", expectedStatus: 200, weight: 2 },
             { type: "create_book", expectedStatus: 201, weight: 2 },
-            { type: "search_books", expectedStatus: 200, weight: 2 }
-        ]
+            { type: "search_books", expectedStatus: 200, weight: 2 },
+        ],
     };
 
     const userOperations = operations[userProfile.type] || operations.reader;
@@ -388,7 +383,7 @@ function getKnownBookId() {
         "507f1f77bcf86cd799439011",
         "507f1f77bcf86cd799439012",
         "507f1f77bcf86cd799439013",
-        "507f1f77bcf86cd799439014"
+        "507f1f77bcf86cd799439014",
     ];
 
     return bookIds[Math.floor(Math.random() * bookIds.length)];
@@ -396,8 +391,8 @@ function getKnownBookId() {
 
 function getThinkTime(usagePattern) {
     const patterns = {
-        heavy: Math.random() * 2 + 1,    // 1-3 seconds
-        light: Math.random() * 10 + 5,   // 5-15 seconds
+        heavy: Math.random() * 2 + 1, // 1-3 seconds
+        light: Math.random() * 10 + 5, // 5-15 seconds
         burst: Math.random() * 0.5 + 0.5, // 0.5-1 seconds
     };
 

@@ -4,96 +4,96 @@
 version: 2
 
 updates:
-  # NuGet package updates for .NET projects
-  - package-ecosystem: "nuget"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-    open-pull-requests-limit: 10
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "dotnet"
-    groups:
-      aspire:
-        patterns:
-          - "Aspire.*"
-      opentelemetry:
-        patterns:
-          - "OpenTelemetry.*"
-      aws:
-        patterns:
-          - "AWSSDK.*"
-      testing:
-        patterns:
-          - "xunit*"
-          - "Moq*"
-          - "FluentAssertions*"
-          - "Microsoft.NET.Test.Sdk"
+    # NuGet package updates for .NET projects
+    - package-ecosystem: "nuget"
+      directory: "/"
+      schedule:
+          interval: "weekly"
+          day: "monday"
+          time: "06:00"
+      open-pull-requests-limit: 10
+      commit-message:
+          prefix: "chore(deps)"
+          include: "scope"
+      labels:
+          - "dependencies"
+          - "dotnet"
+      groups:
+          aspire:
+              patterns:
+                  - "Aspire.*"
+          opentelemetry:
+              patterns:
+                  - "OpenTelemetry.*"
+          aws:
+              patterns:
+                  - "AWSSDK.*"
+          testing:
+              patterns:
+                  - "xunit*"
+                  - "Moq*"
+                  - "FluentAssertions*"
+                  - "Microsoft.NET.Test.Sdk"
 
-  # GitHub Actions updates
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "chore(ci)"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "github-actions"
-    groups:
-      external-github-actions:
-        patterns:
-          - "*/*"
+    # GitHub Actions updates
+    - package-ecosystem: "github-actions"
+      directory: "/"
+      schedule:
+          interval: "weekly"
+          day: "monday"
+          time: "06:00"
+      open-pull-requests-limit: 5
+      commit-message:
+          prefix: "chore(ci)"
+          include: "scope"
+      labels:
+          - "dependencies"
+          - "github-actions"
+      groups:
+          external-github-actions:
+              patterns:
+                  - "*/*"
 
-  # Docker updates
-  - package-ecosystem: "docker"
-    directory: "/BookStore.Service"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-    open-pull-requests-limit: 3
-    commit-message:
-      prefix: "chore(docker)"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "docker"
+    # Docker updates
+    - package-ecosystem: "docker"
+      directory: "/BookStore.Service"
+      schedule:
+          interval: "weekly"
+          day: "monday"
+          time: "06:00"
+      open-pull-requests-limit: 3
+      commit-message:
+          prefix: "chore(docker)"
+          include: "scope"
+      labels:
+          - "dependencies"
+          - "docker"
 
-  - package-ecosystem: "docker"
-    directory: "/BookStore.Performance.Service"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-    open-pull-requests-limit: 3
-    commit-message:
-      prefix: "chore(docker)"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "docker"
+    - package-ecosystem: "docker"
+      directory: "/BookStore.Performance.Service"
+      schedule:
+          interval: "weekly"
+          day: "monday"
+          time: "06:00"
+      open-pull-requests-limit: 3
+      commit-message:
+          prefix: "chore(docker)"
+          include: "scope"
+      labels:
+          - "dependencies"
+          - "docker"
 
-  # npm updates for K6 test utilities
-  - package-ecosystem: "npm"
-    directory: "/BookStore.Performance.Tests"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "javascript"
+    # npm updates for K6 test utilities
+    - package-ecosystem: "npm"
+      directory: "/BookStore.Performance.Tests"
+      schedule:
+          interval: "weekly"
+          day: "monday"
+          time: "06:00"
+      open-pull-requests-limit: 5
+      commit-message:
+          prefix: "chore(deps)"
+          include: "scope"
+      labels:
+          - "dependencies"
+          - "javascript"

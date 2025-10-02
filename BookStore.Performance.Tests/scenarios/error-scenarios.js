@@ -28,9 +28,9 @@ export const options = {
             executor: "ramping-vus",
             startVUs: 0,
             stages: [
-                { duration: "30s", target: 2 },   // Warm up
-                { duration: "2m", target: 5 },    // Steady state
-                { duration: "1m", target: 0 },    // Ramp down
+                { duration: "30s", target: 2 }, // Warm up
+                { duration: "2m", target: 5 }, // Steady state
+                { duration: "1m", target: 0 }, // Ramp down
             ],
             gracefulRampDown: "15s",
         },
@@ -60,7 +60,7 @@ export function setup() {
 
     return {
         startTime: new Date(),
-        baseUrl: environment.serviceUrl
+        baseUrl: environment.serviceUrl,
     };
 }
 
@@ -72,20 +72,36 @@ export default function (data) {
     // Randomly select an error scenario to test
     const errorScenarios = [
         { name: "not_found", weight: 3, fn: () => testNotFoundErrors(baseUrl) },
-        { name: "invalid_data", weight: 3, fn: () => testInvalidDataErrors(baseUrl) },
+        {
+            name: "invalid_data",
+            weight: 3,
+            fn: () => testInvalidDataErrors(baseUrl),
+        },
         { name: "llm_errors", weight: 2, fn: () => testLLMErrors(baseUrl) },
         { name: "timeout", weight: 1, fn: () => testTimeoutScenarios(baseUrl) },
-        { name: "malformed_requests", weight: 2, fn: () => testMalformedRequests(baseUrl) },
-        { name: "unauthorized", weight: 2, fn: () => testUnauthorizedErrors(baseUrl) },
+        {
+            name: "malformed_requests",
+            weight: 2,
+            fn: () => testMalformedRequests(baseUrl),
+        },
+        {
+            name: "unauthorized",
+            weight: 2,
+            fn: () => testUnauthorizedErrors(baseUrl),
+        },
         { name: "gone", weight: 1, fn: () => testGoneErrors(baseUrl) },
         { name: "conflict", weight: 2, fn: () => testConflictErrors(baseUrl) },
-        { name: "service_unavailable", weight: 1, fn: () => testServiceUnavailableErrors(baseUrl) },
+        {
+            name: "service_unavailable",
+            weight: 1,
+            fn: () => testServiceUnavailableErrors(baseUrl),
+        },
         { name: "success_path", weight: 4, fn: () => testSuccessPath(baseUrl) }, // Include some success
     ];
 
     const selectedScenario = selectWeightedScenario(errorScenarios);
 
-    group(`Error Scenario: ${selectedScenario.name}`, function() {
+    group(`Error Scenario: ${selectedScenario.name}`, function () {
         selectedScenario.fn();
     });
 
@@ -94,12 +110,12 @@ export default function (data) {
 }
 
 function testNotFoundErrors(baseUrl) {
-    group("404 Not Found Errors", function() {
+    group("404 Not Found Errors", function () {
         const startTime = new Date().getTime();
 
         // Non-existent book ID
         const response = http.get(`${baseUrl}/api/v1/Books/000000000000000000000000`, {
-            tags: { error_type: "not_found" }
+            tags: { error_type: "not_found" },
         });
 
         const duration = new Date().getTime() - startTime;
@@ -115,7 +131,7 @@ function testNotFoundErrors(baseUrl) {
 }
 
 function testInvalidDataErrors(baseUrl) {
-    group("400 Bad Request Errors", function() {
+    group("400 Bad Request Errors", function () {
         const invalidBooks = [
             // Missing required fields
             { title: "Test Book" }, // Missing author
@@ -130,14 +146,10 @@ function testInvalidDataErrors(baseUrl) {
         const invalidBook = randomItem(invalidBooks);
         const startTime = new Date().getTime();
 
-        const response = http.post(
-            `${baseUrl}/api/v1/Books`,
-            JSON.stringify(invalidBook),
-            {
-                headers: { "Content-Type": "application/json" },
-                tags: { error_type: "invalid_data" }
-            }
-        );
+        const response = http.post(`${baseUrl}/api/v1/Books`, JSON.stringify(invalidBook), {
+            headers: { "Content-Type": "application/json" },
+            tags: { error_type: "invalid_data" },
+        });
 
         const duration = new Date().getTime() - startTime;
 
@@ -152,23 +164,29 @@ function testInvalidDataErrors(baseUrl) {
 }
 
 function testLLMErrors(baseUrl) {
-    group("LLM Error Scenarios", function() {
+    group("LLM Error Scenarios", function () {
         const scenarios = [
             // Non-existent book for AI summary
             {
                 name: "nonexistent_book_ai",
-                request: () => http.post(`${baseUrl}/api/v1/Books/000000000000000000000000/generate-summary`, null, {
-                    timeout: "30s",
-                    tags: { error_type: "llm_not_found" }
-                })
+                request: () =>
+                    http.post(
+                        `${baseUrl}/api/v1/Books/000000000000000000000000/generate-summary`,
+                        null,
+                        {
+                            timeout: "30s",
+                            tags: { error_type: "llm_not_found" },
+                        }
+                    ),
             },
             // Malformed book ID
             {
                 name: "invalid_book_id_ai",
-                request: () => http.post(`${baseUrl}/api/v1/Books/invalid-id-format/generate-summary`, null, {
-                    timeout: "30s",
-                    tags: { error_type: "llm_invalid_id" }
-                })
+                request: () =>
+                    http.post(`${baseUrl}/api/v1/Books/invalid-id-format/generate-summary`, null, {
+                        timeout: "30s",
+                        tags: { error_type: "llm_invalid_id" },
+                    }),
             },
         ];
 
@@ -193,13 +211,13 @@ function testLLMErrors(baseUrl) {
 }
 
 function testTimeoutScenarios(baseUrl) {
-    group("Timeout Scenarios", function() {
+    group("Timeout Scenarios", function () {
         // Request with very short timeout
         const startTime = new Date().getTime();
 
         const response = http.get(`${baseUrl}/api/v1/Books?page=1&pageSize=100`, {
             timeout: "10ms", // Intentionally too short
-            tags: { error_type: "timeout" }
+            tags: { error_type: "timeout" },
         });
 
         const duration = new Date().getTime() - startTime;
@@ -219,41 +237,40 @@ function testTimeoutScenarios(baseUrl) {
 }
 
 function testMalformedRequests(baseUrl) {
-    group("Malformed Requests", function() {
+    group("Malformed Requests", function () {
         const malformedRequests = [
             // Invalid JSON
             {
                 body: "{invalid json",
-                contentType: "application/json"
+                contentType: "application/json",
             },
             // Wrong content type
             {
                 body: "This is plain text",
-                contentType: "text/plain"
+                contentType: "text/plain",
             },
             // Empty body where required
             {
                 body: "",
-                contentType: "application/json"
+                contentType: "application/json",
             },
             // Extremely large payload
             {
-                body: JSON.stringify({ title: "x".repeat(100000), author: "Test" }),
-                contentType: "application/json"
+                body: JSON.stringify({
+                    title: "x".repeat(100000),
+                    author: "Test",
+                }),
+                contentType: "application/json",
             },
         ];
 
         const malformed = randomItem(malformedRequests);
         const startTime = new Date().getTime();
 
-        const response = http.post(
-            `${baseUrl}/api/v1/Books`,
-            malformed.body,
-            {
-                headers: { "Content-Type": malformed.contentType },
-                tags: { error_type: "malformed" }
-            }
-        );
+        const response = http.post(`${baseUrl}/api/v1/Books`, malformed.body, {
+            headers: { "Content-Type": malformed.contentType },
+            tags: { error_type: "malformed" },
+        });
 
         const duration = new Date().getTime() - startTime;
 
@@ -267,12 +284,12 @@ function testMalformedRequests(baseUrl) {
 }
 
 function testSuccessPath(baseUrl) {
-    group("Success Path (Control)", function() {
+    group("Success Path (Control)", function () {
         // Normal successful request for comparison
         const startTime = new Date().getTime();
 
         const response = http.get(`${baseUrl}/api/v1/Books?page=1&pageSize=5`, {
-            tags: { error_type: "none" }
+            tags: { error_type: "none" },
         });
 
         const duration = new Date().getTime() - startTime;
@@ -324,17 +341,17 @@ function recordError(response, duration, errorType, expectedError) {
 }
 
 function testUnauthorizedErrors(baseUrl) {
-    group("401 Unauthorized Errors", function() {
+    group("401 Unauthorized Errors", function () {
         // Simulate protected endpoints that require authentication
         // Since our API doesn't have auth, we'll test endpoints with invalid auth headers
         const startTime = new Date().getTime();
 
         const response = http.get(`${baseUrl}/api/v1/Books`, {
             headers: {
-                "Authorization": "Bearer invalid_token_12345",
-                "X-API-Key": "invalid_api_key"
+                Authorization: "Bearer invalid_token_12345",
+                "X-API-Key": "invalid_api_key",
             },
-            tags: { error_type: "unauthorized" }
+            tags: { error_type: "unauthorized" },
         });
 
         const duration = new Date().getTime() - startTime;
@@ -357,7 +374,7 @@ function testUnauthorizedErrors(baseUrl) {
 }
 
 function testGoneErrors(baseUrl) {
-    group("410 Gone Errors", function() {
+    group("410 Gone Errors", function () {
         // Simulate resources that have been permanently deleted
         // We'll try to access a book that was deleted
         const startTime = new Date().getTime();
@@ -368,7 +385,7 @@ function testGoneErrors(baseUrl) {
 
         const response = http.get(`${baseUrl}/api/v1/Books/${deletedBookId}`, {
             headers: { "X-Resource-Status": "deleted" }, // Simulated header
-            tags: { error_type: "gone" }
+            tags: { error_type: "gone" },
         });
 
         const duration = new Date().getTime() - startTime;
@@ -391,7 +408,7 @@ function testGoneErrors(baseUrl) {
 }
 
 function testConflictErrors(baseUrl) {
-    group("409 Conflict Errors", function() {
+    group("409 Conflict Errors", function () {
         // Try to create duplicate resources or conflicting updates
         const startTime = new Date().getTime();
 
@@ -403,20 +420,16 @@ function testConflictErrors(baseUrl) {
             genre: "Test",
             publishedDate: "2024-01-01",
             price: 29.99,
-            stockQuantity: 100
+            stockQuantity: 100,
         };
 
-        const response = http.post(
-            `${baseUrl}/api/v1/Books`,
-            JSON.stringify(duplicateBook),
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Idempotency-Key": "duplicate-isbn-test-12345"
-                },
-                tags: { error_type: "conflict" }
-            }
-        );
+        const response = http.post(`${baseUrl}/api/v1/Books`, JSON.stringify(duplicateBook), {
+            headers: {
+                "Content-Type": "application/json",
+                "X-Idempotency-Key": "duplicate-isbn-test-12345",
+            },
+            tags: { error_type: "conflict" },
+        });
 
         const duration = new Date().getTime() - startTime;
 
@@ -438,7 +451,7 @@ function testConflictErrors(baseUrl) {
 }
 
 function testServiceUnavailableErrors(baseUrl) {
-    group("503 Service Unavailable Errors", function() {
+    group("503 Service Unavailable Errors", function () {
         // Test scenarios that might cause service unavailability
         // Such as database connection issues, dependency failures, etc.
 
@@ -449,23 +462,30 @@ function testServiceUnavailableErrors(baseUrl) {
                     // Large page size might overload database
                     return http.get(`${baseUrl}/api/v1/Books?page=1&pageSize=10000`, {
                         timeout: "5s",
-                        tags: { error_type: "service_unavailable", subtype: "db_overload" }
+                        tags: {
+                            error_type: "service_unavailable",
+                            subtype: "db_overload",
+                        },
                     });
-                }
+                },
             },
             {
                 name: "llm_unavailable",
                 request: () => {
                     // LLM service might be unavailable
-                    return http.post(`${baseUrl}/api/v1/Books/507f1f77bcf86cd799439011/generate-summary?provider=invalid`,
+                    return http.post(
+                        `${baseUrl}/api/v1/Books/507f1f77bcf86cd799439011/generate-summary?provider=invalid`,
                         null,
                         {
                             timeout: "5s",
-                            tags: { error_type: "service_unavailable", subtype: "llm_unavailable" }
+                            tags: {
+                                error_type: "service_unavailable",
+                                subtype: "llm_unavailable",
+                            },
                         }
                     );
-                }
-            }
+                },
+            },
         ];
 
         const scenario = randomItem(scenarios);
@@ -482,7 +502,9 @@ function testServiceUnavailableErrors(baseUrl) {
             errorResponseTime.add(duration);
             error5xxRate.add(1);
             errorsByType.add(1, { type: "5xx_service_unavailable" });
-            console.log(`Service Unavailable (${scenario.name}): ${response.status} - ${duration}ms`);
+            console.log(
+                `Service Unavailable (${scenario.name}): ${response.status} - ${duration}ms`
+            );
         } else if (response.status >= 500) {
             recordError(response, duration, "service_unavailable_as_5xx", hasServiceError);
         } else if (response.status >= 400) {

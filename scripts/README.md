@@ -5,6 +5,7 @@ Organized automation and utility scripts for the BookStore project.
 ## Structure
 
 ### 📁 startup/
+
 Service lifecycle management scripts.
 
 - `start-aspire.sh` - Start services using .NET Aspire (recommended)
@@ -12,6 +13,7 @@ Service lifecycle management scripts.
 - `stop-services.sh` - Stop all services
 
 **Usage:**
+
 ```bash
 # Via Makefile (recommended)
 make run-aspire
@@ -23,6 +25,7 @@ make stop-services
 ```
 
 ### 📁 monitoring/
+
 Grafana dashboard generation and monitoring utilities.
 
 - `create-demo-dashboard.py` - Generate demo dashboard (53 curated panels)
@@ -30,6 +33,7 @@ Grafana dashboard generation and monitoring utilities.
 - `add-status-code-panels.py` - Add HTTP status code panels to dashboards
 
 **Usage:**
+
 ```bash
 # Run from project root
 cd monitoring/grafana
@@ -38,12 +42,14 @@ python3 ../../scripts/monitoring/create-mega-dashboard.py
 ```
 
 ### 📁 utils/
+
 Project maintenance and utility scripts.
 
 - `cleanup-project.sh` - Clean old test results, build artifacts, duplicates
 - `reorganize-project.sh` - Project structure reorganization (this setup)
 
 **Usage:**
+
 ```bash
 # Make executable
 chmod +x scripts/utils/cleanup-project.sh

@@ -19,39 +19,39 @@ Time Estimate: 30-45 minutes
 
 1. **Quick Validation** (5 minutes)
 
-   ```bash
-   cd /Users/j.stennett/TAIS/AiHubPerfExample
-   make status
-   make dev-setup  # If needed
-   ```
+    ```bash
+    cd /Users/j.stennett/TAIS/AiHubPerfExample
+    make status
+    make dev-setup  # If needed
+    ```
 
 2. **Full System Smoke Test** (10 minutes)
 
-   ```bash
-   make run-aspire
-   # Wait 30 seconds
-   make health-check
-   make seed-data
-   make perf-smoke
-   ```
+    ```bash
+    make run-aspire
+    # Wait 30 seconds
+    make health-check
+    make seed-data
+    make perf-smoke
+    ```
 
 3. **Performance Service Validation** (10 minutes)
 
-   ```bash
-   # Test the Performance API
-   curl http://localhost:7004/api/v1/performancetest/scenarios
-   make perf-start-test
-   make perf-list-tests
-   ```
+    ```bash
+    # Test the Performance API
+    curl http://localhost:7004/api/v1/performancetest/scenarios
+    make perf-start-test
+    make perf-list-tests
+    ```
 
 4. **Docker Stack Verification** (10 minutes)
 
-   ```bash
-   make docker-stop  # Clean slate
-   make docker-run
-   make health-wait
-   make docker-perf
-   ```
+    ```bash
+    make docker-stop  # Clean slate
+    make docker-run
+    make health-wait
+    make docker-perf
+    ```
 
 ## Secondary Objectives (Based on Time Available)
 
@@ -65,9 +65,9 @@ Time: 45-60 minutes
 - Implement X-Tenant-Name, X-User-Id headers
 - Create authentication test scenarios
 - **Files to create:**
-  - `BookStore.Common.Authentication/`
-  - Middleware classes for tenant context
-  - Updated K6 tests with auth
+    - `BookStore.Common.Authentication/`
+    - Middleware classes for tenant context
+    - Updated K6 tests with auth
 
 #### **Option B: Enhanced MongoDB/Redis (Medium Value)**
 
@@ -77,9 +77,9 @@ Time: 30-45 minutes
 - Implement MongoDB health checks with retry logic
 - Add Redis clustering support
 - **Files to modify:**
-  - `BookStore.Service/Program.cs`
-  - MongoDB connection configuration
-  - Redis advanced settings
+    - `BookStore.Service/Program.cs`
+    - MongoDB connection configuration
+    - Redis advanced settings
 
 #### **Option C: Management Service (Medium Value)**
 
@@ -89,9 +89,9 @@ Time: 45-60 minutes
 - Add admin endpoints for system management
 - Implement system health aggregation
 - **Files to create:**
-  - Complete Management Service project
-  - Admin API controllers
-  - System monitoring endpoints
+    - Complete Management Service project
+    - Admin API controllers
+    - System monitoring endpoints
 
 #### **Option D: Advanced K6 Scenarios (Low Value - Already Strong)**
 
@@ -101,8 +101,8 @@ Time: 30-45 minutes
 - Create business-specific test scenarios
 - Add performance alerting thresholds
 - **Files to enhance:**
-  - Additional K6 test files
-  - Custom metrics collection
+    - Additional K6 test files
+    - Custom metrics collection
 
 ## Potential Issues & Mitigations
 

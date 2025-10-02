@@ -4,33 +4,33 @@
  * Converts K6 JSON output to a readable HTML report
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 function generateHTMLReport(jsonFile) {
     // Read K6 JSON output
-    const data = fs.readFileSync(jsonFile, 'utf8');
-    const lines = data.trim().split('\n');
+    const data = fs.readFileSync(jsonFile, "utf8");
+    const lines = data.trim().split("\n");
 
     const metrics = {};
     const checks = {};
     let testInfo = {
         startTime: null,
         endTime: null,
-        duration: 0
+        duration: 0,
     };
 
     // Parse K6 JSON output (newline-delimited JSON)
-    lines.forEach(line => {
+    lines.forEach((line) => {
         try {
             const entry = JSON.parse(line);
 
-            if (entry.type === 'Metric') {
+            if (entry.type === "Metric") {
                 const name = entry.metric;
                 if (!metrics[name]) {
                     metrics[name] = {
                         type: entry.data.type,
-                        values: []
+                        values: [],
                     };
                 }
                 if (entry.data.value !== undefined) {
@@ -38,12 +38,12 @@ function generateHTMLReport(jsonFile) {
                 }
             }
 
-            if (entry.type === 'Point') {
+            if (entry.type === "Point") {
                 const name = entry.metric;
                 if (!metrics[name]) {
                     metrics[name] = {
                         type: entry.data.type,
-                        values: []
+                        values: [],
                     };
                 }
                 if (entry.data.value !== undefined) {
@@ -73,7 +73,7 @@ function generateHTMLReport(jsonFile) {
         const mean = sum / values.length;
         const min = values[0];
         const max = values[values.length - 1];
-        const p50 = values[Math.floor(values.length * 0.50)];
+        const p50 = values[Math.floor(values.length * 0.5)];
         const p95 = values[Math.floor(values.length * 0.95)];
         const p99 = values[Math.floor(values.length * 0.99)];
 
@@ -194,7 +194,7 @@ function generateHTMLReport(jsonFile) {
         <div class="header">
             <h1>📊 K6 Performance Test Report</h1>
             <p>Generated: ${new Date().toLocaleString()}</p>
-            ${testInfo.startTime ? `<p>Duration: ${Math.round((new Date(testInfo.endTime) - new Date(testInfo.startTime)) / 1000)}s</p>` : ''}
+            ${testInfo.startTime ? `<p>Duration: ${Math.round((new Date(testInfo.endTime) - new Date(testInfo.startTime)) / 1000)}s</p>` : ""}
         </div>
 
         <div class="summary">
@@ -235,13 +235,13 @@ function generateHTMLReport(jsonFile) {
         const cards = [];
 
         // HTTP request duration
-        if (metrics['http_req_duration']) {
-            const stats = calculateStats(metrics['http_req_duration'].values);
+        if (metrics["http_req_duration"]) {
+            const stats = calculateStats(metrics["http_req_duration"].values);
             if (stats) {
                 cards.push(`
                     <div class="card">
                         <h3>Response Time (P95)</h3>
-                        <div class="value ${stats.p95 < 1000 ? 'good' : stats.p95 < 2000 ? 'warning' : 'bad'}">${stats.p95.toFixed(0)}ms</div>
+                        <div class="value ${stats.p95 < 1000 ? "good" : stats.p95 < 2000 ? "warning" : "bad"}">${stats.p95.toFixed(0)}ms</div>
                         <div class="label">95th percentile</div>
                     </div>
                 `);
@@ -249,8 +249,8 @@ function generateHTMLReport(jsonFile) {
         }
 
         // HTTP requests
-        if (metrics['http_reqs']) {
-            const stats = calculateStats(metrics['http_reqs'].values);
+        if (metrics["http_reqs"]) {
+            const stats = calculateStats(metrics["http_reqs"].values);
             if (stats) {
                 cards.push(`
                     <div class="card">
@@ -263,8 +263,8 @@ function generateHTMLReport(jsonFile) {
         }
 
         // VUs
-        if (metrics['vus']) {
-            const stats = calculateStats(metrics['vus'].values);
+        if (metrics["vus"]) {
+            const stats = calculateStats(metrics["vus"].values);
             if (stats) {
                 cards.push(`
                     <div class="card">
@@ -277,8 +277,8 @@ function generateHTMLReport(jsonFile) {
         }
 
         // Iterations
-        if (metrics['iterations']) {
-            const stats = calculateStats(metrics['iterations'].values);
+        if (metrics["iterations"]) {
+            const stats = calculateStats(metrics["iterations"].values);
             if (stats) {
                 cards.push(`
                     <div class="card">
@@ -290,26 +290,26 @@ function generateHTMLReport(jsonFile) {
             }
         }
 
-        return cards.join('\n');
+        return cards.join("\n");
     }
 
     function generateMetricsRows(metrics) {
         const rows = [];
         const priorityMetrics = [
-            'http_req_duration',
-            'http_req_waiting',
-            'http_req_connecting',
-            'http_req_sending',
-            'http_req_receiving',
-            'http_reqs',
-            'iterations',
-            'vus',
-            'data_received',
-            'data_sent'
+            "http_req_duration",
+            "http_req_waiting",
+            "http_req_connecting",
+            "http_req_sending",
+            "http_req_receiving",
+            "http_reqs",
+            "iterations",
+            "vus",
+            "data_received",
+            "data_sent",
         ];
 
         // Add priority metrics first
-        priorityMetrics.forEach(name => {
+        priorityMetrics.forEach((name) => {
             if (metrics[name]) {
                 const stats = calculateStats(metrics[name].values);
                 if (stats) {
@@ -319,7 +319,7 @@ function generateHTMLReport(jsonFile) {
         });
 
         // Add remaining metrics
-        Object.keys(metrics).forEach(name => {
+        Object.keys(metrics).forEach((name) => {
             if (!priorityMetrics.includes(name)) {
                 const stats = calculateStats(metrics[name].values);
                 if (stats) {
@@ -328,15 +328,15 @@ function generateHTMLReport(jsonFile) {
             }
         });
 
-        return rows.join('\n');
+        return rows.join("\n");
     }
 
     function createMetricRow(name, stats, type) {
         const formatValue = (val) => {
-            if (name.includes('duration') || name.includes('time')) {
+            if (name.includes("duration") || name.includes("time")) {
                 return `${val.toFixed(2)}ms`;
             }
-            if (name.includes('data_')) {
+            if (name.includes("data_")) {
                 return `${(val / 1024).toFixed(2)} KB`;
             }
             return val.toFixed(2);
@@ -362,8 +362,8 @@ function generateHTMLReport(jsonFile) {
 // Main execution
 const args = process.argv.slice(2);
 if (args.length === 0) {
-    console.error('Usage: node generate-html-report.js <k6-json-output-file>');
-    console.error('Example: node generate-html-report.js results/smoke-20250101-120000.json');
+    console.error("Usage: node generate-html-report.js <k6-json-output-file>");
+    console.error("Example: node generate-html-report.js results/smoke-20250101-120000.json");
     process.exit(1);
 }
 
@@ -374,7 +374,7 @@ if (!fs.existsSync(jsonFile)) {
 }
 
 const html = generateHTMLReport(jsonFile);
-const outputFile = jsonFile.replace('.json', '.html');
+const outputFile = jsonFile.replace(".json", ".html");
 fs.writeFileSync(outputFile, html);
 
 console.log(`✓ HTML report generated: ${outputFile}`);

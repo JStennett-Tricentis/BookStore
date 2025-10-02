@@ -373,6 +373,7 @@ results/
 !monitoring/grafana/dashboards/*.json
 !*.example.json
 !BookStore.postman_collection.json
+!.prettierrc.json
 
 # Environment variables
 .env

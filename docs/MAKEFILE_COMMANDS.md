@@ -13,52 +13,53 @@ make perf-smoke        # Run quick performance test
 
 ## 📦 Development Setup Commands
 
-| Command | Description | Usage |
-|---------|-------------|-------|
-| `make dev-setup` | Setup development environment (install dependencies) | Run once when starting development |
-| `make clean` | Clean build artifacts (bin/obj folders) | Use when you need a fresh build |
-| `make build` | Build the entire solution | Standard development build |
-| `make build-release` | Build in Release mode | For production-ready builds |
-| `make restore` | Restore NuGet packages | Fix missing dependencies |
-| `make install-k6` | Install K6 performance testing tool | One-time setup for performance testing |
-| `make install-deps` | Install all required dependencies | Complete environment setup |
+| Command              | Description                                          | Usage                                  |
+| -------------------- | ---------------------------------------------------- | -------------------------------------- |
+| `make dev-setup`     | Setup development environment (install dependencies) | Run once when starting development     |
+| `make clean`         | Clean build artifacts (bin/obj folders)              | Use when you need a fresh build        |
+| `make build`         | Build the entire solution                            | Standard development build             |
+| `make build-release` | Build in Release mode                                | For production-ready builds            |
+| `make restore`       | Restore NuGet packages                               | Fix missing dependencies               |
+| `make install-k6`    | Install K6 performance testing tool                  | One-time setup for performance testing |
+| `make install-deps`  | Install all required dependencies                    | Complete environment setup             |
 
 ## 🚀 Run Services Commands
 
-| Command | Description | Port |
-|---------|-------------|------|
-| `make run-aspire` | Start all services with .NET Aspire (recommended) | 15888 (Dashboard) |
-| `make run-bookstore` | Run BookStore API service only | 7001 (HTTPS), 7002 (HTTP) |
-| `make run-performance` | Run Performance orchestration service only | 7003 (HTTPS), 7004 (HTTP) |
-| `make up` | Alias for run-aspire | - |
-| `make watch` | Run with file watching (auto-reload) | 7001/7002 |
+| Command                | Description                                       | Port                      |
+| ---------------------- | ------------------------------------------------- | ------------------------- |
+| `make run-aspire`      | Start all services with .NET Aspire (recommended) | 15888 (Dashboard)         |
+| `make run-bookstore`   | Run BookStore API service only                    | 7001 (HTTPS), 7002 (HTTP) |
+| `make run-performance` | Run Performance orchestration service only        | 7003 (HTTPS), 7004 (HTTP) |
+| `make up`              | Alias for run-aspire                              | -                         |
+| `make watch`           | Run with file watching (auto-reload)              | 7001/7002                 |
 
 ## 🐳 Docker Commands
 
-| Command | Description | Notes |
-|---------|-------------|-------|
-| `make docker-build` | Build Docker images | Required before first docker-run |
-| `make docker-run` | Start full stack with Docker Compose | All services in containers |
-| `make docker-stop` | Stop all Docker services | Preserves data volumes |
-| `make docker-clean` | Stop and remove all Docker resources | **WARNING:** Removes all data |
-| `make docker-logs` | Show Docker logs (all services) | Real-time log streaming |
-| `make docker-observability` | Start with observability stack | Includes Grafana (3333), Prometheus (9090), Jaeger (16686) |
-| `make down` | Alias for docker-stop | - |
+| Command                     | Description                          | Notes                                                      |
+| --------------------------- | ------------------------------------ | ---------------------------------------------------------- |
+| `make docker-build`         | Build Docker images                  | Required before first docker-run                           |
+| `make docker-run`           | Start full stack with Docker Compose | All services in containers                                 |
+| `make docker-stop`          | Stop all Docker services             | Preserves data volumes                                     |
+| `make docker-clean`         | Stop and remove all Docker resources | **WARNING:** Removes all data                              |
+| `make docker-logs`          | Show Docker logs (all services)      | Real-time log streaming                                    |
+| `make docker-observability` | Start with observability stack       | Includes Grafana (3333), Prometheus (9090), Jaeger (16686) |
+| `make down`                 | Alias for docker-stop                | -                                                          |
 
 ## 📊 Monitoring & Observability Commands
 
-| Command | Description | Access URL |
-|---------|-------------|------------|
-| `make docker-observability` | Start Grafana, Prometheus, Jaeger | Grafana: http://localhost:3333 |
-| `make logs-bookstore` | View BookStore API logs | - |
-| `make logs-performance` | View Performance Service logs | - |
-| `make status` | Show complete project status | Service health, Docker containers |
-| `make health-check` | Check health of all services | Quick availability check |
-| `make health-wait` | Wait for all services to be healthy | Use after starting services |
-| `make swagger` | Open Swagger UI | http://localhost:7002/swagger |
-| `make aspire-dashboard` | Open Aspire Dashboard | http://localhost:15889 |
+| Command                     | Description                         | Access URL                        |
+| --------------------------- | ----------------------------------- | --------------------------------- |
+| `make docker-observability` | Start Grafana, Prometheus, Jaeger   | Grafana: http://localhost:3333    |
+| `make logs-bookstore`       | View BookStore API logs             | -                                 |
+| `make logs-performance`     | View Performance Service logs       | -                                 |
+| `make status`               | Show complete project status        | Service health, Docker containers |
+| `make health-check`         | Check health of all services        | Quick availability check          |
+| `make health-wait`          | Wait for all services to be healthy | Use after starting services       |
+| `make swagger`              | Open Swagger UI                     | http://localhost:7002/swagger     |
+| `make aspire-dashboard`     | Open Aspire Dashboard               | http://localhost:15889            |
 
 ### Observability Stack URLs
+
 - **Grafana Dashboard**: http://localhost:3333 (admin/admin123)
 - **Prometheus**: http://localhost:9090
 - **Jaeger Tracing**: http://localhost:16686
@@ -67,49 +68,50 @@ make perf-smoke        # Run quick performance test
 
 ### Basic Tests
 
-| Command | Description | Duration | Virtual Users |
-|---------|-------------|----------|---------------|
-| `make perf-smoke` | Quick smoke test | 2 minutes | 1 user |
-| `make perf-load` | Realistic load test | 10 minutes | 5-10 users |
-| `make perf-stress` | High-load stress test | 15 minutes | Up to 30 users |
-| `make perf-spike` | Burst traffic test | Variable | Burst to 50 users |
-| `make perf-comprehensive` | Run all tests sequentially | ~30 minutes | All scenarios |
+| Command                   | Description                | Duration    | Virtual Users     |
+| ------------------------- | -------------------------- | ----------- | ----------------- |
+| `make perf-smoke`         | Quick smoke test           | 2 minutes   | 1 user            |
+| `make perf-load`          | Realistic load test        | 10 minutes  | 5-10 users        |
+| `make perf-stress`        | High-load stress test      | 15 minutes  | Up to 30 users    |
+| `make perf-spike`         | Burst traffic test         | Variable    | Burst to 50 users |
+| `make perf-comprehensive` | Run all tests sequentially | ~30 minutes | All scenarios     |
 
 ### Advanced Testing
 
-| Command | Description | Notes |
-|---------|-------------|-------|
-| `make docker-perf` | Run performance test via Docker | Isolated container execution |
-| `make perf-start-test` | Start test via Performance API | RESTful API trigger |
-| `make perf-list-tests` | List running performance tests | Active test monitoring |
-| `make perf-results` | View latest performance test results | Check test outcomes |
+| Command                | Description                          | Notes                        |
+| ---------------------- | ------------------------------------ | ---------------------------- |
+| `make docker-perf`     | Run performance test via Docker      | Isolated container execution |
+| `make perf-start-test` | Start test via Performance API       | RESTful API trigger          |
+| `make perf-list-tests` | List running performance tests       | Active test monitoring       |
+| `make perf-results`    | View latest performance test results | Check test outcomes          |
 
 ## 📝 Data Management Commands
 
-| Command | Description | Impact |
-|---------|-------------|--------|
-| `make seed-data` | Populate database with test data | Adds sample books/authors |
-| `make reset-db` | Reset MongoDB database | **WARNING:** Deletes all data |
+| Command          | Description                      | Impact                        |
+| ---------------- | -------------------------------- | ----------------------------- |
+| `make seed-data` | Populate database with test data | Adds sample books/authors     |
+| `make reset-db`  | Reset MongoDB database           | **WARNING:** Deletes all data |
 
 ## 🔧 Development Utilities
 
-| Command | Description | Use Case |
-|---------|-------------|----------|
-| `make test` | Run unit tests (if any) | Continuous integration |
-| `make format` | Format code | Code style consistency |
-| `make restart` | Restart all services | Quick refresh |
-| `make reset` | Complete reset and setup | **WARNING:** Full cleanup |
+| Command        | Description              | Use Case                  |
+| -------------- | ------------------------ | ------------------------- |
+| `make test`    | Run unit tests (if any)  | Continuous integration    |
+| `make format`  | Format code              | Code style consistency    |
+| `make restart` | Restart all services     | Quick refresh             |
+| `make reset`   | Complete reset and setup | **WARNING:** Full cleanup |
 
 ## 🔄 CI/CD Commands
 
-| Command | Description | Pipeline Stage |
-|---------|-------------|---------------|
-| `make ci-build` | CI build pipeline (restore, build, test) | Build stage |
-| `make ci-test` | CI test pipeline (docker, health, smoke, stop) | Test stage |
+| Command         | Description                                    | Pipeline Stage |
+| --------------- | ---------------------------------------------- | -------------- |
+| `make ci-build` | CI build pipeline (restore, build, test)       | Build stage    |
+| `make ci-test`  | CI test pipeline (docker, health, smoke, stop) | Test stage     |
 
 ## 📋 Common Workflows
 
 ### First Time Setup
+
 ```bash
 make dev-setup
 make build
@@ -118,6 +120,7 @@ make seed-data
 ```
 
 ### Run Performance Test with Monitoring
+
 ```bash
 make docker-observability   # Start monitoring stack
 make run-aspire             # Start services
@@ -128,6 +131,7 @@ make perf-load              # Run load test
 ```
 
 ### Quick Development Cycle
+
 ```bash
 make up                     # Start services
 make watch                  # Auto-reload on changes
@@ -135,6 +139,7 @@ make logs-bookstore         # Monitor logs
 ```
 
 ### Full Stack Testing
+
 ```bash
 make docker-run             # Start everything in Docker
 make health-wait            # Ensure services ready
@@ -144,6 +149,7 @@ make docker-clean          # Cleanup
 ```
 
 ### Reset Everything
+
 ```bash
 make reset                  # Complete cleanup and fresh setup
 ```
@@ -157,13 +163,13 @@ make reset                  # Complete cleanup and fresh setup
 
 ## 🆘 Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Port conflicts | Run `make docker-clean` and check for other services |
-| Build failures | Try `make clean` then `make build` |
-| Docker issues | Ensure Docker Desktop is running |
-| K6 not found | Run `make install-k6` |
-| Services not responding | Use `make health-wait` after starting |
+| Issue                   | Solution                                             |
+| ----------------------- | ---------------------------------------------------- |
+| Port conflicts          | Run `make docker-clean` and check for other services |
+| Build failures          | Try `make clean` then `make build`                   |
+| Docker issues           | Ensure Docker Desktop is running                     |
+| K6 not found            | Run `make install-k6`                                |
+| Services not responding | Use `make health-wait` after starting                |
 
 ## 💡 Pro Tips
 

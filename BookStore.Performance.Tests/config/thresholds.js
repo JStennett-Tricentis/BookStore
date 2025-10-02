@@ -24,7 +24,7 @@ export function getThresholds(scenario) {
             ...baseThresholds,
             http_req_duration: ["p(95)<8000", "p(99)<15000"],
             http_req_failed: ["rate<0.10"], // Allow even more during spikes
-        }
+        },
     };
 
     return scenarioThresholds[scenario] || baseThresholds;

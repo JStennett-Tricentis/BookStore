@@ -293,17 +293,17 @@ Consider adding:
 
 1. **Custom Token Metrics**: Export actual token counts from ClaudeService
 
-   ```csharp
-   _meter.CreateCounter<long>("claude.tokens.input").Add(inputTokens);
-   _meter.CreateCounter<long>("claude.tokens.output").Add(outputTokens);
-   ```
+    ```csharp
+    _meter.CreateCounter<long>("claude.tokens.input").Add(inputTokens);
+    _meter.CreateCounter<long>("claude.tokens.output").Add(outputTokens);
+    ```
 
 2. **Cost Tracking**: Calculate and export costs in real-time
 
-   ```csharp
-   var cost = (inputTokens * 0.000003) + (outputTokens * 0.000015);
-   _meter.CreateHistogram<double>("claude.cost.dollars").Record(cost);
-   ```
+    ```csharp
+    var cost = (inputTokens * 0.000003) + (outputTokens * 0.000015);
+    _meter.CreateHistogram<double>("claude.cost.dollars").Record(cost);
+    ```
 
 3. **Quality Metrics**: Track summary length, stop reasons, model versions
 

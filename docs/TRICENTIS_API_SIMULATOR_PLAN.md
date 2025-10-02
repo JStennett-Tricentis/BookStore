@@ -7,12 +7,14 @@ Integrate the Tricentis API Simulator (used in hub-services-latest) into BookSto
 ## Cost Savings Analysis
 
 ### Current State (BookStore POC)
+
 - **Ollama**: $0 (free, local)
 - **Claude**: $3/M input, $15/M output tokens (~$0.99 per 540 requests in testing)
 - **OpenAI**: $2.50-10/M tokens depending on model
 - **Bedrock**: Similar to Claude pricing
 
 ### With API Simulator
+
 - **All Providers**: $0 (mocked responses)
 - **Performance Testing**: Unlimited requests without cost
 - **CI/CD**: No API keys needed in pipelines
@@ -25,13 +27,14 @@ Integrate the Tricentis API Simulator (used in hub-services-latest) into BookSto
 ### What is the Tricentis API Simulator?
 
 From hub-services-latest analysis:
+
 - Docker container: `ghcr.io/tricentis-product-integration/tpi-iris-simulator-ci:0.2`
 - Mocks external API responses (AI providers, external services)
 - Configurable via YAML simulations
 - Three endpoints:
-  - Internal API: Port 17070
-  - UI Dashboard: Port 28880
-  - Service API: Port 5020 (AI Hub API mock)
+    - Internal API: Port 17070
+    - UI Dashboard: Port 28880
+    - Service API: Port 5020 (AI Hub API mock)
 
 ### Integration Points in BookStore POC
 
@@ -70,6 +73,7 @@ From hub-services-latest analysis:
 ### Phase 1: Infrastructure Setup (1-2 hours)
 
 #### 1.1 Add Simulator Service Constants
+
 **File**: `BookStore.Aspire.AppHost/ServiceConstants.cs` (new)
 
 ```csharp
@@ -92,33 +96,35 @@ public static class ServiceConstants
 ```
 
 #### 1.2 Create Simulator Configuration
+
 **File**: `BookStore.Aspire.AppHost/appsettings.simulator.yml` (new)
 
 ```yaml
 Simulator:
-  Workspace: /workspace/simulations
-  Identifier: "bookstore-simulator"
-  FormatDate: "yyyy-MM-dd"
-  FormatTime: "yyyy-MM-ddTHH:mm:ss.fffZ"
+    Workspace: /workspace/simulations
+    Identifier: "bookstore-simulator"
+    FormatDate: "yyyy-MM-dd"
+    FormatTime: "yyyy-MM-ddTHH:mm:ss.fffZ"
 
-  Variables:
-    Simulator__Variables__Model_Name: "claude-3-5-sonnet-20241022"
-    Simulator__Variables__Book_Title: "Sample Book"
-    Simulator__Variables__Author_Name: "Sample Author"
+    Variables:
+        Simulator__Variables__Model_Name: "claude-3-5-sonnet-20241022"
+        Simulator__Variables__Book_Title: "Sample Book"
+        Simulator__Variables__Author_Name: "Sample Author"
 
-  IdleTimeout: 60
-  Environment: dev
+    IdleTimeout: 60
+    Environment: dev
 
 Logging:
-  LogLevel:
-    Default: Information
-  File:
-    FileName: "Simulator_{date}.log"
     LogLevel:
-      Default: Warning
+        Default: Information
+    File:
+        FileName: "Simulator_{date}.log"
+        LogLevel:
+            Default: Warning
 ```
 
 #### 1.3 Create Aspire Extension
+
 **File**: `BookStore.Aspire.AppHost/Extensions/ApiSimulatorExtensions.cs` (new)
 
 ```csharp
@@ -169,6 +175,7 @@ public static class ApiSimulatorExtensions
 ```
 
 #### 1.4 Update AppHost Program.cs
+
 **File**: `BookStore.Aspire.AppHost/Program.cs`
 
 ```csharp
@@ -192,6 +199,7 @@ builder.Build().Run();
 ### Phase 2: Service Abstraction (2-3 hours)
 
 #### 2.1 Create LLM Provider Interface
+
 **File**: `BookStore.Service/Services/ILlmProvider.cs` (new)
 
 ```csharp
@@ -224,6 +232,7 @@ public class LlmOptions
 ```
 
 #### 2.2 Create Simulator LLM Service
+
 **File**: `BookStore.Service/Services/SimulatorLlmService.cs` (new)
 
 ```csharp
@@ -342,6 +351,7 @@ public class SimulatorLlmService : IClaudeService
 ```
 
 #### 2.3 Update Service Registration
+
 **File**: `BookStore.Service/Program.cs`
 
 ```csharp
@@ -379,6 +389,7 @@ else
 ### Phase 3: Simulation Definitions (1-2 hours)
 
 #### 3.1 Create Simulations Directory Structure
+
 ```
 BookStore.Aspire.AppHost/
 ├── simulations/
@@ -393,104 +404,109 @@ BookStore.Aspire.AppHost/
 ```
 
 #### 3.2 Sample Simulation: Claude Summary Generation
+
 **File**: `simulations/claude/generate-summary.json`
 
 ```json
 {
-  "name": "Claude Generate Summary",
-  "endpoint": "/api/llm/generate",
-  "method": "POST",
-  "responses": [
-    {
-      "condition": "$.prompt contains 'Gatsby'",
-      "response": {
-        "status": 200,
-        "body": {
-          "content": "The Great Gatsby is F. Scott Fitzgerald's masterpiece about the American Dream in the 1920s. The story follows Jay Gatsby's obsessive pursuit of his lost love Daisy Buchanan through the eyes of narrator Nick Carraway. Set in the Jazz Age, it explores themes of wealth, love, and the corruption of idealism.",
-          "model": "claude-3-5-sonnet-20241022",
-          "usage": {
-            "input_tokens": 45,
-            "output_tokens": 67
-          }
+    "name": "Claude Generate Summary",
+    "endpoint": "/api/llm/generate",
+    "method": "POST",
+    "responses": [
+        {
+            "condition": "$.prompt contains 'Gatsby'",
+            "response": {
+                "status": 200,
+                "body": {
+                    "content": "The Great Gatsby is F. Scott Fitzgerald's masterpiece about the American Dream in the 1920s. The story follows Jay Gatsby's obsessive pursuit of his lost love Daisy Buchanan through the eyes of narrator Nick Carraway. Set in the Jazz Age, it explores themes of wealth, love, and the corruption of idealism.",
+                    "model": "claude-3-5-sonnet-20241022",
+                    "usage": {
+                        "input_tokens": 45,
+                        "output_tokens": 67
+                    }
+                },
+                "headers": {
+                    "Content-Type": "application/json"
+                }
+            }
         },
-        "headers": {
-          "Content-Type": "application/json"
+        {
+            "condition": "$.prompt contains 'error'",
+            "response": {
+                "status": 500,
+                "body": {
+                    "error": "Internal server error"
+                }
+            }
+        },
+        {
+            "default": true,
+            "response": {
+                "status": 200,
+                "body": {
+                    "content": "This is a compelling book that explores important themes through well-developed characters. The author's writing style is engaging and thought-provoking. Readers will find this work both entertaining and intellectually stimulating.",
+                    "model": "claude-3-5-sonnet-20241022",
+                    "usage": {
+                        "input_tokens": 50,
+                        "output_tokens": 45
+                    }
+                }
+            }
         }
-      }
-    },
-    {
-      "condition": "$.prompt contains 'error'",
-      "response": {
-        "status": 500,
-        "body": {
-          "error": "Internal server error"
-        }
-      }
-    },
-    {
-      "default": true,
-      "response": {
-        "status": 200,
-        "body": {
-          "content": "This is a compelling book that explores important themes through well-developed characters. The author's writing style is engaging and thought-provoking. Readers will find this work both entertaining and intellectually stimulating.",
-          "model": "claude-3-5-sonnet-20241022",
-          "usage": {
-            "input_tokens": 50,
-            "output_tokens": 45
-          }
-        }
-      }
-    }
-  ]
+    ]
 }
 ```
 
 ### Phase 4: Configuration Updates (30 minutes)
 
 #### 4.1 Update BookStore.Service appsettings.json
+
 ```json
 {
-  "LLM": {
-    "Provider": "Claude",
-    "UseSimulator": false,
-    "SimulatorBaseUrl": "http://localhost:5020",
-    "Providers": {
-      "Simulator": {
-        "Enabled": true,
-        "BaseUrl": "http://localhost:5020"
-      }
+    "LLM": {
+        "Provider": "Claude",
+        "UseSimulator": false,
+        "SimulatorBaseUrl": "http://localhost:5020",
+        "Providers": {
+            "Simulator": {
+                "Enabled": true,
+                "BaseUrl": "http://localhost:5020"
+            }
+        }
     }
-  }
 }
 ```
 
 #### 4.2 Update appsettings.example.json
+
 ```json
 {
-  "LLM": {
-    "Provider": "Ollama",
-    "UseSimulator": false,
-    "SimulatorBaseUrl": "http://localhost:5020",
-    "Providers": {
-      "Simulator": {
-        "Enabled": true,
-        "BaseUrl": "http://localhost:5020"
-      }
+    "LLM": {
+        "Provider": "Ollama",
+        "UseSimulator": false,
+        "SimulatorBaseUrl": "http://localhost:5020",
+        "Providers": {
+            "Simulator": {
+                "Enabled": true,
+                "BaseUrl": "http://localhost:5020"
+            }
+        }
     }
-  }
 }
 ```
 
 #### 4.3 Update AppHost appsettings.json
+
 ```json
 {
-  "ApiSimulatorEnabled": false
+    "ApiSimulatorEnabled": false
 }
 ```
 
 ### Phase 5: Testing Integration (2-3 hours)
 
 #### 5.1 Create Simulator Test Makefile Targets
+
 **File**: `Makefile` (additions)
 
 ```makefile
@@ -523,29 +539,32 @@ perf-simulator: ## Run performance tests with simulator ($0 cost)
 ```
 
 #### 5.2 Update K6 Tests for Simulator
+
 **File**: `BookStore.Performance.Tests/config/simulator.js` (new)
 
 ```javascript
 export const simulatorConfig = {
-  useSimulator: __ENV.USE_SIMULATOR === 'true',
-  simulatorBaseUrl: __ENV.SIMULATOR_BASE_URL || 'http://localhost:5020',
+    useSimulator: __ENV.USE_SIMULATOR === "true",
+    simulatorBaseUrl: __ENV.SIMULATOR_BASE_URL || "http://localhost:5020",
 };
 
 export function isSimulatorEnabled() {
-  return simulatorConfig.useSimulator;
+    return simulatorConfig.useSimulator;
 }
 
 // When using simulator, we can increase load significantly since it's free
 export function getScaledVUs(baseVUs) {
-  return isSimulatorEnabled() ? baseVUs * 10 : baseVUs;
+    return isSimulatorEnabled() ? baseVUs * 10 : baseVUs;
 }
 ```
 
 ### Phase 6: Documentation (1 hour)
 
 #### 6.1 Update SETUP.md
+
 Add section:
-```markdown
+
+````markdown
 ## API Simulator Integration (Zero-Cost Testing)
 
 The API Simulator allows unlimited performance testing without API costs.
@@ -564,6 +583,7 @@ export LLM__UseSimulator=true
 # Start with simulator
 make run-aspire-simulator
 ```
+````
 
 ### Access Simulator
 
@@ -573,15 +593,16 @@ make run-aspire-simulator
 
 ### Cost Comparison
 
-| Provider | Real API | Simulator |
-|----------|----------|-----------|
-| Claude   | $0.99/540 req | $0.00 |
-| OpenAI   | $0.50-2.00/1K | $0.00 |
-| Ollama   | $0.00 | $0.00 |
+| Provider | Real API      | Simulator |
+| -------- | ------------- | --------- |
+| Claude   | $0.99/540 req | $0.00     |
+| OpenAI   | $0.50-2.00/1K | $0.00     |
+| Ollama   | $0.00         | $0.00     |
 
 ### When to Use Simulator
 
 ✅ **Use Simulator For:**
+
 - CI/CD pipeline tests
 - Load testing (unlimited requests)
 - Development without API keys
@@ -589,11 +610,13 @@ make run-aspire-simulator
 - Cost-free experimentation
 
 ⚠️ **Use Real APIs For:**
+
 - Production deployments
 - Accuracy validation
 - Real-world performance benchmarks
 - Final integration testing
-```
+
+````
 
 #### 6.2 Create Simulator Guide
 **File**: `SIMULATOR.md` (new)
@@ -614,22 +637,24 @@ The Tricentis API Simulator enables zero-cost LLM performance testing by mocking
        "UseSimulator": true
      }
    }
-   ```
+````
 
 2. Start with simulator:
-   ```bash
-   make run-aspire-simulator
-   ```
+
+    ```bash
+    make run-aspire-simulator
+    ```
 
 3. Verify simulator:
-   ```bash
-   make test-simulator
-   ```
+
+    ```bash
+    make test-simulator
+    ```
 
 4. Run unlimited tests:
-   ```bash
-   make perf-simulator
-   ```
+    ```bash
+    make perf-simulator
+    ```
 
 ## Creating Simulations
 
@@ -638,7 +663,8 @@ See `simulations/` directory for examples.
 ## Monitoring
 
 View simulator activity at: http://localhost:28880
-```
+
+````
 
 ### Phase 7: CI/CD Integration (1 hour)
 
@@ -689,16 +715,18 @@ jobs:
         with:
           name: performance-results
           path: BookStore.Performance.Tests/results/
-```
+````
 
 ## Implementation Checklist
 
 ### Prerequisites
+
 - [ ] Access to Tricentis API Simulator Docker image
 - [ ] Understanding of simulator configuration format
 - [ ] Simulation JSON definitions ready
 
 ### Phase 1: Infrastructure (Day 1)
+
 - [ ] Create `ServiceConstants.cs`
 - [ ] Create `ApiSimulatorExtensions.cs`
 - [ ] Create `appsettings.simulator.yml`
@@ -706,6 +734,7 @@ jobs:
 - [ ] Test simulator container starts
 
 ### Phase 2: Service Layer (Day 1-2)
+
 - [ ] Create `ILlmProvider` interface
 - [ ] Implement `SimulatorLlmService`
 - [ ] Update service registration logic
@@ -713,6 +742,7 @@ jobs:
 - [ ] Test provider switching
 
 ### Phase 3: Simulations (Day 2)
+
 - [ ] Create simulations directory structure
 - [ ] Write Claude simulation JSON
 - [ ] Write OpenAI simulation JSON
@@ -720,12 +750,14 @@ jobs:
 - [ ] Test simulation responses
 
 ### Phase 4: Configuration (Day 2)
+
 - [ ] Update all appsettings files
 - [ ] Update example configurations
 - [ ] Add environment variable support
 - [ ] Test configuration switching
 
 ### Phase 5: Testing (Day 3)
+
 - [ ] Add Makefile targets
 - [ ] Update K6 test configurations
 - [ ] Create simulator-specific tests
@@ -733,6 +765,7 @@ jobs:
 - [ ] Validate metrics collection
 
 ### Phase 6: Documentation (Day 3)
+
 - [ ] Update SETUP.md
 - [ ] Create SIMULATOR.md
 - [ ] Update README.md
@@ -740,6 +773,7 @@ jobs:
 - [ ] Create cost comparison table
 
 ### Phase 7: CI/CD (Day 3)
+
 - [ ] Update GitHub Actions workflows
 - [ ] Add simulator toggle option
 - [ ] Test CI/CD pipeline
@@ -748,6 +782,7 @@ jobs:
 ## Success Metrics
 
 ### Technical
+
 - ✅ Simulator starts successfully in Aspire
 - ✅ All three simulator ports accessible
 - ✅ Service can switch between real/simulator
@@ -755,6 +790,7 @@ jobs:
 - ✅ K6 tests run with simulator at 10x scale
 
 ### Business
+
 - ✅ Zero API costs during CI/CD
 - ✅ Unlimited performance testing capacity
 - ✅ Faster development iteration (no rate limits)
@@ -762,12 +798,12 @@ jobs:
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-|------|------------|
+| Risk                                      | Mitigation                                                 |
+| ----------------------------------------- | ---------------------------------------------------------- |
 | Simulator responses don't match real APIs | Create comprehensive simulation library from real API logs |
-| Performance characteristics differ | Document differences, use real APIs for final validation |
-| Team forgets to disable simulator in prod | Add startup checks, environment variable validation |
-| Simulations become outdated | Regularly update from production API traces |
+| Performance characteristics differ        | Document differences, use real APIs for final validation   |
+| Team forgets to disable simulator in prod | Add startup checks, environment variable validation        |
+| Simulations become outdated               | Regularly update from production API traces                |
 
 ## Timeline
 

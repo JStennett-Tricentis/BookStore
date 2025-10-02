@@ -90,7 +90,7 @@ export function setup() {
 
     // Verify service is accessible
     const healthCheck = http.get(`${environment.serviceUrl}/health`, {
-        timeout: environment.timeout
+        timeout: environment.timeout,
     });
     if (healthCheck.status !== 200) {
         throw new Error(`BookStore API health check failed: ${healthCheck.status}`);
@@ -99,7 +99,7 @@ export function setup() {
     // Seed data if needed
     console.log("Ensuring test data exists...");
     const seedResponse = http.post(`${environment.serviceUrl}/seed-data`, null, {
-        timeout: "30s"
+        timeout: "30s",
     });
     if (seedResponse.status !== 200) {
         console.warn("Failed to seed data, continuing with existing data");
@@ -110,7 +110,7 @@ export function setup() {
     let bookIds = [];
     if (booksResponse.status === 200) {
         const books = JSON.parse(booksResponse.body);
-        bookIds = books.map(book => book.id);
+        bookIds = books.map((book) => book.id);
         console.log(`Found ${bookIds.length} books for testing`);
     }
 
@@ -118,7 +118,7 @@ export function setup() {
     return {
         startTime: new Date(),
         bookIds: bookIds,
-        baseUrl: environment.serviceUrl
+        baseUrl: environment.serviceUrl,
     };
 }
 
@@ -137,7 +137,7 @@ export default function (data) {
     // Select a random book
     const bookId = randomItem(bookIds);
 
-    group("AI Summary Generation", function() {
+    group("AI Summary Generation", function () {
         generateAiSummary(baseUrl, bookId);
     });
 
@@ -154,17 +154,13 @@ function generateAiSummary(baseUrl, bookId) {
         tags: {
             name: "generate_ai_summary",
             operation_type: "llm",
-            endpoint: "generate-summary"
-        }
+            endpoint: "generate-summary",
+        },
     };
 
     const startTime = new Date().getTime();
 
-    const response = http.post(
-        `${baseUrl}/api/v1/Books/${bookId}/generate-summary`,
-        null,
-        params
-    );
+    const response = http.post(`${baseUrl}/api/v1/Books/${bookId}/generate-summary`, null, params);
 
     const endTime = new Date().getTime();
     const responseTimeMs = endTime - startTime;
@@ -212,7 +208,9 @@ function generateAiSummary(baseUrl, bookId) {
         if (Math.random() < 0.1) {
             try {
                 const json = JSON.parse(response.body);
-                console.log(`Sample summary (${json.title}): ${json.aiGeneratedSummary.substring(0, 100)}...`);
+                console.log(
+                    `Sample summary (${json.title}): ${json.aiGeneratedSummary.substring(0, 100)}...`
+                );
             } catch (e) {
                 // Ignore parsing errors
             }
@@ -228,7 +226,9 @@ function generateAiSummary(baseUrl, bookId) {
 
     // Log errors
     if (!success) {
-        console.error(`LLM request failed: ${response.status} - ${response.body?.substring(0, 200)}`);
+        console.error(
+            `LLM request failed: ${response.status} - ${response.body?.substring(0, 200)}`
+        );
     }
 
     return success;

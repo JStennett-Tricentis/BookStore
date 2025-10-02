@@ -51,7 +51,7 @@ make grafana-dashboards  # Open all 8 specialized dashboards
 
 - **OpenTelemetry** - Traces, metrics, logs
 - **TraceLoop** - LLM-specific observability
-- **Semantic Conventions** - Standard gen_ai.*, llm.* tags
+- **Semantic Conventions** - Standard gen*ai.*, llm.\_ tags
 - **Real-time Cost Tracking** - Token usage & API costs
 
 ## LLM Support (Multi-Provider)
@@ -59,19 +59,19 @@ make grafana-dashboards  # Open all 8 specialized dashboards
 ### Providers
 
 1. **Ollama** (default) - Free unlimited local models
-   - llama3.2, mistral, phi3, etc.
-   - Zero cost for performance testing
-   - Full OpenTelemetry instrumentation
+    - llama3.2, mistral, phi3, etc.
+    - Zero cost for performance testing
+    - Full OpenTelemetry instrumentation
 
 2. **Claude** - Anthropic direct API
-   - claude-3-5-sonnet-20241022
-   - $3/M input, $15/M output tokens
+    - claude-3-5-sonnet-20241022
+    - $3/M input, $15/M output tokens
 
 3. **OpenAI** - GPT models (SDK ready)
-   - gpt-4o, gpt-4.1-mini
+    - gpt-4o, gpt-4.1-mini
 
 4. **Bedrock** - AWS-hosted models (SDK ready)
-   - us.anthropic.claude-sonnet-4-*
+    - us.anthropic.claude-sonnet-4-\*
 
 ### Switch Provider
 
@@ -79,9 +79,9 @@ Edit `appsettings.json`:
 
 ```json
 {
-  "LLM": {
-    "Provider": "Ollama"  // or "Claude", "OpenAI", "Bedrock"
-  }
+    "LLM": {
+        "Provider": "Ollama" // or "Claude", "OpenAI", "Bedrock"
+    }
 }
 ```
 
@@ -274,6 +274,6 @@ lsof -Pi :11434  # Check Ollama port
 
 ## Latest Mega Dashboard
 
-*All monitoring widgets in one comprehensive view - from performance metrics to error tracking to LLM costs.*
+_All monitoring widgets in one comprehensive view - from performance metrics to error tracking to LLM costs._
 
 ![MEGA Dashboard - All 91 Widgets](src/images/latest_mega_dashboard.jpg)

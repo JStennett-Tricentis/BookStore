@@ -22,19 +22,22 @@ Import it into Postman to access pre-configured requests.
 ### New Endpoints
 
 #### 1. Get Available Providers
+
 ```
 GET http://localhost:7002/api/v1/Books/llm-providers
 ```
 
 **Response:**
+
 ```json
 {
-  "availableProviders": ["claude", "openai", "bedrock", "ollama"],
-  "defaultProvider": "ollama"
+    "availableProviders": ["claude", "openai", "bedrock", "ollama"],
+    "defaultProvider": "ollama"
 }
 ```
 
 #### 2. Generate Summary (Default Provider)
+
 ```
 POST http://localhost:7002/api/v1/Books/{bookId}/generate-summary
 ```
@@ -42,6 +45,7 @@ POST http://localhost:7002/api/v1/Books/{bookId}/generate-summary
 Uses the default provider configured in `appsettings.json` (Ollama).
 
 #### 3. Generate Summary (Specific Provider)
+
 ```
 POST http://localhost:7002/api/v1/Books/{bookId}/generate-summary?provider=ollama
 POST http://localhost:7002/api/v1/Books/{bookId}/generate-summary?provider=claude
@@ -50,13 +54,14 @@ POST http://localhost:7002/api/v1/Books/{bookId}/generate-summary?provider=bedro
 ```
 
 **Response:**
+
 ```json
 {
-  "bookId": "670c27a74f0e6b7a2e1a3456",
-  "title": "The Great Gatsby",
-  "author": "F. Scott Fitzgerald",
-  "provider": "ollama",
-  "aiGeneratedSummary": "A captivating tale of wealth..."
+    "bookId": "670c27a74f0e6b7a2e1a3456",
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "provider": "ollama",
+    "aiGeneratedSummary": "A captivating tale of wealth..."
 }
 ```
 
@@ -92,24 +97,24 @@ Each request includes automated tests:
 
 ```json
 {
-  "LLM": {
-    "Provider": "Ollama"  // Default provider
-  },
-  "Claude": {
-    "ApiKey": ""  // Add your API key here
-  },
-  "OpenAI": {
-    "ApiKey": "",
-    "Model": "gpt-4o-mini"
-  },
-  "Bedrock": {
-    "Region": "us-east-1",
-    "Model": "anthropic.claude-3-5-sonnet-20241022-v2:0"
-  },
-  "Ollama": {
-    "BaseUrl": "http://localhost:11434",
-    "Model": "llama3.2:latest"
-  }
+    "LLM": {
+        "Provider": "Ollama" // Default provider
+    },
+    "Claude": {
+        "ApiKey": "" // Add your API key here
+    },
+    "OpenAI": {
+        "ApiKey": "",
+        "Model": "gpt-4o-mini"
+    },
+    "Bedrock": {
+        "Region": "us-east-1",
+        "Model": "anthropic.claude-3-5-sonnet-20241022-v2:0"
+    },
+    "Ollama": {
+        "BaseUrl": "http://localhost:11434",
+        "Model": "llama3.2:latest"
+    }
 }
 ```
 
@@ -135,13 +140,14 @@ Each request includes automated tests:
 3. Click **Send**
 
 Expected result:
+
 ```json
 {
-  "bookId": "...",
-  "title": "...",
-  "author": "...",
-  "provider": "ollama",
-  "aiGeneratedSummary": "..."
+    "bookId": "...",
+    "title": "...",
+    "author": "...",
+    "provider": "ollama",
+    "aiGeneratedSummary": "..."
 }
 ```
 
@@ -154,6 +160,7 @@ GET http://localhost:7002/metrics
 ```
 
 Look for:
+
 ```
 # Ollama token counts
 ollama_tokens_input_tokens{model="llama3.2"} 45
@@ -171,28 +178,32 @@ ollama_cost_usd_USD{model="llama3.2"} 0
 If you try to use a provider without configuration:
 
 **Request:**
+
 ```
 POST /api/v1/Books/{id}/generate-summary?provider=claude
 ```
 
 **Response (503):**
+
 ```json
 {
-  "message": "LLM provider not configured: Claude API key not configured"
+    "message": "LLM provider not configured: Claude API key not configured"
 }
 ```
 
 ### Invalid Provider
 
 **Request:**
+
 ```
 POST /api/v1/Books/{id}/generate-summary?provider=invalid
 ```
 
 **Response (400):**
+
 ```json
 {
-  "message": "Unknown provider: invalid. Available providers: claude, openai, bedrock, ollama"
+    "message": "Unknown provider: invalid. Available providers: claude, openai, bedrock, ollama"
 }
 ```
 
@@ -220,11 +231,13 @@ k6 run tests/books.js --env TEST_TYPE=load
 ### Grafana Dashboard
 
 View real-time metrics:
+
 ```
 http://localhost:3000
 ```
 
 **LLM Metrics Include:**
+
 - Token usage (input/output/total)
 - Cost per request (USD)
 - Latency (milliseconds)
@@ -233,11 +246,13 @@ http://localhost:3000
 ### Aspire Dashboard
 
 View traces and logs:
+
 ```
 http://localhost:15888
 ```
 
 **LLM Traces Include:**
+
 - Request/response content
 - Token counts
 - Cost calculation
@@ -250,6 +265,7 @@ http://localhost:15888
 **Error:** Connection refused to http://localhost:11434
 
 **Solution:**
+
 ```bash
 ollama serve
 ```
@@ -259,6 +275,7 @@ ollama serve
 **Error:** Model "llama3.2" not found
 
 **Solution:**
+
 ```bash
 ollama pull llama3.2
 ```
@@ -268,14 +285,15 @@ ollama pull llama3.2
 **Error:** Provider not configured
 
 **Solution:** Add API keys to `appsettings.json`:
+
 ```json
 {
-  "Claude": {
-    "ApiKey": "sk-ant-..."
-  },
-  "OpenAI": {
-    "ApiKey": "sk-..."
-  }
+    "Claude": {
+        "ApiKey": "sk-ant-..."
+    },
+    "OpenAI": {
+        "ApiKey": "sk-..."
+    }
 }
 ```
 
@@ -284,6 +302,7 @@ ollama pull llama3.2
 **Error:** AWS credentials not found
 
 **Solution:** Configure AWS CLI:
+
 ```bash
 aws configure
 ```

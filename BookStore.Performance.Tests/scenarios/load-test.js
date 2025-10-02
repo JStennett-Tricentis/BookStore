@@ -29,11 +29,11 @@ export const options = {
             executor: "ramping-vus",
             startVUs: 0,
             stages: [
-                { duration: "2m", target: 5 },   // Ramp up to 5 users over 2 minutes
-                { duration: "5m", target: 10 },  // Stay at 10 users for 5 minutes
-                { duration: "3m", target: 15 },  // Ramp up to 15 users
-                { duration: "5m", target: 15 },  // Stay at 15 users for 5 minutes
-                { duration: "2m", target: 0 },   // Ramp down
+                { duration: "2m", target: 5 }, // Ramp up to 5 users over 2 minutes
+                { duration: "5m", target: 10 }, // Stay at 10 users for 5 minutes
+                { duration: "3m", target: 15 }, // Ramp up to 15 users
+                { duration: "5m", target: 15 }, // Stay at 15 users for 5 minutes
+                { duration: "2m", target: 0 }, // Ramp down
             ],
             gracefulRampDown: "30s",
         },
@@ -43,17 +43,17 @@ export const options = {
             executor: "ramping-vus",
             startVUs: 0,
             stages: [
-                { duration: "5m", target: 5 },   // Normal load
+                { duration: "5m", target: 5 }, // Normal load
                 { duration: "30s", target: 25 }, // Spike
-                { duration: "2m", target: 25 },  // Hold spike
-                { duration: "30s", target: 5 },  // Return to normal
-                { duration: "3m", target: 5 },   // Stay normal
-                { duration: "30s", target: 0 },  // Finish
+                { duration: "2m", target: 25 }, // Hold spike
+                { duration: "30s", target: 5 }, // Return to normal
+                { duration: "3m", target: 5 }, // Stay normal
+                { duration: "30s", target: 0 }, // Finish
             ],
             gracefulRampDown: "30s",
             // Start this scenario after 8 minutes
             startTime: "8m",
-        }
+        },
     },
     thresholds: {
         ...getThresholds(scenario),
@@ -85,18 +85,18 @@ export function setup() {
     console.log("✓ Load test setup completed");
     return {
         startTime: new Date(),
-        baseUrl: environment.serviceUrl
+        baseUrl: environment.serviceUrl,
     };
 }
 
-export default function(data) {
+export default function (data) {
     activeUsers.add(1);
 
     const userProfile = generateUserProfile(__VU);
     const baseUrl = data.baseUrl;
 
     // Execute mixed workload based on user profile
-    group("Mixed BookStore Operations", function() {
+    group("Mixed BookStore Operations", function () {
         executeUserScenario(baseUrl, userProfile);
     });
 
@@ -110,7 +110,7 @@ function executeUserScenario(baseUrl, userProfile) {
     const scenarios = {
         reader: () => executeReaderScenario(baseUrl, userProfile),
         librarian: () => executeLibrarianScenario(baseUrl, userProfile),
-        manager: () => executeManagerScenario(baseUrl, userProfile)
+        manager: () => executeManagerScenario(baseUrl, userProfile),
     };
 
     const scenarioFunc = scenarios[userProfile.type] || scenarios.reader;
@@ -120,7 +120,7 @@ function executeUserScenario(baseUrl, userProfile) {
 function executeReaderScenario(baseUrl, userProfile) {
     // Typical reader: browses books, searches, reads details
 
-    group("Browse Books", function() {
+    group("Browse Books", function () {
         const listResponse = http.get(`${baseUrl}/api/v1/books?page=1&pageSize=10`);
         const success = checkResponse(listResponse, 200);
 
@@ -132,7 +132,7 @@ function executeReaderScenario(baseUrl, userProfile) {
                 // Get details of a random book (cache test)
                 const randomBook = books[randomIntBetween(0, books.length - 1)];
 
-                group("Get Book Details", function() {
+                group("Get Book Details", function () {
                     const bookResponse = http.get(`${baseUrl}/api/v1/books/${randomBook.id}`);
                     const bookSuccess = checkResponse(bookResponse, 200);
 
@@ -152,7 +152,7 @@ function executeReaderScenario(baseUrl, userProfile) {
 
     // 60% chance to perform a search
     if (Math.random() < 0.6) {
-        group("Search Books", function() {
+        group("Search Books", function () {
             const searchTerms = ["fiction", "mystery", "romance", "classic", "adventure"];
             const query = randomItem(searchTerms);
 
@@ -165,7 +165,7 @@ function executeReaderScenario(baseUrl, userProfile) {
 
     // 40% chance to browse authors
     if (Math.random() < 0.4) {
-        group("Browse Authors", function() {
+        group("Browse Authors", function () {
             const authorsResponse = http.get(`${baseUrl}/api/v1/authors?page=1&pageSize=5`);
             const success = checkResponse(authorsResponse, 200);
 
@@ -182,17 +182,13 @@ function executeLibrarianScenario(baseUrl, userProfile) {
 
     // 70% chance to create a new book
     if (Math.random() < 0.7) {
-        group("Create Book", function() {
+        group("Create Book", function () {
             const bookData = generateBookData();
 
-            const createResponse = http.post(
-                `${baseUrl}/api/v1/books`,
-                JSON.stringify(bookData),
-                {
-                    headers: { "Content-Type": "application/json" },
-                    timeout: "10s"
-                }
-            );
+            const createResponse = http.post(`${baseUrl}/api/v1/books`, JSON.stringify(bookData), {
+                headers: { "Content-Type": "application/json" },
+                timeout: "10s",
+            });
 
             const success = checkCreateResponse(createResponse);
             recordMetrics(createResponse, success, "create_book");
@@ -205,7 +201,7 @@ function executeLibrarianScenario(baseUrl, userProfile) {
 
     // 50% chance to update an existing book
     if (Math.random() < 0.5) {
-        group("Update Book", function() {
+        group("Update Book", function () {
             // First get list of books
             const listResponse = http.get(`${baseUrl}/api/v1/books?page=1&pageSize=5`);
             if (listResponse.status === 200) {
@@ -216,7 +212,7 @@ function executeLibrarianScenario(baseUrl, userProfile) {
                     // Update some fields
                     const updates = {
                         price: parseFloat((Math.random() * 30 + 10).toFixed(2)),
-                        stockQuantity: randomIntBetween(1, 100)
+                        stockQuantity: randomIntBetween(1, 100),
                     };
 
                     const updateResponse = http.patch(
@@ -224,7 +220,7 @@ function executeLibrarianScenario(baseUrl, userProfile) {
                         JSON.stringify(updates),
                         {
                             headers: { "Content-Type": "application/json" },
-                            timeout: "10s"
+                            timeout: "10s",
                         }
                     );
 
@@ -248,31 +244,25 @@ function executeManagerScenario(baseUrl, userProfile) {
 
     // 30% chance to delete a book (rare operation)
     if (Math.random() < 0.3) {
-        group("Delete Book", function() {
+        group("Delete Book", function () {
             // Create a book first, then delete it
             const bookData = generateBookData();
             bookData.title = `TEST_DELETE_${Date.now()}`;
 
-            const createResponse = http.post(
-                `${baseUrl}/api/v1/books`,
-                JSON.stringify(bookData),
-                {
-                    headers: { "Content-Type": "application/json" },
-                    timeout: "10s"
-                }
-            );
+            const createResponse = http.post(`${baseUrl}/api/v1/books`, JSON.stringify(bookData), {
+                headers: { "Content-Type": "application/json" },
+                timeout: "10s",
+            });
 
             if (createResponse.status === 201) {
                 const createdBook = JSON.parse(createResponse.body);
 
-                const deleteResponse = http.del(
-                    `${baseUrl}/api/v1/books/${createdBook.id}`,
-                    null,
-                    { timeout: "10s" }
-                );
+                const deleteResponse = http.del(`${baseUrl}/api/v1/books/${createdBook.id}`, null, {
+                    timeout: "10s",
+                });
 
                 const success = check(deleteResponse, {
-                    "delete status is 204": (r) => r.status === 204
+                    "delete status is 204": (r) => r.status === 204,
                 });
 
                 recordMetrics(deleteResponse, success, "delete_book");
@@ -285,19 +275,21 @@ function executeManagerScenario(baseUrl, userProfile) {
     }
 
     // Manager analytics - multiple concurrent requests
-    group("Analytics Dashboard", function() {
+    group("Analytics Dashboard", function () {
         const requests = [
             ["GET", `${baseUrl}/api/v1/books?genre=Fiction&page=1&pageSize=20`],
             ["GET", `${baseUrl}/api/v1/books?genre=Mystery&page=1&pageSize=20`],
             ["GET", `${baseUrl}/api/v1/authors?page=1&pageSize=15`],
-            ["GET", `${baseUrl}/api/v1/books/search?query=bestseller`]
+            ["GET", `${baseUrl}/api/v1/books/search?query=bestseller`],
         ];
 
-        const responses = http.batch(requests.map(([method, url]) => ({
-            method,
-            url,
-            params: { timeout: "15s" }
-        })));
+        const responses = http.batch(
+            requests.map(([method, url]) => ({
+                method,
+                url,
+                params: { timeout: "15s" },
+            }))
+        );
 
         responses.forEach((response, index) => {
             const success = checkResponse(response, 200);
@@ -309,22 +301,22 @@ function executeManagerScenario(baseUrl, userProfile) {
 function recordMetrics(response, success, operation) {
     responseTime.add(response.timings.duration, {
         operation: operation,
-        success: success.toString()
+        success: success.toString(),
     });
     operationsExecuted.add(1, {
         operation: operation,
-        success: success.toString()
+        success: success.toString(),
     });
     errorRate.add(!success, {
-        operation: operation
+        operation: operation,
     });
 }
 
 function getThinkTime(usagePattern) {
     const patterns = {
-        heavy: randomIntBetween(1000, 3000),    // 1-3 seconds
-        light: randomIntBetween(3000, 8000),    // 3-8 seconds
-        burst: randomIntBetween(500, 1500),     // 0.5-1.5 seconds
+        heavy: randomIntBetween(1000, 3000), // 1-3 seconds
+        light: randomIntBetween(3000, 8000), // 3-8 seconds
+        burst: randomIntBetween(500, 1500), // 0.5-1.5 seconds
     };
 
     return patterns[usagePattern] || patterns.light;

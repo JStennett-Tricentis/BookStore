@@ -13,16 +13,12 @@ export const options = {
 export default function () {
     console.log("Seeding test data...");
 
-    const response = http.post(
-        `${environment.serviceUrl}/seed-data`,
-        null,
-        {
-            headers: {
-                "Content-Type": "application/json"
-            },
-            timeout: "30s"
-        }
-    );
+    const response = http.post(`${environment.serviceUrl}/seed-data`, null, {
+        headers: {
+            "Content-Type": "application/json",
+        },
+        timeout: "30s",
+    });
 
     if (response.status === 200) {
         console.log("✓ Test data seeded successfully");

@@ -191,10 +191,10 @@ Key configuration patterns in Program.cs:
 - Integration Tests: `BookStore.Service.Tests.Integration/`
 - Postman Collections: `tests/postman/`
 - K6 Performance Tests: `BookStore.Performance.Tests/`
-  - Test Scenarios: `scenarios/`
-  - Test Scripts: `tests/`
-  - Utilities: `utils/`
-  - Config: `config/`
+    - Test Scenarios: `scenarios/`
+    - Test Scripts: `tests/`
+    - Utilities: `utils/`
+    - Config: `config/`
 
 ### Infrastructure
 
@@ -250,6 +250,7 @@ make grafana-dashboards   # Open all 8 specialized dashboards
 10 dashboards with 91 total widgets organized into:
 
 **Specialized Dashboards (8):**
+
 1. **Performance Testing** - Request rates, latency percentiles, throughput
 2. **Errors & Diagnostics** - HTTP status codes (400, 401, 404, 409, 410, 422, 500, 503), exception tracking
 3. **LLM Metrics** - Token usage, costs, multi-provider comparison
@@ -260,6 +261,7 @@ make grafana-dashboards   # Open all 8 specialized dashboards
 8. **System Health** - CPU, memory, process stats, uptime
 
 **Overview Dashboards (2):**
+
 - **Demo Dashboard** - 53 curated panels for quick demos
 - **MEGA Dashboard** - All 91 widgets in one scrollable view
 
@@ -272,15 +274,17 @@ The application supports 4 LLM providers via factory pattern:
 1. **Ollama** (default) - Free local models (llama3.2, mistral, phi3)
 2. **Claude** - Anthropic API (claude-3-5-sonnet-20241022)
 3. **OpenAI** - GPT models (gpt-4o, gpt-4.1-mini)
-4. **Bedrock** - AWS-hosted models (us.anthropic.claude-sonnet-4-*)
+4. **Bedrock** - AWS-hosted models (us.anthropic.claude-sonnet-4-\*)
 
 **Key Components:**
+
 - `ILLMService` - Common interface for all providers
 - `ILLMServiceFactory` - Provider selection and instantiation
 - `ClaudeService`, `OpenAIService`, `BedrockService`, `OllamaService` - Provider implementations
 - Configuration in `appsettings.json`: `LLM.Provider` setting
 
 **Testing LLM endpoints:**
+
 ```bash
 make perf-ai-smoke      # Quick LLM endpoint test
 make perf-ai-load       # LLM load test

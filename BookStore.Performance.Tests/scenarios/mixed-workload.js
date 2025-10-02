@@ -37,12 +37,12 @@ export const options = {
             executor: "ramping-vus",
             startVUs: 0,
             stages: [
-                { duration: "1m", target: 5 },    // Warm up
-                { duration: "3m", target: 10 },   // Ramp to steady load
-                { duration: "10m", target: 10 },  // Sustained mixed load
-                { duration: "2m", target: 15 },   // Peak traffic
-                { duration: "5m", target: 15 },   // Hold peak
-                { duration: "2m", target: 0 },    // Ramp down
+                { duration: "1m", target: 5 }, // Warm up
+                { duration: "3m", target: 10 }, // Ramp to steady load
+                { duration: "10m", target: 10 }, // Sustained mixed load
+                { duration: "2m", target: 15 }, // Peak traffic
+                { duration: "5m", target: 15 }, // Hold peak
+                { duration: "2m", target: 0 }, // Ramp down
             ],
             gracefulRampDown: "30s",
         },
@@ -80,7 +80,7 @@ export function setup() {
     // Seed data
     console.log("Seeding test data...");
     const seedResponse = http.post(`${environment.serviceUrl}/seed-data`, null, {
-        timeout: "30s"
+        timeout: "30s",
     });
     if (seedResponse.status !== 200) {
         console.warn("Failed to seed data, continuing with existing data");
@@ -91,7 +91,7 @@ export function setup() {
     let bookIds = [];
     if (booksResponse.status === 200) {
         const books = JSON.parse(booksResponse.body);
-        bookIds = books.map(book => book.id);
+        bookIds = books.map((book) => book.id);
         console.log(`✓ Found ${bookIds.length} books for testing`);
     }
 
@@ -99,7 +99,7 @@ export function setup() {
     return {
         startTime: new Date(),
         bookIds: bookIds,
-        baseUrl: environment.serviceUrl
+        baseUrl: environment.serviceUrl,
     };
 }
 
@@ -114,7 +114,7 @@ export default function (data) {
     const isAiEnabledUser = Math.random() * 100 < AI_ENABLED_USER_PERCENTAGE;
 
     // Execute mixed workload based on user profile
-    group("Mixed Operations", function() {
+    group("Mixed Operations", function () {
         executeMixedWorkload(baseUrl, bookIds, userProfile, isAiEnabledUser);
     });
 
@@ -157,7 +157,7 @@ function executeMixedWorkload(baseUrl, bookIds, userProfile, isAiEnabled) {
 }
 
 function browseBooksWithAi(baseUrl, bookIds, isAiEnabled) {
-    group("Browse Books", function() {
+    group("Browse Books", function () {
         const startTime = new Date().getTime();
 
         const response = http.get(`${baseUrl}/api/v1/Books?page=1&pageSize=10`);
@@ -174,7 +174,7 @@ function browseBooksWithAi(baseUrl, bookIds, isAiEnabled) {
             if (books.length > 0) {
                 const randomBook = randomItem(books);
 
-                group("Get AI Summary", function() {
+                group("Get AI Summary", function () {
                     generateAiSummary(baseUrl, [randomBook.id]);
                 });
             }
@@ -183,7 +183,7 @@ function browseBooksWithAi(baseUrl, bookIds, isAiEnabled) {
 }
 
 function searchBooks(baseUrl) {
-    group("Search Books", function() {
+    group("Search Books", function () {
         const searchTerms = ["fiction", "mystery", "romance", "classic", "adventure", "bestseller"];
         const query = randomItem(searchTerms);
 
@@ -199,18 +199,14 @@ function searchBooks(baseUrl) {
 }
 
 function createBook(baseUrl) {
-    group("Create Book", function() {
+    group("Create Book", function () {
         const bookData = generateBookData();
 
         const startTime = new Date().getTime();
-        const response = http.post(
-            `${baseUrl}/api/v1/Books`,
-            JSON.stringify(bookData),
-            {
-                headers: { "Content-Type": "application/json" },
-                timeout: "10s"
-            }
-        );
+        const response = http.post(`${baseUrl}/api/v1/Books`, JSON.stringify(bookData), {
+            headers: { "Content-Type": "application/json" },
+            timeout: "10s",
+        });
         const duration = new Date().getTime() - startTime;
 
         const success = checkCreateResponse(response);
@@ -223,22 +219,18 @@ function createBook(baseUrl) {
 function updateBook(baseUrl, bookIds) {
     if (bookIds.length === 0) return;
 
-    group("Update Book", function() {
+    group("Update Book", function () {
         const bookId = randomItem(bookIds);
         const updates = {
             price: parseFloat((Math.random() * 30 + 10).toFixed(2)),
-            stockQuantity: randomIntBetween(1, 100)
+            stockQuantity: randomIntBetween(1, 100),
         };
 
         const startTime = new Date().getTime();
-        const response = http.patch(
-            `${baseUrl}/api/v1/Books/${bookId}`,
-            JSON.stringify(updates),
-            {
-                headers: { "Content-Type": "application/json" },
-                timeout: "10s"
-            }
-        );
+        const response = http.patch(`${baseUrl}/api/v1/Books/${bookId}`, JSON.stringify(updates), {
+            headers: { "Content-Type": "application/json" },
+            timeout: "10s",
+        });
         const duration = new Date().getTime() - startTime;
 
         const success = checkResponse(response, 200);
@@ -251,18 +243,14 @@ function updateBook(baseUrl, bookIds) {
 function generateAiSummary(baseUrl, bookIds) {
     if (bookIds.length === 0) return;
 
-    group("Generate AI Summary", function() {
+    group("Generate AI Summary", function () {
         const bookId = randomItem(bookIds);
 
         const startTime = new Date().getTime();
-        const response = http.post(
-            `${baseUrl}/api/v1/Books/${bookId}/generate-summary`,
-            null,
-            {
-                timeout: "30s",
-                tags: { operation: "llm", endpoint: "generate-summary" }
-            }
-        );
+        const response = http.post(`${baseUrl}/api/v1/Books/${bookId}/generate-summary`, null, {
+            timeout: "30s",
+            tags: { operation: "llm", endpoint: "generate-summary" },
+        });
         const duration = new Date().getTime() - startTime;
 
         const success = check(response, {
@@ -270,7 +258,10 @@ function generateAiSummary(baseUrl, bookIds) {
             "has aiGeneratedSummary": (r) => {
                 try {
                     const json = JSON.parse(r.body);
-                    return json.hasOwnProperty("aiGeneratedSummary") && json.aiGeneratedSummary.length > 0;
+                    return (
+                        json.hasOwnProperty("aiGeneratedSummary") &&
+                        json.aiGeneratedSummary.length > 0
+                    );
                 } catch (e) {
                     return false;
                 }
@@ -291,7 +282,7 @@ function generateAiSummary(baseUrl, bookIds) {
 function bulkGenerateSummaries(baseUrl, bookIds) {
     if (bookIds.length < 3) return;
 
-    group("Bulk AI Summaries", function() {
+    group("Bulk AI Summaries", function () {
         // Generate summaries for 2-3 books concurrently
         const count = randomIntBetween(2, 3);
         const selectedBooks = [];
@@ -299,20 +290,20 @@ function bulkGenerateSummaries(baseUrl, bookIds) {
             selectedBooks.push(randomItem(bookIds));
         }
 
-        const requests = selectedBooks.map(bookId => ({
+        const requests = selectedBooks.map((bookId) => ({
             method: "POST",
             url: `${baseUrl}/api/v1/Books/${bookId}/generate-summary`,
             params: {
                 timeout: "30s",
-                tags: { operation: "llm", endpoint: "generate-summary" }
-            }
+                tags: { operation: "llm", endpoint: "generate-summary" },
+            },
         }));
 
         const startTime = new Date().getTime();
         const responses = http.batch(requests);
         const duration = new Date().getTime() - startTime;
 
-        responses.forEach(response => {
+        responses.forEach((response) => {
             const success = check(response, {
                 "status is 200": (r) => r.status === 200,
                 "has aiGeneratedSummary": (r) => {
@@ -331,7 +322,9 @@ function bulkGenerateSummaries(baseUrl, bookIds) {
 
         llmResponseTime.add(duration / responses.length);
 
-        console.log(`Bulk summary generation: ${count} books in ${duration}ms (avg: ${duration/count}ms)`);
+        console.log(
+            `Bulk summary generation: ${count} books in ${duration}ms (avg: ${duration / count}ms)`
+        );
     });
 }
 
@@ -352,7 +345,7 @@ function getOperationsForUser(userProfile, isAiEnabled) {
             { type: "create_book", weight: 2 },
             { type: "update_book", weight: 2 },
             { type: "search_books", weight: 2 },
-        ]
+        ],
     };
 
     let ops = baseOps[userProfile.type] || baseOps.reader;
@@ -385,9 +378,9 @@ function selectWeightedOperation(operations) {
 
 function getThinkTime(usagePattern) {
     const patterns = {
-        heavy: randomIntBetween(1, 3),      // 1-3 seconds
-        light: randomIntBetween(3, 8),      // 3-8 seconds
-        burst: randomIntBetween(1, 2),      // 1-2 seconds
+        heavy: randomIntBetween(1, 3), // 1-3 seconds
+        light: randomIntBetween(3, 8), // 3-8 seconds
+        burst: randomIntBetween(1, 2), // 1-2 seconds
     };
 
     return patterns[usagePattern] || patterns.light;

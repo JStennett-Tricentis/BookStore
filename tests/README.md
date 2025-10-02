@@ -5,6 +5,7 @@ This directory contains automated tests for the BookStore API to ensure reliabil
 ## Test Types
 
 ### 1. Postman Collection Tests
+
 Location: `postman/`
 
 - **BookStore-Smoke-Tests.postman_collection.json**: Comprehensive smoke tests for all API endpoints
@@ -13,24 +14,27 @@ Location: `postman/`
 #### Running Postman Tests
 
 1. **Via Postman GUI**:
-   - Import the collection and environment files into Postman
-   - Select the "BookStore Local" environment
-   - Run the collection
+    - Import the collection and environment files into Postman
+    - Select the "BookStore Local" environment
+    - Run the collection
 
 2. **Via Newman (CLI)**:
-   ```bash
-   # Install Newman
-   npm install -g newman
 
-   # Run tests
-   newman run postman/BookStore-Smoke-Tests.postman_collection.json \
-     -e postman/BookStore.postman_environment.json
-   ```
+    ```bash
+    # Install Newman
+    npm install -g newman
+
+    # Run tests
+    newman run postman/BookStore-Smoke-Tests.postman_collection.json \
+      -e postman/BookStore.postman_environment.json
+    ```
 
 ### 2. .NET Integration Tests
+
 Location: `../BookStore.Service.Tests.Integration/`
 
 #### Test Categories:
+
 - **Smoke Tests**: Basic functionality tests for all endpoints
 - **Health Check Tests**: Service health and readiness checks
 - **Performance Tests**: Response time validation
@@ -51,6 +55,7 @@ dotnet test BookStore.Service.Tests.Integration --filter "FullyQualifiedName~Smo
 ## Test Coverage
 
 ### API Endpoints Tested:
+
 - ✅ GET /health
 - ✅ GET /api/v1/books
 - ✅ GET /api/v1/books/{id}
@@ -60,6 +65,7 @@ dotnet test BookStore.Service.Tests.Integration --filter "FullyQualifiedName~Smo
 - ✅ GET /api/v1/books/search?query={query}
 
 ### Test Scenarios:
+
 1. **Happy Path**: Valid requests with expected responses
 2. **Error Handling**: Invalid data, missing resources, bad requests
 3. **Performance**: Response time validation
@@ -68,11 +74,13 @@ dotnet test BookStore.Service.Tests.Integration --filter "FullyQualifiedName~Smo
 ## Prerequisites
 
 ### For Postman Tests:
+
 - Postman or Newman installed
 - BookStore API running on http://localhost:7002
 - MongoDB and Redis running
 
 ### For .NET Tests:
+
 - .NET 9.0 SDK
 - Docker (for Testcontainers)
 - The tests use Testcontainers to automatically spin up MongoDB and Redis
@@ -80,30 +88,31 @@ dotnet test BookStore.Service.Tests.Integration --filter "FullyQualifiedName~Smo
 ## CI/CD Integration
 
 ### GitHub Actions Example:
+
 ```yaml
 name: Run Tests
 
 on: [push, pull_request]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '9.0.x'
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: "9.0.x"
 
-    - name: Run Integration Tests
-      run: dotnet test BookStore.Service.Tests.Integration
+            - name: Run Integration Tests
+              run: dotnet test BookStore.Service.Tests.Integration
 
-    - name: Run Postman Tests
-      run: |
-        npm install -g newman
-        newman run tests/postman/BookStore-Smoke-Tests.postman_collection.json \
-          -e tests/postman/BookStore.postman_environment.json
+            - name: Run Postman Tests
+              run: |
+                  npm install -g newman
+                  newman run tests/postman/BookStore-Smoke-Tests.postman_collection.json \
+                    -e tests/postman/BookStore.postman_environment.json
 ```
 
 ## Test Maintenance
@@ -111,16 +120,17 @@ jobs:
 ### Adding New Tests:
 
 1. **Postman**:
-   - Add new requests to the collection
-   - Include appropriate test scripts
-   - Update environment variables if needed
+    - Add new requests to the collection
+    - Include appropriate test scripts
+    - Update environment variables if needed
 
 2. **.NET Tests**:
-   - Add new test methods to appropriate test class
-   - Follow existing naming conventions
-   - Ensure proper cleanup in tests
+    - Add new test methods to appropriate test class
+    - Follow existing naming conventions
+    - Ensure proper cleanup in tests
 
 ### Test Data:
+
 - Tests create their own test data
 - All test data is cleaned up after test execution
 - Use unique identifiers (GUIDs) to avoid conflicts
@@ -130,18 +140,18 @@ jobs:
 ### Common Issues:
 
 1. **Connection Refused**:
-   - Ensure services are running: `make run-services`
-   - Check ports 7002 (API), 27017 (MongoDB), 6379 (Redis)
+    - Ensure services are running: `make run-services`
+    - Check ports 7002 (API), 27017 (MongoDB), 6379 (Redis)
 
 2. **Test Failures**:
-   - Check service logs: `tail -f logs/bookstore-api.log`
-   - Verify MongoDB/Redis connectivity
-   - Ensure no port conflicts
+    - Check service logs: `tail -f logs/bookstore-api.log`
+    - Verify MongoDB/Redis connectivity
+    - Ensure no port conflicts
 
 3. **Testcontainers Issues**:
-   - Ensure Docker is running
-   - Check Docker permissions
-   - Verify sufficient resources
+    - Ensure Docker is running
+    - Check Docker permissions
+    - Verify sufficient resources
 
 ## Best Practices
 

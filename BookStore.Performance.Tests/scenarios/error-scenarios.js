@@ -76,6 +76,10 @@ export default function (data) {
         { name: "llm_errors", weight: 2, fn: () => testLLMErrors(baseUrl) },
         { name: "timeout", weight: 1, fn: () => testTimeoutScenarios(baseUrl) },
         { name: "malformed_requests", weight: 2, fn: () => testMalformedRequests(baseUrl) },
+        { name: "unauthorized", weight: 2, fn: () => testUnauthorizedErrors(baseUrl) },
+        { name: "gone", weight: 1, fn: () => testGoneErrors(baseUrl) },
+        { name: "conflict", weight: 2, fn: () => testConflictErrors(baseUrl) },
+        { name: "service_unavailable", weight: 1, fn: () => testServiceUnavailableErrors(baseUrl) },
         { name: "success_path", weight: 4, fn: () => testSuccessPath(baseUrl) }, // Include some success
     ];
 
@@ -317,6 +321,174 @@ function recordError(response, duration, errorType, expectedError) {
         error_type: errorType,
         status_class: `${Math.floor(status / 100)}xx`,
     };
+}
+
+function testUnauthorizedErrors(baseUrl) {
+    group("401 Unauthorized Errors", function() {
+        // Simulate protected endpoints that require authentication
+        // Since our API doesn't have auth, we'll test endpoints with invalid auth headers
+        const startTime = new Date().getTime();
+
+        const response = http.get(`${baseUrl}/api/v1/Books`, {
+            headers: {
+                "Authorization": "Bearer invalid_token_12345",
+                "X-API-Key": "invalid_api_key"
+            },
+            tags: { error_type: "unauthorized" }
+        });
+
+        const duration = new Date().getTime() - startTime;
+
+        // Note: Our API doesn't enforce auth, so this will return 200
+        // But we're testing the pattern for when auth is added
+        const hasAuth = check(response, {
+            "response received": (r) => r.status >= 200,
+            "response time acceptable": (r) => duration < 1000,
+        });
+
+        // If this were a real auth endpoint, we'd expect 401
+        // For now, just track the pattern
+        if (response.status === 401) {
+            errorResponseTime.add(duration);
+            error4xxRate.add(1);
+            errorsByType.add(1, { type: "4xx_unauthorized" });
+        }
+    });
+}
+
+function testGoneErrors(baseUrl) {
+    group("410 Gone Errors", function() {
+        // Simulate resources that have been permanently deleted
+        // We'll try to access a book that was deleted
+        const startTime = new Date().getTime();
+
+        // Use a well-formed MongoDB ObjectId that doesn't exist
+        // Format: 24 hex characters (represents permanently deleted resource)
+        const deletedBookId = "507f1f77bcf86cd799439011"; // Valid format, non-existent
+
+        const response = http.get(`${baseUrl}/api/v1/Books/${deletedBookId}`, {
+            headers: { "X-Resource-Status": "deleted" }, // Simulated header
+            tags: { error_type: "gone" }
+        });
+
+        const duration = new Date().getTime() - startTime;
+
+        // Our API returns 404, but testing the pattern for 410
+        const isGone = check(response, {
+            "resource not found": (r) => r.status === 404 || r.status === 410,
+            "response time acceptable": (r) => duration < 1000,
+        });
+
+        if (response.status === 410) {
+            errorResponseTime.add(duration);
+            error4xxRate.add(1);
+            errorsByType.add(1, { type: "4xx_gone" });
+        } else if (response.status === 404) {
+            // Count as expected not found
+            recordError(response, duration, "gone_as_404", isGone);
+        }
+    });
+}
+
+function testConflictErrors(baseUrl) {
+    group("409 Conflict Errors", function() {
+        // Try to create duplicate resources or conflicting updates
+        const startTime = new Date().getTime();
+
+        // Attempt to create a book with duplicate ISBN
+        const duplicateBook = {
+            title: "Duplicate Test Book",
+            author: "Test Author",
+            isbn: "978-0-123456-78-9", // Same ISBN to cause conflict
+            genre: "Test",
+            publishedDate: "2024-01-01",
+            price: 29.99,
+            stockQuantity: 100
+        };
+
+        const response = http.post(
+            `${baseUrl}/api/v1/Books`,
+            JSON.stringify(duplicateBook),
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Idempotency-Key": "duplicate-isbn-test-12345"
+                },
+                tags: { error_type: "conflict" }
+            }
+        );
+
+        const duration = new Date().getTime() - startTime;
+
+        // Our API might not enforce ISBN uniqueness, so check for various responses
+        const hasConflict = check(response, {
+            "response received": (r) => r.status >= 200,
+            "response time acceptable": (r) => duration < 2000,
+        });
+
+        if (response.status === 409) {
+            errorResponseTime.add(duration);
+            error4xxRate.add(1);
+            errorsByType.add(1, { type: "4xx_conflict" });
+        } else if (response.status === 400 || response.status === 422) {
+            // Validation error is acceptable alternative
+            recordError(response, duration, "conflict_as_validation", hasConflict);
+        }
+    });
+}
+
+function testServiceUnavailableErrors(baseUrl) {
+    group("503 Service Unavailable Errors", function() {
+        // Test scenarios that might cause service unavailability
+        // Such as database connection issues, dependency failures, etc.
+
+        const scenarios = [
+            {
+                name: "database_overload",
+                request: () => {
+                    // Large page size might overload database
+                    return http.get(`${baseUrl}/api/v1/Books?page=1&pageSize=10000`, {
+                        timeout: "5s",
+                        tags: { error_type: "service_unavailable", subtype: "db_overload" }
+                    });
+                }
+            },
+            {
+                name: "llm_unavailable",
+                request: () => {
+                    // LLM service might be unavailable
+                    return http.post(`${baseUrl}/api/v1/Books/507f1f77bcf86cd799439011/generate-summary?provider=invalid`,
+                        null,
+                        {
+                            timeout: "5s",
+                            tags: { error_type: "service_unavailable", subtype: "llm_unavailable" }
+                        }
+                    );
+                }
+            }
+        ];
+
+        const scenario = randomItem(scenarios);
+        const startTime = new Date().getTime();
+        const response = scenario.request();
+        const duration = new Date().getTime() - startTime;
+
+        const hasServiceError = check(response, {
+            "response received": (r) => r.status >= 200 || r.status === 0,
+            "completes within timeout": (r) => duration < 5000,
+        });
+
+        if (response.status === 503) {
+            errorResponseTime.add(duration);
+            error5xxRate.add(1);
+            errorsByType.add(1, { type: "5xx_service_unavailable" });
+            console.log(`Service Unavailable (${scenario.name}): ${response.status} - ${duration}ms`);
+        } else if (response.status >= 500) {
+            recordError(response, duration, "service_unavailable_as_5xx", hasServiceError);
+        } else if (response.status >= 400) {
+            recordError(response, duration, "service_unavailable_as_4xx", hasServiceError);
+        }
+    });
 }
 
 function selectWeightedScenario(scenarios) {

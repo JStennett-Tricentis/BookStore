@@ -28,11 +28,11 @@
                             },
                             {
                                 "color": "yellow",
-                                "value": 5
+                                "value": 10
                             },
                             {
                                 "color": "red",
-                                "value": 20
+                                "value": 30
                             }
                         ]
                     },
@@ -62,11 +62,11 @@
             "pluginVersion": "10.0.0",
             "targets": [
                 {
-                    "expr": "sum(http_client_active_requests) or vector(0)",
+                    "expr": "process_runtime_dotnet_thread_pool_threads_count or vector(0)",
                     "refId": "A"
                 }
             ],
-            "title": "Active HTTP Client Requests",
+            "title": "Thread Pool Size",
             "type": "stat"
         },
         {
@@ -88,11 +88,11 @@
                             },
                             {
                                 "color": "yellow",
-                                "value": 10
+                                "value": 5
                             },
                             {
                                 "color": "red",
-                                "value": 50
+                                "value": 20
                             }
                         ]
                     },
@@ -122,11 +122,71 @@
             "pluginVersion": "10.0.0",
             "targets": [
                 {
-                    "expr": "sum(http_client_open_connections) or vector(0)",
+                    "expr": "process_runtime_dotnet_thread_pool_queue_length or vector(0)",
                     "refId": "A"
                 }
             ],
-            "title": "Open HTTP Client Connections",
+            "title": "Thread Pool Queue Length",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 100
+                            },
+                            {
+                                "color": "red",
+                                "value": 500
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 6,
+                "x": 12,
+                "y": 0
+            },
+            "id": 3,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "values": false,
+                    "calcs": ["lastNotNull"],
+                    "fields": ""
+                },
+                "textMode": "auto"
+            },
+            "pluginVersion": "10.0.0",
+            "targets": [
+                {
+                    "expr": "rate(process_runtime_dotnet_monitor_lock_contention_count_total[1m]) * 60 or vector(0)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Lock Contentions per Minute",
             "type": "stat"
         },
         {
@@ -156,67 +216,7 @@
                             }
                         ]
                     },
-                    "unit": "ms"
-                },
-                "overrides": []
-            },
-            "gridPos": {
-                "h": 6,
-                "w": 6,
-                "x": 12,
-                "y": 0
-            },
-            "id": 3,
-            "options": {
-                "colorMode": "value",
-                "graphMode": "area",
-                "justifyMode": "auto",
-                "orientation": "auto",
-                "reduceOptions": {
-                    "values": false,
-                    "calcs": ["lastNotNull"],
-                    "fields": ""
-                },
-                "textMode": "auto"
-            },
-            "pluginVersion": "10.0.0",
-            "targets": [
-                {
-                    "expr": "histogram_quantile(0.95, sum(rate(http_client_request_duration_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "refId": "A"
-                }
-            ],
-            "title": "HTTP Client P95 Latency",
-            "type": "stat"
-        },
-        {
-            "datasource": {
-                "type": "prometheus"
-            },
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "thresholds"
-                    },
-                    "mappings": [],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "yellow",
-                                "value": 50
-                            },
-                            {
-                                "color": "red",
-                                "value": 200
-                            }
-                        ]
-                    },
-                    "unit": "reqps"
+                    "unit": "short"
                 },
                 "overrides": []
             },
@@ -242,11 +242,11 @@
             "pluginVersion": "10.0.0",
             "targets": [
                 {
-                    "expr": "sum(rate(http_client_request_duration_seconds_count[1m])) or vector(0)",
+                    "expr": "process_thread_count or vector(0)",
                     "refId": "A"
                 }
             ],
-            "title": "HTTP Client Request Rate",
+            "title": "Total Process Threads",
             "type": "stat"
         },
         {
@@ -298,7 +298,7 @@
                             }
                         ]
                     },
-                    "unit": "ms"
+                    "unit": "ops"
                 },
                 "overrides": []
             },
@@ -323,27 +323,12 @@
             },
             "targets": [
                 {
-                    "expr": "histogram_quantile(0.50, sum(rate(http_client_request_duration_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P50",
+                    "expr": "rate(process_runtime_dotnet_thread_pool_completed_items_count_total[1m]) or vector(0)",
+                    "legendFormat": "Work Items Completed/sec",
                     "refId": "A"
-                },
-                {
-                    "expr": "histogram_quantile(0.90, sum(rate(http_client_request_duration_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P90",
-                    "refId": "B"
-                },
-                {
-                    "expr": "histogram_quantile(0.95, sum(rate(http_client_request_duration_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P95",
-                    "refId": "C"
-                },
-                {
-                    "expr": "histogram_quantile(0.99, sum(rate(http_client_request_duration_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P99",
-                    "refId": "D"
                 }
             ],
-            "title": "HTTP Client Request Duration (Percentiles)",
+            "title": "Thread Pool Work Item Throughput",
             "type": "timeseries"
         },
         {
@@ -395,7 +380,7 @@
                             }
                         ]
                     },
-                    "unit": "ms"
+                    "unit": "short"
                 },
                 "overrides": []
             },
@@ -420,27 +405,17 @@
             },
             "targets": [
                 {
-                    "expr": "histogram_quantile(0.50, sum(rate(http_client_request_time_in_queue_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P50",
+                    "expr": "process_runtime_dotnet_thread_pool_threads_count or vector(0)",
+                    "legendFormat": "Thread Pool Threads",
                     "refId": "A"
                 },
                 {
-                    "expr": "histogram_quantile(0.90, sum(rate(http_client_request_time_in_queue_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P90",
+                    "expr": "process_runtime_dotnet_thread_pool_queue_length or vector(0)",
+                    "legendFormat": "Queue Length",
                     "refId": "B"
-                },
-                {
-                    "expr": "histogram_quantile(0.95, sum(rate(http_client_request_time_in_queue_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P95",
-                    "refId": "C"
-                },
-                {
-                    "expr": "histogram_quantile(0.99, sum(rate(http_client_request_time_in_queue_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P99",
-                    "refId": "D"
                 }
             ],
-            "title": "HTTP Client Queue Time (Percentiles)",
+            "title": "Thread Pool Activity",
             "type": "timeseries"
         },
         {
@@ -459,7 +434,7 @@
                         "axisPlacement": "auto",
                         "barAlignment": 0,
                         "drawStyle": "line",
-                        "fillOpacity": 20,
+                        "fillOpacity": 10,
                         "gradientMode": "none",
                         "hideFrom": {
                             "tooltip": false,
@@ -517,17 +492,12 @@
             },
             "targets": [
                 {
-                    "expr": "sum(http_client_active_requests) or vector(0)",
-                    "legendFormat": "Active Requests",
+                    "expr": "rate(process_runtime_dotnet_monitor_lock_contention_count_total[1m]) or vector(0)",
+                    "legendFormat": "Lock Contentions/sec",
                     "refId": "A"
-                },
-                {
-                    "expr": "sum(http_client_open_connections) or vector(0)",
-                    "legendFormat": "Open Connections",
-                    "refId": "B"
                 }
             ],
-            "title": "HTTP Client Activity",
+            "title": "Lock Contention Rate",
             "type": "timeseries"
         },
         {
@@ -579,7 +549,7 @@
                             }
                         ]
                     },
-                    "unit": "s"
+                    "unit": "short"
                 },
                 "overrides": []
             },
@@ -604,27 +574,310 @@
             },
             "targets": [
                 {
-                    "expr": "histogram_quantile(0.50, sum(rate(http_client_connection_duration_seconds_bucket[1m])) by (le)) or vector(0)",
-                    "legendFormat": "P50",
+                    "expr": "process_thread_count or vector(0)",
+                    "legendFormat": "Total Threads",
                     "refId": "A"
-                },
-                {
-                    "expr": "histogram_quantile(0.90, sum(rate(http_client_connection_duration_seconds_bucket[1m])) by (le)) or vector(0)",
-                    "legendFormat": "P90",
-                    "refId": "B"
-                },
-                {
-                    "expr": "histogram_quantile(0.95, sum(rate(http_client_connection_duration_seconds_bucket[1m])) by (le)) or vector(0)",
-                    "legendFormat": "P95",
-                    "refId": "C"
-                },
-                {
-                    "expr": "histogram_quantile(0.99, sum(rate(http_client_connection_duration_seconds_bucket[1m])) by (le)) or vector(0)",
-                    "legendFormat": "P99",
-                    "refId": "D"
                 }
             ],
-            "title": "HTTP Client Connection Duration (Percentiles)",
+            "title": "Process Thread Count",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 0,
+                "y": 22
+            },
+            "id": 9,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "values": false,
+                    "calcs": ["lastNotNull"],
+                    "fields": ""
+                },
+                "textMode": "auto"
+            },
+            "pluginVersion": "10.0.0",
+            "targets": [
+                {
+                    "expr": "process_runtime_dotnet_timer_count or vector(0)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Active Timers",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 6,
+                "y": 22
+            },
+            "id": 10,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "values": false,
+                    "calcs": ["lastNotNull"],
+                    "fields": ""
+                },
+                "textMode": "auto"
+            },
+            "pluginVersion": "10.0.0",
+            "targets": [
+                {
+                    "expr": "process_runtime_dotnet_assemblies_count or vector(0)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Loaded Assemblies",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 1000
+                            },
+                            {
+                                "color": "red",
+                                "value": 5000
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 12,
+                "y": 22
+            },
+            "id": 11,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "values": false,
+                    "calcs": ["lastNotNull"],
+                    "fields": ""
+                },
+                "textMode": "auto"
+            },
+            "pluginVersion": "10.0.0",
+            "targets": [
+                {
+                    "expr": "process_runtime_dotnet_exceptions_count_total or vector(0)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Total Exceptions Thrown",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 6,
+                "x": 18,
+                "y": 22
+            },
+            "id": 12,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "values": false,
+                    "calcs": ["lastNotNull"],
+                    "fields": ""
+                },
+                "textMode": "auto"
+            },
+            "pluginVersion": "10.0.0",
+            "targets": [
+                {
+                    "expr": "process_cpu_count or vector(0)",
+                    "refId": "A"
+                }
+            ],
+            "title": "CPU Count",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "tooltip": false,
+                            "viz": false,
+                            "legend": false
+                        },
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": true,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 26
+            },
+            "id": 13,
+            "options": {
+                "legend": {
+                    "calcs": ["mean", "max", "last"],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "targets": [
+                {
+                    "expr": "rate(process_runtime_dotnet_exceptions_count_total[1m]) * 60 or vector(0)",
+                    "legendFormat": "Exceptions/min",
+                    "refId": "A"
+                }
+            ],
+            "title": "Exception Rate",
             "type": "timeseries"
         },
         {
@@ -676,17 +929,17 @@
                             }
                         ]
                     },
-                    "unit": "ms"
+                    "unit": "short"
                 },
                 "overrides": []
             },
             "gridPos": {
                 "h": 8,
-                "w": 24,
-                "x": 0,
-                "y": 22
+                "w": 12,
+                "x": 12,
+                "y": 26
             },
-            "id": 9,
+            "id": 14,
             "options": {
                 "legend": {
                     "calcs": ["mean", "max", "last"],
@@ -701,34 +954,19 @@
             },
             "targets": [
                 {
-                    "expr": "histogram_quantile(0.50, sum(rate(dns_lookup_duration_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P50",
+                    "expr": "process_runtime_dotnet_timer_count or vector(0)",
+                    "legendFormat": "Active Timers",
                     "refId": "A"
-                },
-                {
-                    "expr": "histogram_quantile(0.90, sum(rate(dns_lookup_duration_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P90",
-                    "refId": "B"
-                },
-                {
-                    "expr": "histogram_quantile(0.95, sum(rate(dns_lookup_duration_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P95",
-                    "refId": "C"
-                },
-                {
-                    "expr": "histogram_quantile(0.99, sum(rate(dns_lookup_duration_seconds_bucket[1m])) by (le)) * 1000 or vector(0)",
-                    "legendFormat": "P99",
-                    "refId": "D"
                 }
             ],
-            "title": "DNS Lookup Duration (Percentiles)",
+            "title": "Active Timers Over Time",
             "type": "timeseries"
         }
     ],
     "refresh": "5s",
     "schemaVersion": 38,
     "style": "dark",
-    "tags": ["bookstore", "dependencies", "http-client", "external"],
+    "tags": ["bookstore", "threading", "concurrency", "performance"],
     "templating": {
         "list": []
     },
@@ -738,7 +976,7 @@
     },
     "timepicker": {},
     "timezone": "",
-    "title": "External Dependencies",
-    "uid": "bookstore-dependencies",
+    "title": "Threading & Concurrency",
+    "uid": "bookstore-threading",
     "version": 1
 }

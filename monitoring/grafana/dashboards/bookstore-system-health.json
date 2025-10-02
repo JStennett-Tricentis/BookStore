@@ -992,12 +992,12 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-2m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "BookStore System Health & Runtime Metrics",
+  "title": "System Health",
   "uid": "bookstore-system",
   "version": 1,
   "weekStart": ""

@@ -907,12 +907,12 @@
         "list": []
     },
     "time": {
-        "from": "now-15m",
+        "from": "now-2m",
         "to": "now"
     },
     "timepicker": {},
     "timezone": "",
-    "title": "BookStore - HTTP & Kestrel Performance",
+    "title": "HTTP & Kestrel",
     "uid": "bookstore-http-performance",
     "version": 1
 }

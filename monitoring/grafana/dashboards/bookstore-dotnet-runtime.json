@@ -805,12 +805,12 @@
         "list": []
     },
     "time": {
-        "from": "now-15m",
+        "from": "now-2m",
         "to": "now"
     },
     "timepicker": {},
     "timezone": "",
-    "title": "BookStore - .NET Runtime Performance",
+    "title": ".NET Runtime",
     "uid": "bookstore-dotnet-runtime",
     "version": 1
 }

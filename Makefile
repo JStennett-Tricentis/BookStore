@@ -507,16 +507,20 @@ grafana-dashboards: ## Open all Grafana dashboards in separate tabs
 	@echo "Opening all Grafana dashboards..."
 	@open http://localhost:3000/d/bookstore-perf || xdg-open http://localhost:3000/d/bookstore-perf
 	@sleep 0.5
+	@open http://localhost:3000/d/bookstore-errors || xdg-open http://localhost:3000/d/bookstore-errors
+	@sleep 0.5
 	@open http://localhost:3000/d/bookstore-llm || xdg-open http://localhost:3000/d/bookstore-llm
 	@sleep 0.5
 	@open http://localhost:3000/d/bookstore-dotnet-runtime || xdg-open http://localhost:3000/d/bookstore-dotnet-runtime
 	@sleep 0.5
 	@open http://localhost:3000/d/bookstore-http-performance || xdg-open http://localhost:3000/d/bookstore-http-performance
 	@sleep 0.5
+	@open http://localhost:3000/d/bookstore-threading || xdg-open http://localhost:3000/d/bookstore-threading
+	@sleep 0.5
 	@open http://localhost:3000/d/bookstore-dependencies || xdg-open http://localhost:3000/d/bookstore-dependencies
 	@sleep 0.5
 	@open http://localhost:3000/d/bookstore-system || xdg-open http://localhost:3000/d/bookstore-system
-	@echo "✓ All dashboards opened"
+	@echo "✓ All 8 dashboards opened"
 
 .PHONY: prometheus
 prometheus: ## Open Prometheus

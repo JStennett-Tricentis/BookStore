@@ -812,12 +812,12 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-2m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "BookStore Performance Testing",
+  "title": "Performance Testing",
   "uid": "bookstore-perf",
   "version": 2,
   "weekStart": ""

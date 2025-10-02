@@ -38,9 +38,13 @@ Micro-benchmarking suite for performance testing at the code level, complementin
 # Run all benchmarks
 make bench
 
-# Run specific benchmark by filter
-make bench FILTER=*Json*
-make bench FILTER=*String*
+# Run specific benchmark categories
+make bench-json         # JSON serialization benchmarks only
+make bench-string       # String manipulation benchmarks only
+
+# Run with custom filter
+make bench FILTER='*Json*'
+make bench FILTER='*FormatIsbn*'
 
 # Run with memory profiler
 make bench-memory

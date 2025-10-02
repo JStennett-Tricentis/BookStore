@@ -709,12 +709,12 @@ bench: ## Run all BenchmarkDotNet micro-benchmarks
 .PHONY: bench-json
 bench-json: ## Benchmark JSON serialization performance
 	@echo "🔬 Benchmarking JSON serialization..."
-	@cd BookStore.Benchmarks && dotnet run -c Release -- --filter *Json*
+	@cd BookStore.Benchmarks && dotnet run -c Release -- '--filter=*Json*'
 
 .PHONY: bench-string
 bench-string: ## Benchmark string manipulation performance
 	@echo "🔬 Benchmarking string manipulation..."
-	@cd BookStore.Benchmarks && dotnet run -c Release -- --filter *String*
+	@cd BookStore.Benchmarks && dotnet run -c Release -- '--filter=*String*'
 
 .PHONY: bench-memory
 bench-memory: ## Run benchmarks with detailed memory profiler

@@ -64,8 +64,9 @@ make perf-comprehensive            # Run all tests (~30 min)
 
 # BenchmarkDotNet Tests (code-level micro-benchmarks)
 make bench                         # Run all micro-benchmarks
-make bench-json                    # JSON serialization benchmarks
-make bench-string                  # String manipulation benchmarks
+make bench-json                    # JSON serialization only
+make bench-string                  # String manipulation only
+make bench FILTER='*Json*'         # Custom filter
 make bench-memory                  # Run with memory profiler
 make bench-report                  # Open HTML reports in browser
 make bench-results                 # List available report files

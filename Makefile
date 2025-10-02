@@ -11,7 +11,7 @@ help: ## Show this help message
 	@echo "🚀 QUICK START"
 	@echo "──────────────────────────────────────────────────────────────────"
 	@printf "\033[36m%-30s\033[0m %s\n" "make dev-setup" "Setup development environment"
-	@printf "\033[36m%-30s\033[0m %s\n" "make run-aspire" "Start all services (recommended)"
+	@printf "\033[36m%-30s\033[0m %s\n" "make run-services" "Start all services (recommended)"
 	@printf "\033[36m%-30s\033[0m %s\n" "make perf-smoke" "Run quick performance test"
 	@printf "\033[36m%-30s\033[0m %s\n" "make status" "Check service status"
 	@echo ""
@@ -92,8 +92,18 @@ restore: ## Restore NuGet packages
 # ==================== Run Services ====================
 
 .PHONY: run-aspire
-run-aspire: ## Start all services with Aspire [RECOMMENDED - Auto-cleans MongoDB]
-	@./scripts/startup/start-aspire.sh
+run-aspire: ## Start all services with Aspire [REQUIRES .NET 9 SDK]
+	@echo "⚠️  WARNING: Aspire AppHost requires .NET 9 SDK"
+	@echo "   Current SDK: $$(dotnet --version)"
+	@echo "   Use 'make run-services' for .NET 8 compatible startup"
+	@echo ""
+	@read -p "Continue anyway? (y/N) " -n 1 -r; echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		./scripts/startup/start-aspire.sh; \
+	else \
+		echo "Cancelled. Use 'make run-services' instead."; \
+		exit 1; \
+	fi
 
 .PHONY: run-services
 run-services: ## Start all services (alternative to Aspire)
@@ -572,7 +582,7 @@ prometheus: ## Open Prometheus
 # ==================== Quick Commands ====================
 
 .PHONY: up
-up: run-aspire ## Quick alias → run-aspire
+up: run-services ## Quick alias → run-services
 
 .PHONY: down
 down: docker-stop ## Quick alias → docker-stop

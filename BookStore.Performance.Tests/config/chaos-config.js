@@ -98,6 +98,13 @@ export const chaosConfig = {
 
         // Minimum books to keep (prevents deleting all test data)
         minBooksToKeep: 10,
+
+        // Random error injection rate (0.0 to 1.0)
+        // 0.15 = 15% chance to inject a random error into any operation
+        randomErrorRate: 0.15,
+
+        // Number of errors to fire per error chaos iteration
+        errorsPerIteration: { min: 3, max: 6 },
     },
 
     // ==================== THRESHOLDS ====================

@@ -150,6 +150,34 @@ export function setupTestData() {
     console.log("✅ Test data setup complete!");
 }
 
+// Helper: Inject random errors for TRUE CHAOS
+function maybeInjectRandomError() {
+    if (Math.random() < chaosConfig.behavior.randomErrorRate) {
+        const randomErrors = [
+            () =>
+                http.post(`${BASE_URL}/api/v1/Books`, JSON.stringify({ bad: "data" }), {
+                    headers: { "Content-Type": "application/json" },
+                    tags: { injected_error: "400" },
+                }),
+            () =>
+                http.get(`${BASE_URL}/api/v1/Books/999999999999999999999999`, {
+                    tags: { injected_error: "404" },
+                }),
+            () =>
+                http.post(
+                    `${BASE_URL}/api/v1/Books`,
+                    JSON.stringify({ title: "", author: "" }),
+                    {
+                        headers: { "Content-Type": "application/json" },
+                        tags: { injected_error: "422" },
+                    }
+                ),
+        ];
+        const randomError = randomErrors[Math.floor(Math.random() * randomErrors.length)];
+        randomError();
+    }
+}
+
 // Scenario 1: Random chaotic requests - hits all CRUD operations
 export function chaosRequests() {
     group("Chaos CRUD Operations", function () {
@@ -162,6 +190,9 @@ export function chaosRequests() {
             "listAuthors",
             "searchBooks",
         ];
+
+        // CHAOS: Maybe inject a random error before main operation
+        maybeInjectRandomError();
 
         // Pick random operation
         const operation = operations[Math.floor(Math.random() * operations.length)];
@@ -401,17 +432,33 @@ export function errorChaos() {
                 ),
         ];
 
-        // Execute random error scenario
-        const scenario = errorScenarios[Math.floor(Math.random() * errorScenarios.length)];
-        scenario();
+        // TRUE CHAOS: Execute multiple random errors simultaneously (from config)
+        const { min, max } = chaosConfig.behavior.errorsPerIteration;
+        const numErrors = Math.floor(Math.random() * (max - min + 1)) + min;
+        const selectedErrors = [];
 
-        sleep(Math.random() * 2 + 0.5);
+        // Randomly select which errors to fire (with duplicates possible for more chaos)
+        for (let i = 0; i < numErrors; i++) {
+            const randomIndex = Math.floor(Math.random() * errorScenarios.length);
+            selectedErrors.push(errorScenarios[randomIndex]);
+        }
+
+        // Fire all selected errors with tiny random delays (chaos!)
+        selectedErrors.forEach((errorFn) => {
+            errorFn();
+            sleep(Math.random() * 0.2); // 0-200ms between errors
+        });
+
+        sleep(Math.random() * 1 + 0.3);
     });
 }
 
 // Scenario 4: Memory pressure - creates lots of objects to stress GC
 export function memoryPressure() {
     group("Memory Pressure", function () {
+        // CHAOS: Random error injection
+        maybeInjectRandomError();
+
         // Create many books rapidly to pressure memory/GC (from config)
         for (let i = 0; i < chaosConfig.memoryPressure.booksPerIteration; i++) {
             const response = http.post(
@@ -445,6 +492,9 @@ export function memoryPressure() {
 // Scenario 5: Database chaos - hammers MongoDB/Redis
 export function databaseChaos() {
     group("Database Chaos", function () {
+        // CHAOS: Random error injection
+        maybeInjectRandomError();
+
         const operations = [
             // Heavy pagination (MongoDB stress)
             () => http.get(`${BASE_URL}/api/v1/Books?page=1&pageSize=1000`),

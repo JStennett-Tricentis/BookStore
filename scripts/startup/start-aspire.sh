@@ -21,11 +21,10 @@ docker volume ls | grep -E "mongodb|aspire.*mongo" | awk '{print $2}' | xargs -r
 echo "✓ Docker cleanup complete"
 echo ""
 
-# Build the solution
-echo "📦 Building solution..."
-dotnet build
-echo "✓ Build complete"
-echo ""
+# Note: Skipping 'dotnet build' at root level because:
+# - Root uses .NET 8 SDK (services are .NET 8)
+# - AppHost needs .NET 9 SDK (controlled by global.json in AppHost dir)
+# - 'dotnet run' in AppHost will build what it needs with correct SDK
 
 # Start Aspire
 echo "▶️  Starting Aspire..."

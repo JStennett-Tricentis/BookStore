@@ -92,18 +92,8 @@ restore: ## Restore NuGet packages
 # ==================== Run Services ====================
 
 .PHONY: run-aspire
-run-aspire: ## Start all services with Aspire [REQUIRES .NET 9 SDK]
-	@echo "⚠️  WARNING: Aspire AppHost requires .NET 9 SDK"
-	@echo "   Current SDK: $$(dotnet --version)"
-	@echo "   Use 'make run-services' for .NET 8 compatible startup"
-	@echo ""
-	@read -p "Continue anyway? (y/N) " -n 1 -r; echo; \
-	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		./scripts/startup/start-aspire.sh; \
-	else \
-		echo "Cancelled. Use 'make run-services' instead."; \
-		exit 1; \
-	fi
+run-aspire: ## Start all services with Aspire Dashboard [REQUIRES .NET 9 SDK]
+	@./scripts/startup/start-aspire.sh
 
 .PHONY: run-services
 run-services: ## Start all services (alternative to Aspire)
@@ -162,7 +152,15 @@ docker-run: ## Start full stack in Docker
 .PHONY: docker-stop
 docker-stop: ## Stop Docker services (keeps data)
 	@echo "Stopping Docker services..."
-	@docker-compose -f docker-compose.perf.yml down
+	@docker-compose -f docker-compose.perf.yml down 2>/dev/null || echo "  Docker containers already stopped or daemon not running"
+	@echo "Stopping Aspire and .NET processes..."
+	@pkill -9 -f "BookStore.Service.dll" 2>/dev/null || true
+	@pkill -9 -f "BookStore.Performance.Service.dll" 2>/dev/null || true
+	@pkill -9 -f "BookStore.Aspire.AppHost" 2>/dev/null || true
+	@lsof -ti:7002 2>/dev/null | xargs kill -9 2>/dev/null || true
+	@lsof -ti:7004 2>/dev/null | xargs kill -9 2>/dev/null || true
+	@lsof -ti:15888 2>/dev/null | xargs kill -9 2>/dev/null || true
+	@echo "✅ All services stopped"
 
 .PHONY: docker-clean
 docker-clean: docker-stop ## Clean all Docker resources [DATA LOSS]

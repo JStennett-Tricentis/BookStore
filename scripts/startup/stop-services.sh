@@ -21,6 +21,14 @@ fi
 # Stop any remaining dotnet processes
 echo "🧹 Cleaning up any remaining processes..."
 pkill -f "dotnet run" 2>/dev/null || true
+pkill -9 -f "BookStore.Service.dll" 2>/dev/null || true
+pkill -9 -f "BookStore.Performance.Service.dll" 2>/dev/null || true
+pkill -9 -f "BookStore.Aspire.AppHost" 2>/dev/null || true
+
+# Kill processes on ports
+lsof -ti:7002 2>/dev/null | xargs kill -9 2>/dev/null || true
+lsof -ti:7004 2>/dev/null | xargs kill -9 2>/dev/null || true
+lsof -ti:15888 2>/dev/null | xargs kill -9 2>/dev/null || true
 
 # Stop Docker infrastructure
 echo "📦 Stopping infrastructure..."

@@ -6,11 +6,8 @@
 
 set -e
 
-# Set up .NET environment to support both .NET 8 and .NET 9
-# Use .NET 9 SDK for building (supports both .NET 8 and .NET 9 projects)
-# .NET 8 runtime is available at /opt/homebrew/opt/dotnet@8/libexec
-export PATH="/opt/homebrew/Cellar/dotnet/9.0.6/libexec:$PATH"
-export DOTNET_ROOT="/opt/homebrew/Cellar/dotnet/9.0.6/libexec"
+# .NET 9 SDK is symlinked to ~/.dotnet/sdk/9.0.109
+# No need to modify PATH - dotnet CLI will use the symlinked SDK automatically
 
 echo "🚀 Starting BookStore with .NET Aspire..."
 echo ""

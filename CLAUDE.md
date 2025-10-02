@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-BookStore is an enterprise-grade .NET 9 performance testing application that
+BookStore is an enterprise-grade .NET 8 performance testing application that
 replicates production microservice architectures. It consists of:
 
 - **BookStore.Service** - Main API with CRUD operations for books/authors
@@ -86,6 +86,29 @@ docker-compose -f docker-compose.perf.yml logs -f bookstore-api
 
 ## Troubleshooting
 
+### .NET SDK Requirements
+
+**IMPORTANT:** This project uses a hybrid .NET version approach (same as hub-services-latest):
+- **Services**: .NET 8.0 (BookStore.Service, BookStore.Performance.Service)
+- **Aspire AppHost**: .NET 9.0 (required for Aspire Dashboard orchestration)
+
+You need **BOTH** .NET 8 SDK and .NET 9 SDK installed:
+
+```bash
+# Check installed SDKs
+dotnet --list-sdks
+
+# Should show both:
+# 8.0.412 [/Users/username/.dotnet/sdk]
+# 9.0.xxx [/Users/username/.dotnet/sdk]
+
+# Install .NET 9 via Homebrew (macOS)
+brew install dotnet@9
+
+# If Homebrew installs to separate location, symlink it:
+ln -s /opt/homebrew/Cellar/dotnet/9.0.8/libexec/sdk/9.0.109 ~/.dotnet/sdk/9.0.109
+```
+
 ### Aspire Workload Issues
 
 If you encounter .NET Aspire workload installation problems:
@@ -104,6 +127,7 @@ make run-services
 
 **Common Issues:**
 
+- Missing .NET 9 SDK (Aspire AppHost won't run)
 - Workload dependency conflicts between Emscripten and Mono toolchain versions
 - Permission denied errors on ~/.dotnet/metadata/ (requires admin privileges to fix)
 - DCP executable and Dashboard binaries missing

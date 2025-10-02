@@ -83,7 +83,8 @@ if (app.Environment.IsDevelopment())
 app.UseHealthChecks("/health");
 
 // Prometheus metrics scraping endpoint
-app.MapPrometheusScrapingEndpoint();
+// TODO: Fix Prometheus metrics scraping endpoint (same as BookStore.Service)
+// app.MapPrometheusScrapingEndpoint();
 
 app.UseCors();
 

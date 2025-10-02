@@ -54,7 +54,9 @@
                 "orientation": "auto",
                 "reduceOptions": {
                     "values": false,
-                    "calcs": ["lastNotNull"],
+                    "calcs": [
+                        "lastNotNull"
+                    ],
                     "fields": ""
                 },
                 "textMode": "auto"
@@ -114,7 +116,9 @@
                 "orientation": "auto",
                 "reduceOptions": {
                     "values": false,
-                    "calcs": ["lastNotNull"],
+                    "calcs": [
+                        "lastNotNull"
+                    ],
                     "fields": ""
                 },
                 "textMode": "auto"
@@ -174,7 +178,9 @@
                 "orientation": "auto",
                 "reduceOptions": {
                     "values": false,
-                    "calcs": ["lastNotNull"],
+                    "calcs": [
+                        "lastNotNull"
+                    ],
                     "fields": ""
                 },
                 "textMode": "auto"
@@ -234,7 +240,9 @@
                 "orientation": "auto",
                 "reduceOptions": {
                     "values": false,
-                    "calcs": ["lastNotNull"],
+                    "calcs": [
+                        "lastNotNull"
+                    ],
                     "fields": ""
                 },
                 "textMode": "auto"
@@ -311,7 +319,11 @@
             "id": 5,
             "options": {
                 "legend": {
-                    "calcs": ["mean", "max", "last"],
+                    "calcs": [
+                        "mean",
+                        "max",
+                        "last"
+                    ],
                     "displayMode": "table",
                     "placement": "bottom",
                     "showLegend": true
@@ -408,7 +420,11 @@
             "id": 6,
             "options": {
                 "legend": {
-                    "calcs": ["mean", "max", "last"],
+                    "calcs": [
+                        "mean",
+                        "max",
+                        "last"
+                    ],
                     "displayMode": "table",
                     "placement": "bottom",
                     "showLegend": true
@@ -505,7 +521,11 @@
             "id": 7,
             "options": {
                 "legend": {
-                    "calcs": ["mean", "max", "last"],
+                    "calcs": [
+                        "mean",
+                        "max",
+                        "last"
+                    ],
                     "displayMode": "table",
                     "placement": "bottom",
                     "showLegend": true
@@ -592,7 +612,11 @@
             "id": 8,
             "options": {
                 "legend": {
-                    "calcs": ["mean", "max", "last"],
+                    "calcs": [
+                        "mean",
+                        "max",
+                        "last"
+                    ],
                     "displayMode": "table",
                     "placement": "bottom",
                     "showLegend": true
@@ -689,7 +713,11 @@
             "id": 9,
             "options": {
                 "legend": {
-                    "calcs": ["mean", "max", "last"],
+                    "calcs": [
+                        "mean",
+                        "max",
+                        "last"
+                    ],
                     "displayMode": "table",
                     "placement": "bottom",
                     "showLegend": true
@@ -723,12 +751,564 @@
             ],
             "title": "DNS Lookup Duration (Percentiles)",
             "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "tooltip": false,
+                            "viz": false,
+                            "legend": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "ops"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 30
+            },
+            "id": 100,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "mean",
+                        "lastNotNull",
+                        "max"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(mongodb_operations_count[1m])",
+                    "legendFormat": "{{operation}}",
+                    "refId": "A"
+                }
+            ],
+            "title": "MongoDB Operations/sec",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "tooltip": false,
+                            "viz": false,
+                            "legend": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "ms"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 30
+            },
+            "id": 101,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "mean",
+                        "p95",
+                        "max"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "histogram_quantile(0.50, rate(mongodb_operation_duration_bucket[1m]))",
+                    "legendFormat": "P50 - {{operation}}",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "histogram_quantile(0.95, rate(mongodb_operation_duration_bucket[1m]))",
+                    "legendFormat": "P95 - {{operation}}",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "histogram_quantile(0.99, rate(mongodb_operation_duration_bucket[1m]))",
+                    "legendFormat": "P99 - {{operation}}",
+                    "refId": "C"
+                }
+            ],
+            "title": "MongoDB Operation Duration (Percentiles)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "tooltip": false,
+                            "viz": false,
+                            "legend": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "ops"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 38
+            },
+            "id": 102,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "mean",
+                        "lastNotNull",
+                        "max"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(redis_operations_count[1m])",
+                    "legendFormat": "{{operation}}",
+                    "refId": "A"
+                }
+            ],
+            "title": "Redis Operations/sec",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "tooltip": false,
+                            "viz": false,
+                            "legend": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 38
+            },
+            "id": 103,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "sum"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(redis_cache_hits[1m])",
+                    "legendFormat": "Cache Hits",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "rate(redis_cache_misses[1m])",
+                    "legendFormat": "Cache Misses",
+                    "refId": "B"
+                }
+            ],
+            "title": "Redis Cache Hit Rate",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "red",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 50
+                            },
+                            {
+                                "color": "green",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 46
+            },
+            "id": 104,
+            "options": {
+                "orientation": "auto",
+                "reduceOptions": {
+                    "values": false,
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": ""
+                },
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true
+            },
+            "pluginVersion": "10.2.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "(rate(redis_cache_hits[1m]) / (rate(redis_cache_hits[1m]) + rate(redis_cache_misses[1m]))) * 100",
+                    "legendFormat": "Hit Ratio",
+                    "refId": "A"
+                }
+            ],
+            "title": "Cache Hit Ratio %",
+            "type": "gauge"
+        },
+        {
+            "datasource": {
+                "type": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "tooltip": false,
+                            "viz": false,
+                            "legend": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "ms"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 46
+            },
+            "id": 105,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "mean",
+                        "p95",
+                        "max"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "histogram_quantile(0.50, rate(redis_operation_duration_bucket[1m]))",
+                    "legendFormat": "P50 - {{operation}}",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "histogram_quantile(0.95, rate(redis_operation_duration_bucket[1m]))",
+                    "legendFormat": "P95 - {{operation}}",
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus"
+                    },
+                    "expr": "histogram_quantile(0.99, rate(redis_operation_duration_bucket[1m]))",
+                    "legendFormat": "P99 - {{operation}}",
+                    "refId": "C"
+                }
+            ],
+            "title": "Redis Operation Duration (Percentiles)",
+            "type": "timeseries"
         }
     ],
     "refresh": "5s",
     "schemaVersion": 38,
     "style": "dark",
-    "tags": ["bookstore", "dependencies", "http-client", "external"],
+    "tags": [
+        "bookstore",
+        "dependencies",
+        "http-client",
+        "external"
+    ],
     "templating": {
         "list": []
     },

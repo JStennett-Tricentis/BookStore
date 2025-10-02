@@ -29,7 +29,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "🔥 PERFORMANCE TESTING"
 	@echo "──────────────────────────────────────────────────────────────────"
-	@grep -E '^(perf-smoke|perf-load|perf-stress|perf-spike|perf-comprehensive|perf-errors|perf-start-test|perf-list-tests|perf-results|perf-clean|perf-report|perf-report-latest|perf-report-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^(perf-smoke|perf-load|perf-stress|perf-spike|perf-chaos|perf-comprehensive|perf-errors|perf-start-test|perf-list-tests|perf-results|perf-clean|perf-report|perf-report-latest|perf-report-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "🤖 AI/LLM PERFORMANCE TESTING"
 	@echo "──────────────────────────────────────────────────────────────────"
@@ -239,6 +239,24 @@ perf-spike: ## Spike test - burst to 50 users
 			echo "📊 Opening report: $$LATEST_HTML" && \
 			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
 		fi
+
+.PHONY: perf-chaos
+perf-chaos: ## Chaos test - random spikes, errors, LLM, all metrics (2.5 min)
+	@echo "🌪️  Running chaos test - testing ALL dashboard widgets..."
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run scenarios/chaos-test.js --env BASE_URL=http://localhost:7002 \
+		--out json=results/chaos-test-$(shell date +%Y%m%d-%H%M%S).json; \
+		EXIT_CODE=$$?; \
+		echo "✓ Chaos complete. Generating HTML report..."; \
+		LATEST_JSON=$$(ls -t results/chaos-test-*.json 2>/dev/null | head -1); \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			(open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML" 2>/dev/null); \
+		fi; \
+		exit $$EXIT_CODE
 
 .PHONY: perf-comprehensive
 perf-comprehensive: ## Run ALL tests (~30 min)

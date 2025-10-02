@@ -2,6 +2,7 @@ using BookStore.Common.Models;
 using Microsoft.Extensions.Caching.Distributed;
 using MongoDB.Driver;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Text.Json;
 
 namespace BookStore.Service.Services;
@@ -13,6 +14,33 @@ public class BookService : IBookService
     private readonly ILogger<BookService> _logger;
     private static readonly ActivitySource ActivitySource = new("BookStore.Service");
     private const int CacheExpirationMinutes = 10;
+
+    // Custom metrics for MongoDB and Redis
+    private static readonly Meter Meter = new("BookStore.Database");
+    private static readonly Counter<long> MongoDbOperations = Meter.CreateCounter<long>(
+        "mongodb.operations.count",
+        unit: "operations",
+        description: "Number of MongoDB operations by type");
+    private static readonly Histogram<double> MongoDbDuration = Meter.CreateHistogram<double>(
+        "mongodb.operation.duration",
+        unit: "ms",
+        description: "MongoDB operation duration in milliseconds");
+    private static readonly Counter<long> RedisOperations = Meter.CreateCounter<long>(
+        "redis.operations.count",
+        unit: "operations",
+        description: "Number of Redis operations by type");
+    private static readonly Histogram<double> RedisDuration = Meter.CreateHistogram<double>(
+        "redis.operation.duration",
+        unit: "ms",
+        description: "Redis operation duration in milliseconds");
+    private static readonly Counter<long> CacheHits = Meter.CreateCounter<long>(
+        "redis.cache.hits",
+        unit: "hits",
+        description: "Number of cache hits");
+    private static readonly Counter<long> CacheMisses = Meter.CreateCounter<long>(
+        "redis.cache.misses",
+        unit: "misses",
+        description: "Number of cache misses");
 
     public BookService(
         IMongoDatabase database,
@@ -26,7 +54,6 @@ public class BookService : IBookService
 
     public async Task<IEnumerable<Book>> GetBooksAsync(string? genre = null, string? author = null, int page = 1, int pageSize = 10)
     {
-        // Temporarily bypass cache to debug the issue
         _logger.LogDebug("Getting books: genre={Genre}, author={Author}, page={Page}, pageSize={PageSize}", genre, author, page, pageSize);
 
         var filterBuilder = Builders<Book>.Filter;
@@ -42,31 +69,18 @@ public class BookService : IBookService
             filter &= filterBuilder.Eq(b => b.Author, author);
         }
 
+        // Track MongoDB query
+        var sw = System.Diagnostics.Stopwatch.StartNew();
         var books = await _books.Find(filter)
             .Skip((page - 1) * pageSize)
             .Limit(pageSize)
             .ToListAsync();
+        sw.Stop();
 
-        _logger.LogInformation("Found {Count} books from database", books.Count);
+        MongoDbOperations.Add(1, new KeyValuePair<string, object?>("operation", "find"));
+        MongoDbDuration.Record(sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("operation", "find"));
 
-        // Re-enable caching later
-        /*
-        var cacheKey = $"books:{genre}:{author}:{page}:{pageSize}";
-        var cacheOptions = new DistributedCacheEntryOptions
-        {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(CacheExpirationMinutes)
-        };
-
-        try
-        {
-            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(books), cacheOptions);
-            _logger.LogDebug("Cached books result");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to cache books result");
-        }
-        */
+        _logger.LogInformation("Found {Count} books from database in {Duration}ms", books.Count, sw.Elapsed.TotalMilliseconds);
 
         return books;
     }
@@ -82,15 +96,22 @@ public class BookService : IBookService
         {
             cacheActivity?.SetTag("cache.key", cacheKey);
 
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var cachedBook = await _cache.GetStringAsync(cacheKey);
+            sw.Stop();
+
+            RedisOperations.Add(1, new KeyValuePair<string, object?>("operation", "get"));
+            RedisDuration.Record(sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("operation", "get"));
 
             if (!string.IsNullOrEmpty(cachedBook))
             {
+                CacheHits.Add(1);
                 activity?.SetTag("cache.hit", true);
                 _logger.LogDebug("Retrieved book {BookId} from cache", id);
                 return JsonSerializer.Deserialize<Book>(cachedBook);
             }
 
+            CacheMisses.Add(1);
             activity?.SetTag("cache.hit", false);
         }
 
@@ -99,7 +120,12 @@ public class BookService : IBookService
             dbActivity?.SetTag("database.collection", "books");
             dbActivity?.SetTag("book.id", id);
 
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var book = await _books.Find(b => b.Id == id).FirstOrDefaultAsync();
+            sw.Stop();
+
+            MongoDbOperations.Add(1, new KeyValuePair<string, object?>("operation", "findOne"));
+            MongoDbDuration.Record(sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("operation", "findOne"));
 
             if (book != null)
             {
@@ -114,7 +140,13 @@ public class BookService : IBookService
                         AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(CacheExpirationMinutes)
                     };
 
+                    var cacheSetSw = System.Diagnostics.Stopwatch.StartNew();
                     await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(book), cacheOptions);
+                    cacheSetSw.Stop();
+
+                    RedisOperations.Add(1, new KeyValuePair<string, object?>("operation", "set"));
+                    RedisDuration.Record(cacheSetSw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("operation", "set"));
+
                     _logger.LogDebug("Cached book {BookId}", id);
                 }
             }
@@ -132,8 +164,14 @@ public class BookService : IBookService
         book.CreatedAt = DateTime.UtcNow;
         book.UpdatedAt = DateTime.UtcNow;
 
+        var sw = System.Diagnostics.Stopwatch.StartNew();
         await _books.InsertOneAsync(book);
-        _logger.LogInformation("Created book {BookId}: {Title}", book.Id, book.Title);
+        sw.Stop();
+
+        MongoDbOperations.Add(1, new KeyValuePair<string, object?>("operation", "insert"));
+        MongoDbDuration.Record(sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("operation", "insert"));
+
+        _logger.LogInformation("Created book {BookId}: {Title} in {Duration}ms", book.Id, book.Title, sw.Elapsed.TotalMilliseconds);
 
         await InvalidateRelatedCaches();
 
@@ -145,7 +183,12 @@ public class BookService : IBookService
         book.Id = id;
         book.UpdatedAt = DateTime.UtcNow;
 
+        var sw = System.Diagnostics.Stopwatch.StartNew();
         var result = await _books.ReplaceOneAsync(b => b.Id == id, book);
+        sw.Stop();
+
+        MongoDbOperations.Add(1, new KeyValuePair<string, object?>("operation", "update"));
+        MongoDbDuration.Record(sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("operation", "update"));
 
         if (result.MatchedCount == 0)
         {
@@ -155,7 +198,7 @@ public class BookService : IBookService
         await InvalidateBookCache(id);
         await InvalidateRelatedCaches();
 
-        _logger.LogInformation("Updated book {BookId}: {Title}", book.Id, book.Title);
+        _logger.LogInformation("Updated book {BookId}: {Title} in {Duration}ms", book.Id, book.Title, sw.Elapsed.TotalMilliseconds);
 
         return book;
     }
@@ -209,13 +252,18 @@ public class BookService : IBookService
 
     public async Task<bool> DeleteBookAsync(string id)
     {
+        var sw = System.Diagnostics.Stopwatch.StartNew();
         var result = await _books.DeleteOneAsync(b => b.Id == id);
+        sw.Stop();
+
+        MongoDbOperations.Add(1, new KeyValuePair<string, object?>("operation", "delete"));
+        MongoDbDuration.Record(sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("operation", "delete"));
 
         if (result.DeletedCount > 0)
         {
             await InvalidateBookCache(id);
             await InvalidateRelatedCaches();
-            _logger.LogInformation("Deleted book {BookId}", id);
+            _logger.LogInformation("Deleted book {BookId} in {Duration}ms", id, sw.Elapsed.TotalMilliseconds);
         }
 
         return result.DeletedCount > 0;

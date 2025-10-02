@@ -1,0 +1,34 @@
+# Docker Compose configuration for API Simulator
+# Enables zero-cost LLM performance testing by mocking external APIs
+# Usage: docker-compose -f docker-compose.simulator.yml up -d
+
+version: '3.8'
+
+services:
+  api-simulator:
+    image: ghcr.io/tricentis-product-integration/tpi-iris-simulator-ci:0.2
+    container_name: bookstore-api-simulator
+    ports:
+      - "17070:17070"  # Internal API (health, management)
+      - "28880:28880"  # UI Dashboard
+      - "5020:5020"    # Service API (simulated endpoints)
+    volumes:
+      - ./simulations:/simulations:ro
+    environment:
+      - ASPNETCORE_URLS=http://+:17070
+      - Logging__LogLevel__Default=Information
+      - Logging__LogLevel__Microsoft=Warning
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:17070/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - bookstore-network
+
+networks:
+  bookstore-network:
+    external: true
+    name: bookstore-network

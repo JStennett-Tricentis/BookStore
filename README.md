@@ -22,6 +22,14 @@ make perf-report
 - Grafana: <http://localhost:3000> (admin/admin123)
 - Prometheus: <http://localhost:9090>
 
+**Dashboards:**
+
+```bash
+make grafana-mega        # All 91 widgets in one view
+make grafana-demo        # 53 curated highlights
+make grafana-dashboards  # Open all 8 specialized dashboards
+```
+
 ## Architecture
 
 ### Services
@@ -119,18 +127,32 @@ make perf-comprehensive # All tests (~30 min)
 
 ## Monitoring
 
-### Grafana Dashboards
+### Grafana Dashboards (10 Total)
 
-1. **bookstore-performance.json**
-   - LLM Requests/sec, P95 latency, error rate
-   - Token usage (input/output/total)
-   - API cost tracking ($)
-   - LLM vs non-LLM traffic
+**Specialized Dashboards (8):**
 
-2. **bookstore-system-health.json**
-   - CPU, memory, threads
-   - GC collections, HTTP metrics
-   - Kestrel connection pool
+1. **Performance Testing** - Request rates, latency percentiles, throughput
+2. **Errors & Diagnostics** - HTTP status codes (400, 401, 404, 409, 410, 422, 500, 503), .NET exceptions, debugging links
+3. **LLM Metrics** - Token usage, costs, provider comparison, request duration
+4. **.NET Runtime** - GC, memory, assemblies, exception tracking
+5. **HTTP & Kestrel** - Server performance, connection pools, request queue
+6. **Threading & Concurrency** - Thread pools, lock contention, work items
+7. **External Dependencies** - MongoDB, Redis, HTTP client metrics
+8. **System Health** - CPU, memory, process stats, uptime
+
+**Overview Dashboards (2):**
+
+9. **Demo Dashboard** - 53 curated panels (highlights for quick demos)
+10. **MEGA Dashboard** - All 91 widgets in one scrollable view
+
+### Quick Access
+
+```bash
+make grafana-mega        # MEGA: All 91 widgets
+make grafana-demo        # Demo: 53 highlights
+make grafana-dashboards  # Open all 8 specialized
+make grafana             # Grafana home
+```
 
 ### Prometheus Metrics
 
@@ -186,7 +208,8 @@ MongoDB volumes auto-clean on startup via `start-aspire.sh` to prevent auth issu
 │   └── generate-html-report.js       # Report generator
 ├── BookStore.Aspire.AppHost/         # Aspire orchestration
 ├── monitoring/
-│   ├── grafana/dashboards/           # 2 dashboards
+│   ├── grafana/dashboards/           # 10 dashboards (91 total widgets)
+│   ├── grafana/*.py                  # Dashboard generation scripts
 │   └── prometheus/prometheus.yml     # Scrape config
 ├── .github/workflows/                # CI/CD (5 workflows)
 ├── Makefile                          # 40+ automation commands

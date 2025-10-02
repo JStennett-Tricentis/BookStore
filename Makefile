@@ -177,16 +177,17 @@ perf-smoke: ## Quick test - 1 user, 2 min
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
 		k6 run tests/books.js --env TEST_TYPE=smoke --env BASE_URL=http://localhost:7002 \
-		--out json=results/smoke-test-$(shell date +%Y%m%d-%H%M%S).json
-	@echo "✓ Test complete. Generating HTML report..."
-	@cd BookStore.Performance.Tests && \
-		LATEST_JSON=$$(ls -t results/smoke-test-*.json 2>/dev/null | head -1) && \
+		--out json=results/smoke-test-$(shell date +%Y%m%d-%H%M%S).json; \
+		EXIT_CODE=$$?; \
+		echo "✓ Test complete. Generating HTML report..."; \
+		LATEST_JSON=$$(ls -t results/smoke-test-*.json 2>/dev/null | head -1); \
 		if [ -n "$$LATEST_JSON" ]; then \
 			node generate-html-report.js "$$LATEST_JSON" && \
 			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
 			echo "📊 Opening report: $$LATEST_HTML" && \
-			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
-		fi
+			(open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML" 2>/dev/null); \
+		fi; \
+		exit $$EXIT_CODE
 
 .PHONY: perf-load
 perf-load: ## Load test - 10 users, 10 min
@@ -580,3 +581,30 @@ ci-test: docker-run health-wait perf-smoke docker-stop ## CI test pipeline
 
 # Default target
 .DEFAULT_GOAL := help
+.PHONY: perf-report-latest
+perf-report-latest: ## Generate and open HTML report from latest JSON result
+	@echo "📊 Generating report from latest test result..."
+	@cd BookStore.Performance.Tests && \
+		LATEST_JSON=$$(ls -t results/*.json 2>/dev/null | head -1); \
+		if [ -z "$$LATEST_JSON" ]; then \
+			echo "❌ No test results found in BookStore.Performance.Tests/results/"; \
+			exit 1; \
+		fi; \
+		echo "   Using: $$LATEST_JSON"; \
+		node generate-html-report.js "$$LATEST_JSON" && \
+		LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+		echo "✓ Report generated: $$LATEST_HTML" && \
+		(open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML" 2>/dev/null) && \
+		echo "✓ Opened in browser"
+
+.PHONY: perf-report-all
+perf-report-all: ## Generate HTML reports for all JSON results
+	@echo "📊 Generating reports for all test results..."
+	@cd BookStore.Performance.Tests && \
+		for json in results/*.json; do \
+			if [ -f "$$json" ]; then \
+				echo "   Processing: $$json"; \
+				node generate-html-report.js "$$json"; \
+			fi; \
+		done && \
+		echo "✓ All reports generated"

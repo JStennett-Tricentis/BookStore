@@ -693,3 +693,61 @@ perf-report-all: ## Generate HTML reports for all JSON results
 			fi; \
 		done && \
 		echo "✓ All reports generated"
+
+
+# ==================== BenchmarkDotNet (Micro-benchmarks) ====================
+
+.PHONY: bench
+bench: ## Run all BenchmarkDotNet micro-benchmarks
+	@echo "🔬 Running BenchmarkDotNet micro-benchmarks..."
+	@echo ""
+	@echo "This tests code-level performance (algorithms, memory allocations)"
+	@echo "Complementary to K6 load tests (API-level performance)"
+	@echo ""
+	@cd BookStore.Benchmarks && dotnet run -c Release -- $(if $(FILTER),--filter $(FILTER),)
+
+.PHONY: bench-json
+bench-json: ## Benchmark JSON serialization performance
+	@echo "🔬 Benchmarking JSON serialization..."
+	@cd BookStore.Benchmarks && dotnet run -c Release -- --filter *Json*
+
+.PHONY: bench-string
+bench-string: ## Benchmark string manipulation performance
+	@echo "🔬 Benchmarking string manipulation..."
+	@cd BookStore.Benchmarks && dotnet run -c Release -- --filter *String*
+
+.PHONY: bench-memory
+bench-memory: ## Run benchmarks with detailed memory profiler
+	@echo "🔬 Running benchmarks with memory profiler..."
+	@cd BookStore.Benchmarks && dotnet run -c Release -- --memory
+
+.PHONY: bench-help
+bench-help: ## Show BenchmarkDotNet usage guide
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "   BenchmarkDotNet - Micro-Benchmark Performance Testing"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo ""
+	@echo "📖 What is BenchmarkDotNet?"
+	@echo "   Micro-benchmarking tool for measuring code-level performance"
+	@echo "   Tests isolated methods without HTTP overhead"
+	@echo ""
+	@echo "🎯 When to Use:"
+	@echo "   ✅ Optimize algorithms (compare implementations)"
+	@echo "   ✅ Reduce memory allocations (GC pressure)"
+	@echo "   ✅ Test single methods in isolation"
+	@echo "   ✅ Compare library versions"
+	@echo "   ✅ Find performance regressions"
+	@echo ""
+	@echo "⚡ Commands:"
+	@echo "   make bench              # Run all micro-benchmarks"
+	@echo "   make bench-json         # JSON serialization benchmarks"
+	@echo "   make bench-string       # String manipulation benchmarks"
+	@echo "   make bench FILTER=*Foo* # Run specific benchmark"
+	@echo "   make bench-memory       # Run with memory profiler"
+	@echo ""
+	@echo "📊 vs K6 Load Testing:"
+	@echo "   BenchmarkDotNet → Code-level (μs, ns, memory allocations)"
+	@echo "   K6              → API-level (concurrent users, HTTP latency)"
+	@echo ""
+	@echo "📚 Full Guide: BookStore.Benchmarks/README.md"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

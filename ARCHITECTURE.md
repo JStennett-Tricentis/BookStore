@@ -240,7 +240,7 @@ graph LR
     Bedrock --> Meter
 
     ActivitySource -.->|Traces| AspireDashboard[Aspire Dashboard]
-    Meter -.->|Metrics| PrometheusEndpoint[/metrics]
+    Meter -.->|Metrics| PrometheusEndpoint["Prometheus Endpoint<br/>/metrics"]
 
     classDef service fill:#e1f5ff,stroke:#01579b,stroke-width:2px
     classDef config fill:#fff3e0,stroke:#e65100,stroke-width:2px
@@ -584,7 +584,7 @@ graph TB
 
 ## File System Structure
 
-```
+```yaml
 /Users/j.stennett/TAIS/AiHubPerfExample/
 ├── BookStore.Service/                      # Main REST API
 │   ├── Controllers/                        # API endpoints
@@ -648,36 +648,43 @@ graph TB
 ## Key Architectural Decisions
 
 ### 1. Multi-LLM Provider Strategy
+
 - **Decision**: Support 4 LLM providers with unified interface
 - **Rationale**: Flexibility, cost optimization, avoid vendor lock-in
 - **Implementation**: Factory pattern with `ILLMService` interface
 
 ### 2. Ollama as Default
+
 - **Decision**: Use free local Ollama by default
 - **Rationale**: Zero cost for development and performance testing
 - **Trade-off**: Slightly lower quality vs Claude, but unlimited usage
 
 ### 3. .NET Aspire for Orchestration
+
 - **Decision**: Use Aspire over pure Docker Compose
 - **Rationale**: Better .NET integration, built-in dashboard, easier debugging
 - **Fallback**: Shell scripts provided when Aspire has issues
 
 ### 4. Prometheus + Grafana over Coralogix
+
 - **Decision**: Self-hosted observability stack
 - **Rationale**: $200-500/month cost savings, full control, portable
 - **Benefit**: Same OpenTelemetry semantic conventions as hub-services-latest
 
 ### 5. K6 for Performance Testing
+
 - **Decision**: K6 over JMeter or Gatling
 - **Rationale**: JavaScript-based, modern, excellent HTTP/2 support
 - **Integration**: Docker orchestration via Performance Service
 
 ### 6. OpenTelemetry Semantic Conventions
+
 - **Decision**: Follow OpenTelemetry standard for LLM metrics
 - **Rationale**: Industry standard, compatible with hub-services-latest
 - **Tags**: `gen_ai.*`, `llm.*`, cost tracking, token counts
 
 ### 7. Configuration-Based Provider Selection
+
 - **Decision**: Runtime provider switching via appsettings.json
 - **Rationale**: No code changes needed, easy A/B testing
 - **Pattern**: `LLM:Provider = "Ollama"` or query param `?provider=claude`
@@ -685,24 +692,28 @@ graph TB
 ## Future Enhancements (Roadmap)
 
 ### Phase 1: API Simulator Integration
+
 - Add Tricentis API Simulator support
 - Zero-cost LLM mocking for CI/CD
 - Simulation library from production traces
 - Timeline: 2-3 days (see TRICENTIS_API_SIMULATOR_PLAN.md)
 
 ### Phase 2: Advanced Monitoring
+
 - Custom metrics for business KPIs
 - Alerting rules in Prometheus
 - SLO/SLI tracking dashboards
 - Timeline: 1 week
 
 ### Phase 3: Kubernetes Deployment
+
 - Helm charts for K8s
 - Horizontal pod autoscaling
 - Service mesh integration (Linkerd/Istio)
 - Timeline: 2 weeks
 
 ### Phase 4: Advanced LLM Features
+
 - Streaming responses
 - Token rate limiting
 - Cost budgets per tenant
@@ -712,12 +723,14 @@ graph TB
 ## Quick Reference
 
 ### Start Everything
+
 ```bash
 make run-aspire      # Start with Aspire (recommended)
 make run-services    # Start with shell scripts (fallback)
 ```
 
 ### Access Dashboards
+
 ```bash
 make grafana-mega        # All 91 widgets
 make grafana-dashboards  # Open all 8 specialized
@@ -725,6 +738,7 @@ make aspire-dashboard    # Request tracing
 ```
 
 ### Run Tests
+
 ```bash
 make perf-smoke          # Quick validation
 make perf-comprehensive  # Full test suite
@@ -732,6 +746,7 @@ make test-integration    # .NET integration tests
 ```
 
 ### Monitor Services
+
 ```bash
 make status              # Check all services
 make health-check        # Test endpoints

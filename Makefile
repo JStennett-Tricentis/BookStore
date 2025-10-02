@@ -522,6 +522,18 @@ grafana-dashboards: ## Open all Grafana dashboards in separate tabs
 	@open http://localhost:3000/d/bookstore-system || xdg-open http://localhost:3000/d/bookstore-system
 	@echo "✓ All 8 dashboards opened"
 
+.PHONY: grafana-demo
+grafana-demo: ## Open comprehensive demo dashboard (53 curated panels)
+	@echo "Opening demo dashboard..."
+	@open http://localhost:3000/d/bookstore-demo || xdg-open http://localhost:3000/d/bookstore-demo
+	@echo "✓ Demo dashboard opened"
+
+.PHONY: grafana-mega
+grafana-mega: ## Open MEGA dashboard with ALL 91 widgets
+	@echo "Opening MEGA dashboard..."
+	@open http://localhost:3000/d/bookstore-mega || xdg-open http://localhost:3000/d/bookstore-mega
+	@echo "✓ MEGA dashboard opened (91 widgets across 8 sections)"
+
 .PHONY: prometheus
 prometheus: ## Open Prometheus
 	@echo "Opening Prometheus..."

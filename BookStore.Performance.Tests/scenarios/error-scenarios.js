@@ -73,6 +73,7 @@ export default function (data) {
 
     // Randomly select an error scenario to test
     const errorScenarios = [
+        { name: "error_test_endpoints", weight: 10, fn: () => testErrorTestEndpoints(baseUrl) }, // Use ErrorTest controller
         { name: "not_found", weight: 3, fn: () => testNotFoundErrors(baseUrl) },
         {
             name: "invalid_data",
@@ -86,18 +87,6 @@ export default function (data) {
             weight: 2,
             fn: () => testMalformedRequests(baseUrl),
         },
-        {
-            name: "unauthorized",
-            weight: 2,
-            fn: () => testUnauthorizedErrors(baseUrl),
-        },
-        { name: "gone", weight: 1, fn: () => testGoneErrors(baseUrl) },
-        { name: "conflict", weight: 2, fn: () => testConflictErrors(baseUrl) },
-        {
-            name: "service_unavailable",
-            weight: 1,
-            fn: () => testServiceUnavailableErrors(baseUrl),
-        },
         { name: "success_path", weight: 4, fn: () => testSuccessPath(baseUrl) }, // Include some success
     ];
 
@@ -107,7 +96,7 @@ export default function (data) {
         selectedScenario.fn();
     });
 
-    sleep(randomIntBetween(1, 3));
+    sleep(randomIntBetween(0.5, 2)); // Faster iterations for higher throughput
     activeRequests.add(-1);
 }
 
@@ -333,45 +322,32 @@ function recordError(response, duration, errorType, expectedError) {
             console.error(`Response: ${response.body?.substring(0, 200)}`);
         }
     }
-
-    // Tag the response
-    response.tags = {
-        ...response.tags,
-        error_type: errorType,
-        status_class: `${Math.floor(status / 100)}xx`,
-    };
 }
 
-function testUnauthorizedErrors(baseUrl) {
-    group("401 Unauthorized Errors", function () {
-        // Simulate protected endpoints that require authentication
-        // Since our API doesn't have auth, we'll test endpoints with invalid auth headers
+function testErrorTestEndpoints(baseUrl) {
+    group("ErrorTest Controller Endpoints", function () {
+        // Call the dedicated ErrorTest endpoints that return specific status codes
+        const errorCodes = [400, 401, 403, 404, 409, 410, 422, 429, 500, 502, 503, 504];
+        const errorCode = randomItem(errorCodes);
+
         const startTime = new Date().getTime();
 
-        const response = http.get(`${baseUrl}/api/v1/Books`, {
-            headers: {
-                Authorization: "Bearer invalid_token_12345",
-                "X-API-Key": "invalid_api_key",
+        const response = http.get(`${baseUrl}/api/v1/ErrorTest/${errorCode}`, {
+            tags: {
+                error_type: `error_test_${errorCode}`,
+                status_code: errorCode.toString()
             },
-            tags: { error_type: "unauthorized" },
         });
 
         const duration = new Date().getTime() - startTime;
 
-        // Note: Our API doesn't enforce auth, so this will return 200
-        // But we're testing the pattern for when auth is added
-        const hasAuth = check(response, {
-            "response received": (r) => r.status >= 200,
+        const isExpectedError = check(response, {
+            [`status is ${errorCode}`]: (r) => r.status === errorCode,
+            "has error message": (r) => r.body && r.body.length > 0,
             "response time acceptable": (r) => duration < 1000,
         });
 
-        // If this were a real auth endpoint, we'd expect 401
-        // For now, just track the pattern
-        if (response.status === 401) {
-            errorResponseTime.add(duration);
-            error4xxRate.add(1);
-            errorsByType.add(1, { type: "4xx_unauthorized" });
-        }
+        recordError(response, duration, `error_test_${errorCode}`, isExpectedError);
     });
 }
 

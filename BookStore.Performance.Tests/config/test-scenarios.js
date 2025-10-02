@@ -105,16 +105,18 @@ export const testScenarios = {
     // ==================== ERROR TEST ====================
     errorTest: {
         stages: [
-            { duration: "30s", target: 2 },  // Warm up
-            { duration: "2m", target: 5 },   // Steady state
-            { duration: "1m", target: 0 },   // Ramp down
+            { duration: "30s", target: 10 },  // Warm up
+            { duration: "2m", target: 30 },   // Ramp to high load
+            { duration: "5m", target: 50 },   // Heavy sustained load
+            { duration: "2m", target: 75 },   // Peak load
+            { duration: "1m", target: 0 },    // Ramp down
         ],
-        gracefulRampDown: "15s",
+        gracefulRampDown: "30s",
         thresholds: {
-            // More lenient - we're testing error handling
-            errors: ["rate<0.5"],        // Allow up to 50% errors
-            errors_4xx: ["rate<0.3"],
-            errors_5xx: ["rate<0.2"],
+            // More lenient - we're testing error handling at scale
+            errors: ["rate<0.7"],        // Allow up to 70% errors
+            errors_4xx: ["rate<0.5"],
+            errors_5xx: ["rate<0.3"],
             http_req_duration: ["p(95)<10000"],
         },
     },

@@ -13,54 +13,55 @@ Quick setup instructions for configuring the BookStore Performance Testing POC o
 
 1. **Clone the repository**
 
-    ```bash
-    git clone <repository-url>
-    cd AiHubPerfExample
-    ```
+   ```bash
+   git clone <repository-url>
+   cd AiHubPerfExample
+   ```
 
 2. **Configure Application Settings**
 
-    Copy the example configuration files and update with your API keys:
+   Copy the example configuration files and update with your API keys:
 
-    ```bash
-    # BookStore Service
-    cp BookStore.Service/appsettings.example.json BookStore.Service/appsettings.json
+   ```bash
+   # BookStore Service
+   cp BookStore.Service/appsettings.example.json BookStore.Service/appsettings.json
 
-    # Performance Service
-    cp BookStore.Performance.Service/appsettings.example.json BookStore.Performance.Service/appsettings.json
-    ```
+   # Performance Service
+   cp BookStore.Performance.Service/appsettings.example.json BookStore.Performance.Service/appsettings.json
+   ```
 
 3. **Update Configuration Files**
 
-    Edit the `appsettings.json` files and replace placeholders:
+   Edit the `appsettings.json` files and replace placeholders:
 
-    **BookStore.Service/appsettings.json:**
-    - `LLM.Providers.Claude.ApiKey` - Your Claude API key (if using Claude)
-    - `LLM.Providers.OpenAI.ApiKey` - Your OpenAI API key (if using OpenAI)
-    - `Telemetry.TraceLoop.ApiKey` - Your TraceLoop API key (optional, or set `Enabled: false`)
+   **BookStore.Service/appsettings.json:**
+   - `LLM.Providers.Claude.ApiKey` - Your Claude API key (if using Claude)
+   - `LLM.Providers.OpenAI.ApiKey` - Your OpenAI API key (if using OpenAI)
+   - `Telemetry.TraceLoop.ApiKey` - Your TraceLoop API key (optional, or set `Enabled: false`)
 
-    **BookStore.Performance.Service/appsettings.json:**
-    - `Claude.ApiKey` - Your Claude API key
-    - `Telemetry.TraceLoop.ApiKey` - Your TraceLoop API key (optional, or set `Enabled: false`)
+   **BookStore.Performance.Service/appsettings.json:**
+   - `Claude.ApiKey` - Your Claude API key
+   - `Telemetry.TraceLoop.ApiKey` - Your TraceLoop API key (optional, or set `Enabled: false`)
 
-    **Note:** If you only want to use Ollama (free, local LLM), you can leave the API keys as placeholders and set:
+   **Note:** If you only want to use Ollama (free, local LLM), you can leave the API keys as placeholders and set:
 
-    ```json
-    "LLM": {
-      "Provider": "Ollama"
-    }
-    ```
+   ```json
+   "LLM": {
+     "Provider": "Ollama"
+   }
+   ```
 
 4. **Install Dependencies**
 
-    ```bash
-    make dev-setup
-    ```
+   ```bash
+   make dev-setup
+   ```
 
 5. **Build the Solution**
-    ```bash
-    make build
-    ```
+
+   ```bash
+   make build
+   ```
 
 ## Running the Application
 
@@ -98,9 +99,9 @@ Edit `BookStore.Service/appsettings.json` to choose your LLM provider:
 
 ```json
 {
-    "LLM": {
-        "Provider": "Ollama" // Options: "Ollama", "Claude", "OpenAI", "Bedrock"
-    }
+  "LLM": {
+    "Provider": "Ollama" // Options: "Ollama", "Claude", "OpenAI", "Bedrock"
+  }
 }
 ```
 
@@ -117,13 +118,13 @@ Edit `BookStore.Service/appsettings.json` to choose your LLM provider:
 
 ```json
 {
-    "Telemetry": {
-        "Exporters": {
-            "Console": {
-                "Enabled": true
-            }
-        }
+  "Telemetry": {
+    "Exporters": {
+      "Console": {
+        "Enabled": true
+      }
     }
+  }
 }
 ```
 
@@ -131,13 +132,13 @@ Edit `BookStore.Service/appsettings.json` to choose your LLM provider:
 
 ```json
 {
-    "Telemetry": {
-        "Exporters": {
-            "Prometheus": {
-                "Enabled": true
-            }
-        }
+  "Telemetry": {
+    "Exporters": {
+      "Prometheus": {
+        "Enabled": true
+      }
     }
+  }
 }
 ```
 
@@ -145,12 +146,12 @@ Edit `BookStore.Service/appsettings.json` to choose your LLM provider:
 
 ```json
 {
-    "Telemetry": {
-        "TraceLoop": {
-            "Enabled": true,
-            "ApiKey": "your-traceloop-api-key"
-        }
+  "Telemetry": {
+    "TraceLoop": {
+      "Enabled": true,
+      "ApiKey": "your-traceloop-api-key"
     }
+  }
 }
 ```
 
@@ -180,12 +181,12 @@ make perf-report
 
 Once running, access:
 
-- **API**: http://localhost:7002/swagger
-- **Aspire Dashboard**: http://localhost:15888
-- **Grafana**: http://localhost:3000 (admin/admin123)
-- **Prometheus**: http://localhost:9090
-- **Health Check**: http://localhost:7002/health
-- **Metrics**: http://localhost:7002/metrics
+- **API**: <http://localhost:7002/swagger>
+- **Aspire Dashboard**: <http://localhost:15888>
+- **Grafana**: <http://localhost:3000> (admin/admin123)
+- **Prometheus**: <http://localhost:9090>
+- **Health Check**: <http://localhost:7002/health>
+- **Metrics**: <http://localhost:7002/metrics>
 
 ## Troubleshooting
 
@@ -233,13 +234,13 @@ Or change model in `appsettings.json`:
 
 ```json
 {
-    "LLM": {
-        "Providers": {
-            "Ollama": {
-                "Model": "mistral" // or "phi3", "codellama", etc.
-            }
-        }
+  "LLM": {
+    "Providers": {
+      "Ollama": {
+        "Model": "mistral" // or "phi3", "codellama", etc.
+      }
     }
+  }
 }
 ```
 
@@ -301,9 +302,9 @@ make reset            # Factory reset
 1. ✅ Configure your API keys
 2. ✅ Run `make build`
 3. ✅ Start services with `make run-aspire`
-4. ✅ Verify at http://localhost:7002/swagger
+4. ✅ Verify at <http://localhost:7002/swagger>
 5. ✅ Run smoke test: `make perf-smoke`
-6. ✅ View Grafana dashboards at http://localhost:3000
+6. ✅ View Grafana dashboards at <http://localhost:3000>
 
 For detailed documentation, see:
 

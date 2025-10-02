@@ -16,34 +16,37 @@
 
 ## Dashboard Status
 
-| Dashboard | Widgets | Status | Action |
-|-----------|---------|--------|--------|
-| bookstore-demo.json | 53 | ✅ Primary | Keep, reduce to 45 |
-| bookstore-mega.json | 99 | ⚠️ Reference | Archive, don't deploy |
-| bookstore-performance.json | 9 | ✅ Keep | No changes |
-| bookstore-errors-diagnostics.json | 18 | ✅ Critical | Keep all |
-| bookstore-llm-metrics.json | 7 | ✅ Keep | Keep all |
-| bookstore-dotnet-runtime.json | 11 | 🔄 Consolidate | Merge into Demo |
-| bookstore-http-performance.json | 11 | 🔄 Consolidate | Merge into Demo |
-| bookstore-threading-concurrency.json | 14 | 🔄 Consolidate | Merge into Demo |
-| bookstore-dependencies.json | 15 | ✅ Keep | No changes |
-| bookstore-system-health.json | ERROR | ❌ Broken | Fix or remove |
+| Dashboard                            | Widgets | Status         | Action                |
+| ------------------------------------ | ------- | -------------- | --------------------- |
+| bookstore-demo.json                  | 53      | ✅ Primary     | Keep, reduce to 45    |
+| bookstore-mega.json                  | 99      | ⚠️ Reference   | Archive, don't deploy |
+| bookstore-performance.json           | 9       | ✅ Keep        | No changes            |
+| bookstore-errors-diagnostics.json    | 18      | ✅ Critical    | Keep all              |
+| bookstore-llm-metrics.json           | 7       | ✅ Keep        | Keep all              |
+| bookstore-dotnet-runtime.json        | 11      | 🔄 Consolidate | Merge into Demo       |
+| bookstore-http-performance.json      | 11      | 🔄 Consolidate | Merge into Demo       |
+| bookstore-threading-concurrency.json | 14      | 🔄 Consolidate | Merge into Demo       |
+| bookstore-dependencies.json          | 15      | ✅ Keep        | No changes            |
+| bookstore-system-health.json         | ERROR   | ❌ Broken      | Fix or remove         |
 
 ---
 
 ## Widget Categories by Business Value
 
 ### 🔴 Critical (28 widgets) - KEEP ALL
+
 - Error detection (14 widgets)
 - Performance SLIs (14 widgets)
 - **Action:** No changes
 
 ### 💰 High Value (21 widgets) - KEEP ALL
+
 - LLM cost tracking (7 core widgets)
 - Token consumption monitoring (14 breakdown widgets)
 - **Action:** Keep core 7, optionally remove detailed 14 breakdowns
 
 ### 🔧 Medium (42 widgets) - CONSOLIDATE
+
 - Memory & GC (11 widgets) → Keep 4
 - JIT Compilation (4 widgets) → Keep 1
 - Threading (14 widgets) → Keep 4
@@ -51,6 +54,7 @@
 - **Action:** Remove 27 redundant widgets
 
 ### 📊 Low (128 widgets) - REMOVE MOST
+
 - Duplicate metrics across dashboards
 - Individual HTTP status code panels
 - Static/rarely useful counters
@@ -127,6 +131,7 @@
 ## Action Plan
 
 ### Phase 1: Immediate (Week 1)
+
 - [ ] Fix/remove `bookstore-system-health.json` (corrupted)
 - [ ] Set `bookstore-demo.json` as default dashboard
 - [ ] Add warning to MEGA dashboard title
@@ -134,12 +139,14 @@
 - [ ] **Result:** 53 → 45 widgets in Demo
 
 ### Phase 2: Consolidation (Week 2)
+
 - [ ] Merge Runtime/HTTP/Threading into Demo dashboard
 - [ ] Create Executive Dashboard (12 widgets)
 - [ ] Archive standalone Runtime/HTTP/Threading dashboards
 - [ ] **Result:** 9 → 5 production dashboards
 
 ### Phase 3: Optimization (Week 3-4)
+
 - [ ] Optimize histogram quantile queries
 - [ ] Combine multi-query stat panels
 - [ ] Add recording rules for expensive queries
@@ -147,6 +154,7 @@
 - [ ] **Result:** <2s dashboard load time
 
 ### Phase 4: Documentation (Ongoing)
+
 - [ ] Document each dashboard's purpose
 - [ ] Create runbook links from widgets
 - [ ] Add alert thresholds to descriptions
@@ -157,24 +165,28 @@
 ## Key Recommendations
 
 ### ✅ KEEP
+
 - All error detection widgets (critical for production)
 - All LLM cost tracking (budget management)
 - Performance SLI widgets (SLO compliance)
 - Database/cache dependency metrics (bottleneck detection)
 
 ### ❌ REMOVE
+
 - Individual HTTP status code panels (400, 401, 404, 409, 410)
 - Duplicate metrics across dashboards
 - Static counters (CPU count, loaded assemblies)
 - Rarely actionable JIT metrics
 
 ### 🔄 CONSOLIDATE
+
 - Merge Runtime → Demo
 - Merge HTTP → Demo
 - Merge Threading → Demo
 - Create single Executive Dashboard
 
 ### 📝 FIX
+
 - `bookstore-system-health.json` (JSON parse error at line 960)
 
 ---
@@ -182,11 +194,13 @@
 ## Storage Impact
 
 **Before:**
+
 - 9 dashboards
 - 237 widgets
 - ~3.5 GB storage (estimated)
 
 **After:**
+
 - 5 production + 2 reference dashboards
 - 109 widgets (54% reduction)
 - ~2.35 GB storage (33% reduction)

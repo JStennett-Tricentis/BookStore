@@ -32,40 +32,40 @@ From hub-services-latest analysis:
 - Mocks external API responses (AI providers, external services)
 - Configurable via YAML simulations
 - Three endpoints:
-    - Internal API: Port 17070
-    - UI Dashboard: Port 28880
-    - Service API: Port 5020 (AI Hub API mock)
+  - Internal API: Port 17070
+  - UI Dashboard: Port 28880
+  - Service API: Port 5020 (AI Hub API mock)
 
 ### Integration Points in BookStore POC
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     BookStore.Service                        │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐            │
-│  │  Ollama    │  │   Claude   │  │  OpenAI    │            │
-│  │  Service   │  │  Service   │  │  Service   │            │
-│  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘            │
-│        │                │                │                    │
-│        └────────────────┼────────────────┘                    │
-│                         │                                     │
-│                    ┌────▼────┐                                │
-│                    │ ILLMProvider Interface                   │
-│                    │ (New Abstraction)                        │
-│                    └────┬────┘                                │
-│                         │                                     │
-│           ┌─────────────┴─────────────┐                      │
-│           │                           │                       │
-│      ┌────▼────┐              ┌──────▼──────┐                │
-│      │  Real   │              │  Simulator  │                │
-│      │Provider │              │  Provider   │                │
-│      └─────────┘              └──────┬──────┘                │
-└────────────────────────────────────┼─────────────────────────┘
-                                      │
-                              ┌───────▼────────┐
-                              │  API Simulator │
-                              │  Container     │
-                              │  (Port 5020)   │
-                              └────────────────┘
+```text
+┌─────────────────────────────────────────────────────┐
+│                     BookStore.Service               │
+│  ┌────────────┐   ┌────────────┐   ┌────────────┐   │
+│  │  Ollama    │   │   Claude   │   │  OpenAI    │   │
+│  │  Service   │   │  Service   │   │  Service   │   │
+│  └─────┬──────┘   └─────┬──────┘   └─────┬──────┘   │
+│        │                │                │          │
+│        └────────────────┼────────────────┘          │
+│                         │                           │
+│                    ┌────▼────┐                      │
+│                    │ ILLMProvider Interface         │
+│                    │ (New Abstraction)              │
+│                    └────┬────┘                      │
+│                         │                           │
+│           ┌─────────────┴─────────────┐             │
+│           │                           │             │
+│      ┌────▼────┐              ┌──────▼──────┐       │
+│      │  Real   │              │  Simulator  │       │
+│      │Provider │              │  Provider   │       │
+│      └─────────┘              └──────┬──────┘       │
+└──────────────────────────────────────┼──────────────┘
+                                       │
+                               ┌───────▼────────┐
+                               │  API Simulator │
+                               │  Container     │
+                               │  (Port 5020)   │
+                               └────────────────┘
 ```
 
 ## Implementation Plan
@@ -101,26 +101,26 @@ public static class ServiceConstants
 
 ```yaml
 Simulator:
-    Workspace: /workspace/simulations
-    Identifier: "bookstore-simulator"
-    FormatDate: "yyyy-MM-dd"
-    FormatTime: "yyyy-MM-ddTHH:mm:ss.fffZ"
+  Workspace: /workspace/simulations
+  Identifier: "bookstore-simulator"
+  FormatDate: "yyyy-MM-dd"
+  FormatTime: "yyyy-MM-ddTHH:mm:ss.fffZ"
 
-    Variables:
-        Simulator__Variables__Model_Name: "claude-3-5-sonnet-20241022"
-        Simulator__Variables__Book_Title: "Sample Book"
-        Simulator__Variables__Author_Name: "Sample Author"
+  Variables:
+    Simulator__Variables__Model_Name: "claude-3-5-sonnet-20241022"
+    Simulator__Variables__Book_Title: "Sample Book"
+    Simulator__Variables__Author_Name: "Sample Author"
 
-    IdleTimeout: 60
-    Environment: dev
+  IdleTimeout: 60
+  Environment: dev
 
 Logging:
+  LogLevel:
+    Default: Information
+  File:
+    FileName: "Simulator_{date}.log"
     LogLevel:
-        Default: Information
-    File:
-        FileName: "Simulator_{date}.log"
-        LogLevel:
-            Default: Warning
+      Default: Warning
 ```
 
 #### 1.3 Create Aspire Extension
@@ -390,7 +390,7 @@ else
 
 #### 3.1 Create Simulations Directory Structure
 
-```
+```yaml
 BookStore.Aspire.AppHost/
 ├── simulations/
 │   ├── claude/
@@ -409,51 +409,51 @@ BookStore.Aspire.AppHost/
 
 ```json
 {
-    "name": "Claude Generate Summary",
-    "endpoint": "/api/llm/generate",
-    "method": "POST",
-    "responses": [
-        {
-            "condition": "$.prompt contains 'Gatsby'",
-            "response": {
-                "status": 200,
-                "body": {
-                    "content": "The Great Gatsby is F. Scott Fitzgerald's masterpiece about the American Dream in the 1920s. The story follows Jay Gatsby's obsessive pursuit of his lost love Daisy Buchanan through the eyes of narrator Nick Carraway. Set in the Jazz Age, it explores themes of wealth, love, and the corruption of idealism.",
-                    "model": "claude-3-5-sonnet-20241022",
-                    "usage": {
-                        "input_tokens": 45,
-                        "output_tokens": 67
-                    }
-                },
-                "headers": {
-                    "Content-Type": "application/json"
-                }
-            }
+  "name": "Claude Generate Summary",
+  "endpoint": "/api/llm/generate",
+  "method": "POST",
+  "responses": [
+    {
+      "condition": "$.prompt contains 'Gatsby'",
+      "response": {
+        "status": 200,
+        "body": {
+          "content": "The Great Gatsby is F. Scott Fitzgerald's masterpiece about the American Dream in the 1920s. The story follows Jay Gatsby's obsessive pursuit of his lost love Daisy Buchanan through the eyes of narrator Nick Carraway. Set in the Jazz Age, it explores themes of wealth, love, and the corruption of idealism.",
+          "model": "claude-3-5-sonnet-20241022",
+          "usage": {
+            "input_tokens": 45,
+            "output_tokens": 67
+          }
         },
-        {
-            "condition": "$.prompt contains 'error'",
-            "response": {
-                "status": 500,
-                "body": {
-                    "error": "Internal server error"
-                }
-            }
-        },
-        {
-            "default": true,
-            "response": {
-                "status": 200,
-                "body": {
-                    "content": "This is a compelling book that explores important themes through well-developed characters. The author's writing style is engaging and thought-provoking. Readers will find this work both entertaining and intellectually stimulating.",
-                    "model": "claude-3-5-sonnet-20241022",
-                    "usage": {
-                        "input_tokens": 50,
-                        "output_tokens": 45
-                    }
-                }
-            }
+        "headers": {
+          "Content-Type": "application/json"
         }
-    ]
+      }
+    },
+    {
+      "condition": "$.prompt contains 'error'",
+      "response": {
+        "status": 500,
+        "body": {
+          "error": "Internal server error"
+        }
+      }
+    },
+    {
+      "default": true,
+      "response": {
+        "status": 200,
+        "body": {
+          "content": "This is a compelling book that explores important themes through well-developed characters. The author's writing style is engaging and thought-provoking. Readers will find this work both entertaining and intellectually stimulating.",
+          "model": "claude-3-5-sonnet-20241022",
+          "usage": {
+            "input_tokens": 50,
+            "output_tokens": 45
+          }
+        }
+      }
+    }
+  ]
 }
 ```
 
@@ -463,17 +463,17 @@ BookStore.Aspire.AppHost/
 
 ```json
 {
-    "LLM": {
-        "Provider": "Claude",
-        "UseSimulator": false,
-        "SimulatorBaseUrl": "http://localhost:5020",
-        "Providers": {
-            "Simulator": {
-                "Enabled": true,
-                "BaseUrl": "http://localhost:5020"
-            }
-        }
+  "LLM": {
+    "Provider": "Claude",
+    "UseSimulator": false,
+    "SimulatorBaseUrl": "http://localhost:5020",
+    "Providers": {
+      "Simulator": {
+        "Enabled": true,
+        "BaseUrl": "http://localhost:5020"
+      }
     }
+  }
 }
 ```
 
@@ -481,17 +481,17 @@ BookStore.Aspire.AppHost/
 
 ```json
 {
-    "LLM": {
-        "Provider": "Ollama",
-        "UseSimulator": false,
-        "SimulatorBaseUrl": "http://localhost:5020",
-        "Providers": {
-            "Simulator": {
-                "Enabled": true,
-                "BaseUrl": "http://localhost:5020"
-            }
-        }
+  "LLM": {
+    "Provider": "Ollama",
+    "UseSimulator": false,
+    "SimulatorBaseUrl": "http://localhost:5020",
+    "Providers": {
+      "Simulator": {
+        "Enabled": true,
+        "BaseUrl": "http://localhost:5020"
+      }
     }
+  }
 }
 ```
 
@@ -499,7 +499,7 @@ BookStore.Aspire.AppHost/
 
 ```json
 {
-    "ApiSimulatorEnabled": false
+  "ApiSimulatorEnabled": false
 }
 ```
 
@@ -513,29 +513,29 @@ BookStore.Aspire.AppHost/
 # API Simulator targets
 .PHONY: run-aspire-simulator
 run-aspire-simulator: ## Start with API Simulator enabled
-	@echo "🎭 Starting BookStore with API Simulator..."
-	cd BookStore.Aspire.AppHost && \
-	ASPNETCORE_URLS="http://localhost:15888" \
-	DOTNET_DASHBOARD_OTLP_HTTP_ENDPOINT_URL="http://localhost:19999" \
-	ASPIRE_ALLOW_UNSECURED_TRANSPORT=true \
-	ApiSimulatorEnabled=true \
-	dotnet run
+ @echo "🎭 Starting BookStore with API Simulator..."
+ cd BookStore.Aspire.AppHost && \
+ ASPNETCORE_URLS="http://localhost:15888" \
+ DOTNET_DASHBOARD_OTLP_HTTP_ENDPOINT_URL="http://localhost:19999" \
+ ASPIRE_ALLOW_UNSECURED_TRANSPORT=true \
+ ApiSimulatorEnabled=true \
+ dotnet run
 
 .PHONY: test-simulator
 test-simulator: ## Test API Simulator integration
-	@echo "🧪 Testing API Simulator..."
-	curl -f http://localhost:28880 && echo "✅ Simulator UI accessible" || echo "❌ Simulator UI failed"
-	curl -f http://localhost:17070/health && echo "✅ Simulator API healthy" || echo "❌ Simulator API failed"
+ @echo "🧪 Testing API Simulator..."
+ curl -f http://localhost:28880 && echo "✅ Simulator UI accessible" || echo "❌ Simulator UI failed"
+ curl -f http://localhost:17070/health && echo "✅ Simulator API healthy" || echo "❌ Simulator API failed"
 
 .PHONY: perf-simulator
 perf-simulator: ## Run performance tests with simulator ($0 cost)
-	@echo "🚀 Running K6 tests with API Simulator (FREE)..."
-	cd BookStore.Performance.Tests && \
-	k6 run tests/books.js \
-		--env TEST_TYPE=load \
-		--env BASE_URL=http://localhost:7002 \
-		--env USE_SIMULATOR=true \
-		--out json=results/simulator-test.json
+ @echo "🚀 Running K6 tests with API Simulator (FREE)..."
+ cd BookStore.Performance.Tests && \
+ k6 run tests/books.js \
+  --env TEST_TYPE=load \
+  --env BASE_URL=http://localhost:7002 \
+  --env USE_SIMULATOR=true \
+  --out json=results/simulator-test.json
 ```
 
 #### 5.2 Update K6 Tests for Simulator
@@ -544,17 +544,17 @@ perf-simulator: ## Run performance tests with simulator ($0 cost)
 
 ```javascript
 export const simulatorConfig = {
-    useSimulator: __ENV.USE_SIMULATOR === "true",
-    simulatorBaseUrl: __ENV.SIMULATOR_BASE_URL || "http://localhost:5020",
+  useSimulator: __ENV.USE_SIMULATOR === "true",
+  simulatorBaseUrl: __ENV.SIMULATOR_BASE_URL || "http://localhost:5020",
 };
 
 export function isSimulatorEnabled() {
-    return simulatorConfig.useSimulator;
+  return simulatorConfig.useSimulator;
 }
 
 // When using simulator, we can increase load significantly since it's free
 export function getScaledVUs(baseVUs) {
-    return isSimulatorEnabled() ? baseVUs * 10 : baseVUs;
+  return isSimulatorEnabled() ? baseVUs * 10 : baseVUs;
 }
 ```
 
@@ -587,9 +587,9 @@ make run-aspire-simulator
 
 ### Access Simulator
 
-- **UI Dashboard**: http://localhost:28880
-- **Internal API**: http://localhost:17070
-- **Service API**: http://localhost:5020
+- **UI Dashboard**: <http://localhost:28880>
+- **Internal API**: <http://localhost:17070>
+- **Service API**: <http://localhost:5020>
 
 ### Cost Comparison
 
@@ -616,12 +616,11 @@ make run-aspire-simulator
 - Real-world performance benchmarks
 - Final integration testing
 
-````
-
 #### 6.2 Create Simulator Guide
+
 **File**: `SIMULATOR.md` (new)
 
-```markdown
+````markdown
 # API Simulator Guide
 
 ## Overview
@@ -631,30 +630,33 @@ The Tricentis API Simulator enables zero-cost LLM performance testing by mocking
 ## Quick Start
 
 1. Enable simulator in `appsettings.json`:
-   ```json
-   {
-     "LLM": {
-       "UseSimulator": true
-     }
-   }
+
+```json
+{
+  "LLM": {
+    "UseSimulator": true
+  }
+}
+```
 ````
 
 2. Start with simulator:
 
-    ```bash
-    make run-aspire-simulator
-    ```
+   ```bash
+   make run-aspire-simulator
+   ```
 
 3. Verify simulator:
 
-    ```bash
-    make test-simulator
-    ```
+   ```bash
+   make test-simulator
+   ```
 
 4. Run unlimited tests:
-    ```bash
-    make perf-simulator
-    ```
+
+   ```bash
+   make perf-simulator
+   ```
 
 ## Creating Simulations
 
@@ -662,13 +664,12 @@ See `simulations/` directory for examples.
 
 ## Monitoring
 
-View simulator activity at: http://localhost:28880
-
-````
+View simulator activity at: <http://localhost:28880>
 
 ### Phase 7: CI/CD Integration (1 hour)
 
 #### 7.1 Update GitHub Actions Workflow
+
 **File**: `.github/workflows/performance.yaml`
 
 ```yaml
@@ -676,17 +677,17 @@ name: Performance Tests
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Daily at 2 AM
+    - cron: "0 2 * * *" # Daily at 2 AM
   workflow_dispatch:
     inputs:
       use_simulator:
-        description: 'Use API Simulator (zero cost)'
+        description: "Use API Simulator (zero cost)"
         required: false
-        default: 'true'
+        default: "true"
         type: choice
         options:
-          - 'true'
-          - 'false'
+          - "true"
+          - "false"
 
 jobs:
   performance-test:
@@ -697,7 +698,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: "8.0.x"
 
       - name: Start services with simulator
         run: |
@@ -715,7 +716,7 @@ jobs:
         with:
           name: performance-results
           path: BookStore.Performance.Tests/results/
-````
+```
 
 ## Implementation Checklist
 

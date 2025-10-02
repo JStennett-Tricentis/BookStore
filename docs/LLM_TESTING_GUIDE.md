@@ -31,8 +31,8 @@ GET http://localhost:7002/api/v1/Books/llm-providers
 
 ```json
 {
-    "availableProviders": ["claude", "openai", "bedrock", "ollama"],
-    "defaultProvider": "ollama"
+  "availableProviders": ["claude", "openai", "bedrock", "ollama"],
+  "defaultProvider": "ollama"
 }
 ```
 
@@ -57,11 +57,11 @@ POST http://localhost:7002/api/v1/Books/{bookId}/generate-summary?provider=bedro
 
 ```json
 {
-    "bookId": "670c27a74f0e6b7a2e1a3456",
-    "title": "The Great Gatsby",
-    "author": "F. Scott Fitzgerald",
-    "provider": "ollama",
-    "aiGeneratedSummary": "A captivating tale of wealth..."
+  "bookId": "670c27a74f0e6b7a2e1a3456",
+  "title": "The Great Gatsby",
+  "author": "F. Scott Fitzgerald",
+  "provider": "ollama",
+  "aiGeneratedSummary": "A captivating tale of wealth..."
 }
 ```
 
@@ -97,24 +97,24 @@ Each request includes automated tests:
 
 ```json
 {
-    "LLM": {
-        "Provider": "Ollama" // Default provider
-    },
-    "Claude": {
-        "ApiKey": "" // Add your API key here
-    },
-    "OpenAI": {
-        "ApiKey": "",
-        "Model": "gpt-4o-mini"
-    },
-    "Bedrock": {
-        "Region": "us-east-1",
-        "Model": "anthropic.claude-3-5-sonnet-20241022-v2:0"
-    },
-    "Ollama": {
-        "BaseUrl": "http://localhost:11434",
-        "Model": "llama3.2:latest"
-    }
+  "LLM": {
+    "Provider": "Ollama" // Default provider
+  },
+  "Claude": {
+    "ApiKey": "" // Add your API key here
+  },
+  "OpenAI": {
+    "ApiKey": "",
+    "Model": "gpt-4o-mini"
+  },
+  "Bedrock": {
+    "Region": "us-east-1",
+    "Model": "anthropic.claude-3-5-sonnet-20241022-v2:0"
+  },
+  "Ollama": {
+    "BaseUrl": "http://localhost:11434",
+    "Model": "llama3.2:latest"
+  }
 }
 ```
 
@@ -129,7 +129,7 @@ Each request includes automated tests:
 
 ### Prerequisites
 
-1. Install Ollama: https://ollama.ai
+1. Install Ollama: <https://ollama.ai>
 2. Pull a model: `ollama pull llama3.2`
 3. Verify it's running: `ollama list`
 
@@ -143,11 +143,11 @@ Expected result:
 
 ```json
 {
-    "bookId": "...",
-    "title": "...",
-    "author": "...",
-    "provider": "ollama",
-    "aiGeneratedSummary": "..."
+  "bookId": "...",
+  "title": "...",
+  "author": "...",
+  "provider": "ollama",
+  "aiGeneratedSummary": "..."
 }
 ```
 
@@ -187,7 +187,7 @@ POST /api/v1/Books/{id}/generate-summary?provider=claude
 
 ```json
 {
-    "message": "LLM provider not configured: Claude API key not configured"
+  "message": "LLM provider not configured: Claude API key not configured"
 }
 ```
 
@@ -203,7 +203,7 @@ POST /api/v1/Books/{id}/generate-summary?provider=invalid
 
 ```json
 {
-    "message": "Unknown provider: invalid. Available providers: claude, openai, bedrock, ollama"
+  "message": "Unknown provider: invalid. Available providers: claude, openai, bedrock, ollama"
 }
 ```
 
@@ -262,7 +262,7 @@ http://localhost:15888
 
 ### Ollama Not Running
 
-**Error:** Connection refused to http://localhost:11434
+**Error:** Connection refused to <http://localhost:11434>
 
 **Solution:**
 
@@ -288,12 +288,12 @@ ollama pull llama3.2
 
 ```json
 {
-    "Claude": {
-        "ApiKey": "sk-ant-..."
-    },
-    "OpenAI": {
-        "ApiKey": "sk-..."
-    }
+  "Claude": {
+    "ApiKey": "sk-ant-..."
+  },
+  "OpenAI": {
+    "ApiKey": "sk-..."
+  }
 }
 ```
 

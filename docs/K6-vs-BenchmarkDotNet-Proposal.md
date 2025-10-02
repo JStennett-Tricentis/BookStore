@@ -53,11 +53,11 @@ This proposal evaluates K6 and BenchmarkDotNet for the BookStore application's p
 
 - **Type**: Enterprise load testing platform
 - **Strengths**:
-    - No-code/low-code test design
-    - Advanced analytics and AI-powered analysis
-    - Enterprise integrations (SAP, Citrix, etc.)
-    - Centralized test asset management
-    - Built-in SLA validation
+  - No-code/low-code test design
+  - Advanced analytics and AI-powered analysis
+  - Enterprise integrations (SAP, Citrix, etc.)
+  - Centralized test asset management
+  - Built-in SLA validation
 - **Cost**: Enterprise licensing ($30K-100K+ annually)
 
 ### Comparison Matrix
@@ -88,7 +88,7 @@ This proposal evaluates K6 and BenchmarkDotNet for the BookStore application's p
 
 ## When to Use Each Tool
 
-### Use K6 When:
+### Use K6 When
 
 - Testing API endpoint performance under load
 - Simulating concurrent user scenarios
@@ -97,7 +97,7 @@ This proposal evaluates K6 and BenchmarkDotNet for the BookStore application's p
 - Stress testing infrastructure limits
 - Monitoring performance regression in CI/CD
 
-### Use BenchmarkDotNet When:
+### Use BenchmarkDotNet When
 
 - Optimizing database query performance
 - Comparing algorithm implementations
@@ -113,22 +113,22 @@ This proposal evaluates K6 and BenchmarkDotNet for the BookStore application's p
 ```javascript
 // Test concurrent book searches
 export default function () {
-    let response = http.get("http://localhost:7002/api/books?search=programming");
-    check(response, {
-        "status is 200": (r) => r.status === 200,
-        "response time < 500ms": (r) => r.timings.duration < 500,
-    });
+  let response = http.get("http://localhost:7002/api/books?search=programming");
+  check(response, {
+    "status is 200": (r) => r.status === 200,
+    "response time < 500ms": (r) => r.timings.duration < 500,
+  });
 }
 
 export let options = {
-    stages: [
-        { duration: "2m", target: 100 }, // Ramp up to 100 users
-        { duration: "5m", target: 100 }, // Stay at 100 users
-        { duration: "2m", target: 0 }, // Ramp down
-    ],
-    thresholds: {
-        http_req_duration: ["p(95)<500"], // 95% of requests under 500ms
-    },
+  stages: [
+    { duration: "2m", target: 100 }, // Ramp up to 100 users
+    { duration: "5m", target: 100 }, // Stay at 100 users
+    { duration: "2m", target: 0 }, // Ramp down
+  ],
+  thresholds: {
+    http_req_duration: ["p(95)<500"], // 95% of requests under 500ms
+  },
 };
 ```
 
@@ -169,18 +169,18 @@ public class BookRepositoryBenchmarks
 
 1. Add BenchmarkDotNet to BookStore.Service.Tests
 2. Create benchmarks for:
-    - Repository methods (MongoDB operations)
-    - Cache operations (Redis serialization)
-    - Search algorithms
+   - Repository methods (MongoDB operations)
+   - Cache operations (Redis serialization)
+   - Search algorithms
 3. Establish baseline metrics
 
 ### Phase 2: Load Testing (Week 2)
 
 1. Enhance existing K6 tests
 2. Add scenarios for:
-    - Mixed read/write operations
-    - Cache invalidation under load
-    - Connection pool exhaustion
+   - Mixed read/write operations
+   - Cache invalidation under load
+   - Connection pool exhaustion
 3. Set SLA thresholds
 
 ### Phase 3: Integration (Week 3)
@@ -200,18 +200,18 @@ public class BookRepositoryBenchmarks
 ### Value Delivered
 
 - **BenchmarkDotNet**:
-    - Catches performance regressions early (saves 10-20 hours debugging)
-    - Optimizes hot paths (10-50% performance gains typical)
-    - Provides memory profiling (reduces cloud costs)
+  - Catches performance regressions early (saves 10-20 hours debugging)
+  - Optimizes hot paths (10-50% performance gains typical)
+  - Provides memory profiling (reduces cloud costs)
 
 - **K6**:
-    - Validates production readiness
-    - Prevents outages (avoiding one incident saves $10K+)
-    - Enables capacity planning
+  - Validates production readiness
+  - Prevents outages (avoiding one incident saves $10K+)
+  - Enables capacity planning
 
 ## Strategic Recommendation: Open Source vs Enterprise
 
-### Choose K6 + BenchmarkDotNet When:
+### Choose K6 + BenchmarkDotNet When
 
 - **Budget conscious**: No licensing costs
 - **Developer-centric team**: Engineers comfortable with code
@@ -219,7 +219,7 @@ public class BookRepositoryBenchmarks
 - **DevOps maturity**: Strong CI/CD practices
 - **Customization needs**: Full control over test logic
 
-### Choose NeoLoad When:
+### Choose NeoLoad When
 
 - **Enterprise requirements**: Need executive reporting
 - **Complex protocols**: SAP, Citrix, mainframe testing
@@ -241,19 +241,19 @@ Given Tricentis already owns NeoLoad:
 **For BookStore Project: Implement K6 + BenchmarkDotNet** with the following priority:
 
 1. **Immediate (This Sprint)**:
-    - Add BenchmarkDotNet for critical path optimization
-    - Focus on BookRepository and cache operations
-    - Run benchmarks in CI for regression detection
+   - Add BenchmarkDotNet for critical path optimization
+   - Focus on BookRepository and cache operations
+   - Run benchmarks in CI for regression detection
 
 2. **Next Sprint**:
-    - Enhance K6 test coverage
-    - Add stress and spike scenarios
-    - Integrate with monitoring/alerting
+   - Enhance K6 test coverage
+   - Add stress and spike scenarios
+   - Integrate with monitoring/alerting
 
 3. **Ongoing**:
-    - BenchmarkDotNet before any performance-critical changes
-    - K6 tests before each release
-    - Monthly performance reviews using both tools
+   - BenchmarkDotNet before any performance-critical changes
+   - K6 tests before each release
+   - Monthly performance reviews using both tools
 
 ## Success Metrics
 

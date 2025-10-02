@@ -24,18 +24,18 @@ This catalog documents every widget across all Grafana dashboards to help the te
 
 ## Dashboard Inventory
 
-| Dashboard File | Title | Panels | Purpose | Status |
-|---|---|---|---|---|
-| `bookstore-demo.json` | Demo - Complete Overview | 53 | Production-ready curated dashboard | ✅ Primary |
-| `bookstore-mega.json` | MEGA Dashboard - All Metrics | 99 | Complete metrics collection | ⚠️ Reference Only |
-| `bookstore-performance.json` | Performance Testing | 9 | K6 test monitoring | ✅ Keep |
-| `bookstore-errors-diagnostics.json` | Errors & Diagnostics | 18 | Error tracking & debugging | ✅ Critical |
-| `bookstore-llm-metrics.json` | LLM Metrics | 7 | AI cost tracking | ✅ Keep |
-| `bookstore-dotnet-runtime.json` | .NET Runtime | 11 | Runtime internals | 🔄 Consolidate |
-| `bookstore-http-performance.json` | HTTP & Kestrel | 11 | HTTP metrics | 🔄 Consolidate |
-| `bookstore-threading-concurrency.json` | Threading & Concurrency | 14 | Thread pool metrics | 🔄 Consolidate |
-| `bookstore-dependencies.json` | External Dependencies | 15 | Outbound calls | ✅ Keep |
-| `bookstore-system-health.json` | System Health | ERROR | Corrupted JSON | ❌ Fix/Remove |
+| Dashboard File                         | Title                        | Panels | Purpose                            | Status            |
+| -------------------------------------- | ---------------------------- | ------ | ---------------------------------- | ----------------- |
+| `bookstore-demo.json`                  | Demo - Complete Overview     | 53     | Production-ready curated dashboard | ✅ Primary        |
+| `bookstore-mega.json`                  | MEGA Dashboard - All Metrics | 99     | Complete metrics collection        | ⚠️ Reference Only |
+| `bookstore-performance.json`           | Performance Testing          | 9      | K6 test monitoring                 | ✅ Keep           |
+| `bookstore-errors-diagnostics.json`    | Errors & Diagnostics         | 18     | Error tracking & debugging         | ✅ Critical       |
+| `bookstore-llm-metrics.json`           | LLM Metrics                  | 7      | AI cost tracking                   | ✅ Keep           |
+| `bookstore-dotnet-runtime.json`        | .NET Runtime                 | 11     | Runtime internals                  | 🔄 Consolidate    |
+| `bookstore-http-performance.json`      | HTTP & Kestrel               | 11     | HTTP metrics                       | 🔄 Consolidate    |
+| `bookstore-threading-concurrency.json` | Threading & Concurrency      | 14     | Thread pool metrics                | 🔄 Consolidate    |
+| `bookstore-dependencies.json`          | External Dependencies        | 15     | Outbound calls                     | ✅ Keep           |
+| `bookstore-system-health.json`         | System Health                | ERROR  | Corrupted JSON                     | ❌ Fix/Remove     |
 
 ---
 
@@ -46,6 +46,7 @@ This catalog documents every widget across all Grafana dashboards to help the te
 These widgets detect failures that directly impact users and should be on all production dashboards.
 
 #### Error Detection (14 widgets)
+
 1. **5xx Error Rate** - Server failures
 2. **4xx Client Error Rate** - Client errors
 3. **Error Rate** - Overall error percentage
@@ -62,6 +63,7 @@ These widgets detect failures that directly impact users and should be on all pr
 14. **Exception Rate** (timeseries)
 
 **Queries:**
+
 ```promql
 # Error rate
 sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[1m]))
@@ -72,6 +74,7 @@ rate(process_runtime_dotnet_exceptions_count_total[1m]) * 60
 ```
 
 #### Performance SLIs (14 widgets)
+
 15. **P95 Response Time** - User experience metric
 16. **P99 Response Time** - Tail latency
 17. **Requests per Second** - Traffic volume
@@ -88,6 +91,7 @@ rate(process_runtime_dotnet_exceptions_count_total[1m]) * 60
 28. **Connection Duration Percentiles**
 
 **Queries:**
+
 ```promql
 # P95 response time
 histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket[1m])) by (le)) * 1000
@@ -103,6 +107,7 @@ sum(rate(http_server_request_duration_seconds_count[1m])) by (http_route)
 LLM usage directly impacts operational costs. These widgets are essential for budget management.
 
 #### LLM Cost Monitoring (7 widgets from bookstore-llm-metrics.json)
+
 29. **LLM Cost (Last Hour)** - Combined cost across providers
 30. **LLM Token Usage** (timeseries) - Per-second consumption
 31. **LLM Token Throughput** (timeseries) - Rate tracking
@@ -112,6 +117,7 @@ LLM usage directly impacts operational costs. These widgets are essential for bu
 35. **OpenAI Total Tokens** - OpenAI API usage
 
 **Queries:**
+
 ```promql
 # Total cost last hour
 sum(increase(claude_cost_usd_USD_sum[1h])) +
@@ -125,6 +131,7 @@ rate(openai_tokens_total[1m])
 ```
 
 #### Token Breakdown (14 widgets)
+
 36-49. Individual token counters for input/output per provider
 
 **Recommendation:** Keep consolidated view (widget 29-35), consider removing individual breakdowns unless granular tracking is needed.
@@ -136,6 +143,7 @@ rate(openai_tokens_total[1m])
 These widgets prevent resource exhaustion but many are redundant across dashboards.
 
 #### Memory & GC (11 widgets - bookstore-dotnet-runtime.json)
+
 50. **GC Heap Size by Generation** (timeseries) - Gen0/1/2/LOH/POH
 51. **GC Collections per Minute** (gauge)
 52. **GC Committed Memory** (gauge)
@@ -149,11 +157,13 @@ These widgets prevent resource exhaustion but many are redundant across dashboar
 60. **GC Collections per Second** (timeseries)
 
 **Recommendation:**
+
 - **Keep:** Widgets 50, 51, 56, 58 (core memory tracking)
 - **Remove:** Widgets 52-55, 59-60 (redundant or too detailed)
 - **Consolidation:** Combine GC metrics into single timeseries panel
 
 #### JIT Compilation (4 widgets)
+
 61. **JIT Methods Compiled** (stat)
 62. **JIT IL Compiled Size** (stat)
 63. **Total JIT Compilation Time** (stat)
@@ -162,6 +172,7 @@ These widgets prevent resource exhaustion but many are redundant across dashboar
 **Recommendation:** Keep widget 64 (timeseries), remove 61-63 (rarely actionable).
 
 #### Threading (14 widgets - bookstore-threading-concurrency.json)
+
 65. **Thread Pool Size** (stat)
 66. **Thread Pool Queue Length** (stat)
 67. **Lock Contentions per Minute** (stat)
@@ -178,14 +189,17 @@ These widgets prevent resource exhaustion but many are redundant across dashboar
 78. **Thread Pool Metrics** (timeseries)
 
 **Recommendation:**
+
 - **Keep:** Widgets 66, 67, 69, 71 (actionable threading metrics)
 - **Remove:** Widgets 73-76 (static/rarely useful)
 - **Consolidate:** Combine thread pool metrics into widget 78
 
 #### HTTP/Kestrel (11 widgets - bookstore-http-performance.json)
+
 79-89. Various HTTP server metrics
 
 **Recommendation:** Most of these overlap with Category 1 (Performance SLIs). Keep unique widgets:
+
 - **Request Rate by HTTP Method** (timeseries)
 - **Active Requests by HTTP Method** (timeseries)
 - **Kestrel Connection Status** (timeseries)
@@ -198,6 +212,7 @@ Remove duplicates already in performance dashboard.
 ### Category 4: SPECIALIZED - Dependencies (15 widgets)
 
 #### HTTP Client / Outbound (9 widgets - bookstore-dependencies.json)
+
 90. **Active HTTP Client Requests** (stat)
 91. **Open HTTP Client Connections** (stat)
 92. **HTTP Client P95 Latency** (stat) - Already in Category 1
@@ -209,10 +224,12 @@ Remove duplicates already in performance dashboard.
 98. **DNS Lookup Duration** (timeseries)
 
 **Recommendation:**
+
 - **Keep:** 90, 91, 95, 96, 98 (unique dependency insights)
 - **Remove:** 92, 93, 94 (duplicates from Category 1)
 
 #### Database/Cache (6 widgets)
+
 99. **MongoDB Operations/sec** (timeseries)
 100. **MongoDB Operation Duration Percentiles** (timeseries)
 101. **Redis Operations/sec** (timeseries)
@@ -229,6 +246,7 @@ Remove duplicates already in performance dashboard.
 These widgets provide general observability but are rarely actionable or too granular.
 
 #### System Health (13 widgets from mega dashboard)
+
 105. **CPU Usage** (gauge)
 106. **CPU Usage** (timeseries)
 107. **Memory Usage** (gauge) - Duplicate
@@ -240,6 +258,7 @@ These widgets provide general observability but are rarely actionable or too gra
 **Recommendation:** Remove all - duplicates of Category 1/3 widgets or OS-level metrics better tracked elsewhere.
 
 #### Detailed Breakdowns (115 widgets)
+
 - HTTP status code individual panels (400, 401, 404, 409, 410)
 - Per-generation GC detailed metrics
 - Individual LLM token type breakdowns
@@ -254,6 +273,7 @@ These widgets provide general observability but are rarely actionable or too gra
 The `bookstore-mega.json` dashboard contains ALL 99 widgets but is **NOT recommended for production use**. It exists as a reference catalog.
 
 **Problems:**
+
 - Overwhelming information density
 - Slow rendering with 99 panels
 - Difficult to find specific metrics
@@ -269,7 +289,8 @@ The `bookstore-mega.json` dashboard contains ALL 99 widgets but is **NOT recomme
 
 The `bookstore-demo.json` is the **recommended production dashboard**. It's curated from the mega dashboard with these sections:
 
-### Section Breakdown:
+### Section Breakdown
+
 1. **📊 Performance Testing** (5 widgets)
    - Requests per Second
    - P95 Response Time
@@ -313,18 +334,19 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 
 ## Dashboard Comparison Matrix
 
-| Feature | Mega (99) | Demo (53) | Performance (9) | Errors (18) | LLM (7) | Runtime (11) | HTTP (11) | Threading (14) | Dependencies (15) |
-|---|---|---|---|---|---|---|---|---|---|
-| Error Tracking | ✅ All | ✅ Core | ❌ | ✅✅ Best | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Performance SLIs | ✅ All | ✅ Core | ✅✅ Best | ✅ Some | ❌ | ❌ | ✅ Some | ❌ | ❌ |
-| LLM Costs | ✅ All | ✅ Core | ❌ | ❌ | ✅✅ Best | ❌ | ❌ | ❌ | ❌ |
-| Memory/GC | ✅ All | ✅ Core | ❌ | ❌ | ❌ | ✅✅ Best | ❌ | ❌ | ❌ |
-| Threading | ✅ All | ✅ Core | ❌ | ❌ | ❌ | ❌ | ❌ | ✅✅ Best | ❌ |
-| HTTP Server | ✅ All | ✅ Core | ✅ Some | ❌ | ❌ | ❌ | ✅✅ Best | ❌ | ❌ |
-| Dependencies | ✅ All | ✅ Core | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅✅ Best |
-| Production Ready | ❌ | ✅✅ | ✅ | ✅ | ✅ | 🔄 | 🔄 | 🔄 | ✅ |
+| Feature          | Mega (99) | Demo (53) | Performance (9) | Errors (18) | LLM (7)   | Runtime (11) | HTTP (11) | Threading (14) | Dependencies (15) |
+| ---------------- | --------- | --------- | --------------- | ----------- | --------- | ------------ | --------- | -------------- | ----------------- |
+| Error Tracking   | ✅ All    | ✅ Core   | ❌              | ✅✅ Best   | ❌        | ❌           | ❌        | ❌             | ❌                |
+| Performance SLIs | ✅ All    | ✅ Core   | ✅✅ Best       | ✅ Some     | ❌        | ❌           | ✅ Some   | ❌             | ❌                |
+| LLM Costs        | ✅ All    | ✅ Core   | ❌              | ❌          | ✅✅ Best | ❌           | ❌        | ❌             | ❌                |
+| Memory/GC        | ✅ All    | ✅ Core   | ❌              | ❌          | ❌        | ✅✅ Best    | ❌        | ❌             | ❌                |
+| Threading        | ✅ All    | ✅ Core   | ❌              | ❌          | ❌        | ❌           | ❌        | ✅✅ Best      | ❌                |
+| HTTP Server      | ✅ All    | ✅ Core   | ✅ Some         | ❌          | ❌        | ❌           | ✅✅ Best | ❌             | ❌                |
+| Dependencies     | ✅ All    | ✅ Core   | ❌              | ❌          | ❌        | ❌           | ❌        | ❌             | ✅✅ Best         |
+| Production Ready | ❌        | ✅✅      | ✅              | ✅          | ✅        | 🔄           | 🔄        | 🔄             | ✅                |
 
 **Legend:**
+
 - ✅✅ = Best-in-class coverage
 - ✅ = Good coverage
 - 🔄 = Redundant with demo dashboard
@@ -337,6 +359,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 ### Top 20 Most Important Widgets
 
 #### 1. Requests per Second
+
 - **Type:** stat
 - **Query:** `sum(rate(http_server_request_duration_seconds_count[1m]))`
 - **Thresholds:** Green (any), Red (>1 indicates problems if 0 expected)
@@ -344,6 +367,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, Performance
 
 #### 2. P95 Response Time
+
 - **Type:** stat
 - **Query:** `histogram_quantile(0.95, sum(rate(http_server_request_duration_seconds_bucket[1m])) by (le)) * 1000`
 - **Thresholds:** Green (<100ms), Yellow (100-500ms), Red (>500ms)
@@ -351,6 +375,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, Performance
 
 #### 3. Error Rate
+
 - **Type:** stat
 - **Query:** `sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[1m])) / sum(rate(http_server_request_duration_seconds_count[1m]))`
 - **Thresholds:** Green (<1%), Yellow (1-5%), Red (>5%)
@@ -358,6 +383,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, Performance, Errors
 
 #### 4. LLM Cost (Last Hour)
+
 - **Type:** stat (multi-query)
 - **Queries:**
   - `sum(increase(claude_cost_usd_USD_sum[1h]))`
@@ -367,6 +393,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, LLM
 
 #### 5. .NET Exceptions per Minute
+
 - **Type:** stat
 - **Query:** `rate(process_runtime_dotnet_exceptions_count_total[1m]) * 60`
 - **Thresholds:** Green (<10), Yellow (10-50), Red (>50)
@@ -374,6 +401,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, Errors
 
 #### 6. Thread Pool Queue Length
+
 - **Type:** stat
 - **Query:** `process_runtime_dotnet_thread_pool_queue_length`
 - **Thresholds:** Green (<5), Yellow (5-20), Red (>20)
@@ -381,6 +409,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, Threading
 
 #### 7. Lock Contentions per Minute
+
 - **Type:** stat
 - **Query:** `rate(process_runtime_dotnet_monitor_lock_contention_count_total[1m]) * 60`
 - **Thresholds:** Green (<100), Yellow (100-500), Red (>500)
@@ -388,6 +417,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, Threading
 
 #### 8. GC Heap Size by Generation
+
 - **Type:** timeseries (stacked)
 - **Queries:**
   - `process_runtime_dotnet_gc_heap_size_bytes{generation="gen0"}`
@@ -399,18 +429,21 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, Runtime
 
 #### 9. HTTP Request Duration Percentiles
+
 - **Type:** timeseries
 - **Queries:** P50, P90, P95, P99 calculations
 - **Why Keep:** Performance distribution insight
 - **Found In:** Demo, Mega, Performance, HTTP
 
 #### 10. Request Rate by Endpoint
+
 - **Type:** timeseries
 - **Query:** `sum(rate(http_server_request_duration_seconds_count[1m])) by (http_route)`
 - **Why Keep:** Identify hot endpoints
 - **Found In:** Demo, Mega, Performance
 
 #### 11. Active HTTP Requests
+
 - **Type:** stat
 - **Query:** `sum(http_server_active_requests)`
 - **Thresholds:** Green (<10), Yellow (10-50), Red (>50)
@@ -418,6 +451,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, HTTP
 
 #### 12. Active Connections
+
 - **Type:** stat
 - **Query:** `sum(kestrel_active_connections)`
 - **Thresholds:** Green (<20), Yellow (20-100), Red (>100)
@@ -425,6 +459,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, HTTP
 
 #### 13. HTTP Client P95 Latency
+
 - **Type:** stat
 - **Query:** `histogram_quantile(0.95, sum(rate(http_client_request_duration_seconds_bucket[1m])) by (le)) * 1000`
 - **Thresholds:** Green (<50ms), Yellow (50-200ms), Red (>200ms)
@@ -432,6 +467,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, Dependencies
 
 #### 14. Redis Cache Hit Rate
+
 - **Type:** timeseries
 - **Queries:**
   - `rate(redis_cache_hits[1m])`
@@ -440,30 +476,35 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Dependencies
 
 #### 15. MongoDB Operation Duration (P95)
+
 - **Type:** timeseries
 - **Query:** `histogram_quantile(0.95, rate(mongodb_operation_duration_bucket[1m]))`
 - **Why Keep:** Database performance tracking
 - **Found In:** Dependencies
 
 #### 16. Memory Allocation Rate
+
 - **Type:** timeseries
 - **Query:** `rate(process_runtime_dotnet_gc_allocations_size_bytes_total[1m])`
 - **Why Keep:** Memory churn indicator
 - **Found In:** Demo, Mega, Runtime
 
 #### 17. 5xx Errors by Endpoint
+
 - **Type:** timeseries
 - **Query:** `sum(rate(http_server_request_duration_seconds_count{http_response_status_code=~"5.."}[1m])) by (http_route)`
 - **Why Keep:** Pinpoint failing endpoints
 - **Found In:** Mega, Errors
 
 #### 18. Thread Pool Work Item Throughput
+
 - **Type:** timeseries
 - **Query:** `rate(process_runtime_dotnet_thread_pool_completed_items_count_total[1m])`
 - **Why Keep:** Async workload tracking
 - **Found In:** Demo, Mega, Threading
 
 #### 19. HTTP Client Activity
+
 - **Type:** timeseries
 - **Queries:**
   - `sum(http_client_active_requests)`
@@ -472,6 +513,7 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 - **Found In:** Demo, Mega, Dependencies
 
 #### 20. Endpoints by Error Rate (5m)
+
 - **Type:** table
 - **Query:** Complex aggregation sorting endpoints by error rate
 - **Why Keep:** Quickly identify problem areas
@@ -481,13 +523,13 @@ The `bookstore-demo.json` is the **recommended production dashboard**. It's cura
 
 ## Widget Type Distribution
 
-| Type | Count | Use Case | Keep/Remove |
-|---|---|---|---|
-| **stat** | 89 | Single-value KPIs | Keep 35, Remove 54 |
-| **timeseries** | 78 | Trends over time | Keep 60, Remove 18 |
-| **gauge** | 22 | Current resource levels | Keep 8, Remove 14 |
-| **table** | 2 | Sorted/filtered data | Keep 2 |
-| **text** | 46 | Section headers | Keep all (documentation) |
+| Type           | Count | Use Case                | Keep/Remove              |
+| -------------- | ----- | ----------------------- | ------------------------ |
+| **stat**       | 89    | Single-value KPIs       | Keep 35, Remove 54       |
+| **timeseries** | 78    | Trends over time        | Keep 60, Remove 18       |
+| **gauge**      | 22    | Current resource levels | Keep 8, Remove 14        |
+| **table**      | 2     | Sorted/filtered data    | Keep 2                   |
+| **text**       | 46    | Section headers         | Keep all (documentation) |
 
 **Stat Widget Redundancy:** Many stat widgets show the same metric in different dashboards. Consolidate to demo dashboard only.
 
@@ -535,17 +577,21 @@ sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)
 ## Recommendations by Persona
 
 ### For DevOps Engineers
+
 **Keep:** Demo (53), Errors (18), Dependencies (15)
 **Remove:** Runtime (11), Threading (14), HTTP (11) - redundant with Demo
 **Total:** 86 widgets → 86 widgets (no change, but consolidate viewing)
 
 ### For Performance Engineers
+
 **Keep:** Mega (99) for deep-dive analysis
 **Remove:** None (need all metrics for debugging)
 **Total:** 99 widgets (reference only, not daily use)
 
 ### For Product Managers/Executives
+
 **Keep:** Custom executive dashboard with 12 widgets:
+
 1. Requests per Second
 2. P95 Response Time
 3. Error Rate
@@ -563,6 +609,7 @@ sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)
 **Total:** 12 widgets (new dashboard needed)
 
 ### For Developers (Day-to-Day)
+
 **Keep:** Performance (9), Errors (18), LLM (7)
 **Remove:** Runtime, Threading, HTTP (use Demo for those)
 **Total:** 34 widgets across 3 dashboards
@@ -572,6 +619,7 @@ sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)
 ## Action Plan
 
 ### Phase 1: Immediate (Week 1)
+
 1. ✅ Fix/remove corrupted `bookstore-system-health.json`
 2. ✅ Set `bookstore-demo.json` as default dashboard
 3. ✅ Add warning to `bookstore-mega.json` title: "(Reference Only - Not for Production)"
@@ -579,12 +627,14 @@ sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)
 5. ✅ Reduce Demo from 53 to 45 widgets
 
 ### Phase 2: Consolidation (Week 2)
+
 1. 🔄 Merge Runtime (11), HTTP (11), Threading (14) dashboards into Demo
 2. 🔄 Remove standalone dashboards (keep only Demo, Errors, Dependencies, LLM, Performance)
 3. 🔄 Create Executive Dashboard (12 widgets)
 4. 🔄 Target: 5 production dashboards (down from 9)
 
 ### Phase 3: Optimization (Week 3-4)
+
 1. 🔄 Optimize histogram quantile queries
 2. 🔄 Combine multi-query stat panels
 3. 🔄 Add recording rules for expensive queries
@@ -592,6 +642,7 @@ sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)
 5. 🔄 Target: <2s dashboard load time
 
 ### Phase 4: Documentation (Ongoing)
+
 1. 📝 Document each dashboard's purpose
 2. 📝 Create runbook links from widgets
 3. 📝 Add alert thresholds to widget descriptions
@@ -604,17 +655,20 @@ sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)
 ### Production Dashboards (5 total)
 
 #### 1. BookStore Overview (Executive) - 12 widgets
+
 **Audience:** Product/Business stakeholders
 **Refresh:** 30s
 **Retention:** 90 days
 **Widgets:** Top-level KPIs only
 
 #### 2. BookStore Performance (Developer) - 45 widgets
+
 **Audience:** Developers, SREs
 **Refresh:** 5s
 **Retention:** 30 days
 **Widgets:** Consolidated Demo dashboard (reduced from 53)
 **Sections:**
+
 - Performance Testing (5)
 - Errors (8) - Removed individual status codes
 - LLM (4)
@@ -625,18 +679,21 @@ sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)
 - System Health (4)
 
 #### 3. BookStore Errors & Diagnostics - 18 widgets
+
 **Audience:** On-call engineers
 **Refresh:** 10s
 **Retention:** 30 days
 **Widgets:** Error tracking, debugging links
 
 #### 4. BookStore Dependencies - 15 widgets
+
 **Audience:** SREs, Performance engineers
 **Refresh:** 10s
 **Retention:** 30 days
 **Widgets:** HTTP client, MongoDB, Redis metrics
 
 #### 5. BookStore LLM Costs - 7 widgets
+
 **Audience:** Product managers, Finance
 **Refresh:** 1m
 **Retention:** 365 days
@@ -645,12 +702,14 @@ sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)
 ### Reference Dashboards (2 total, not deployed to prod)
 
 #### 6. BookStore MEGA (All Metrics) - 99 widgets
+
 **Audience:** Performance engineers (debugging only)
 **Refresh:** 15s
 **Retention:** 7 days
 **Purpose:** Deep-dive analysis
 
 #### 7. BookStore K6 Performance Testing - 9 widgets
+
 **Audience:** QA, Performance engineers
 **Refresh:** 5s
 **Retention:** 7 days
@@ -660,15 +719,15 @@ sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)
 
 ## Metrics Retention Strategy
 
-| Dashboard | Refresh | Retention | Disk Usage | Notes |
-|---|---|---|---|---|
-| Executive | 30s | 90 days | ~50 MB | Low cardinality |
-| Performance | 5s | 30 days | ~500 MB | High cardinality |
-| Errors | 10s | 30 days | ~200 MB | Medium cardinality |
-| Dependencies | 10s | 30 days | ~300 MB | Medium cardinality |
-| LLM | 1m | 365 days | ~100 MB | Low cardinality, cost tracking |
-| MEGA | 15s | 7 days | ~1 GB | All metrics |
-| K6 Testing | 5s | 7 days | ~200 MB | Short-term only |
+| Dashboard    | Refresh | Retention | Disk Usage | Notes                          |
+| ------------ | ------- | --------- | ---------- | ------------------------------ |
+| Executive    | 30s     | 90 days   | ~50 MB     | Low cardinality                |
+| Performance  | 5s      | 30 days   | ~500 MB    | High cardinality               |
+| Errors       | 10s     | 30 days   | ~200 MB    | Medium cardinality             |
+| Dependencies | 10s     | 30 days   | ~300 MB    | Medium cardinality             |
+| LLM          | 1m      | 365 days  | ~100 MB    | Low cardinality, cost tracking |
+| MEGA         | 15s     | 7 days    | ~1 GB      | All metrics                    |
+| K6 Testing   | 5s      | 7 days    | ~200 MB    | Short-term only                |
 
 **Total Estimated Storage:** ~2.35 GB for all dashboards
 
@@ -677,16 +736,19 @@ sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)
 ## Key Metrics Reference
 
 ### RED Method (Request-based services)
+
 - **Rate:** Requests per Second
 - **Errors:** Error Rate (5xx)
 - **Duration:** P95/P99 Response Time
 
 ### USE Method (Resource-based services)
+
 - **Utilization:** CPU/Memory Usage
 - **Saturation:** Thread Pool Queue Length, GC Collections
 - **Errors:** .NET Exceptions
 
 ### Four Golden Signals (SRE)
+
 - **Latency:** HTTP Request Duration Percentiles
 - **Traffic:** Request Rate by Endpoint
 - **Errors:** Error Rate by Status Code
@@ -709,6 +771,7 @@ For reference, here are the widget IDs used across dashboards:
 ## Conclusion
 
 ### Summary Statistics
+
 - **Total Widgets Analyzed:** 237
 - **Recommended to Keep:** 109 (46%)
 - **Recommended to Remove:** 128 (54%)
@@ -716,6 +779,7 @@ For reference, here are the widget IDs used across dashboards:
 - **Dashboards to Remove/Fix:** 2 (System Health, consolidate others)
 
 ### Key Findings
+
 1. **Significant redundancy** across Runtime, HTTP, and Threading dashboards
 2. **Demo dashboard is well-curated** but can be reduced by 8 widgets
 3. **LLM cost tracking is unique and valuable** - no consolidation needed
@@ -723,6 +787,7 @@ For reference, here are the widget IDs used across dashboards:
 5. **Mega dashboard serves as useful reference** but shouldn't be used daily
 
 ### Next Steps
+
 1. Review this catalog with team
 2. Vote on widgets to keep/remove
 3. Implement Phase 1 changes (remove status code widgets, fix corrupted dashboard)

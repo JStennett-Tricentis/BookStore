@@ -248,7 +248,7 @@ activity?.SetTag("gen_ai.cost.usd", totalCost);
 
 ### hub-services-latest Stack
 
-```
+```text
 ┌─────────────────────────┐
 │   Application Code      │
 │  (TracingPlugin)        │
@@ -271,7 +271,7 @@ activity?.SetTag("gen_ai.cost.usd", totalCost);
 
 ### BookStore POC Stack
 
-```
+```text
 ┌─────────────────────────┐
 │   Application Code      │
 │  (ClaudeService)        │
@@ -402,31 +402,31 @@ To bring hub-services-latest up to BookStore POC standards:
 ### For hub-services-latest Team
 
 1. **Immediate**: Add custom metrics for token/cost tracking
-    - Enables real-time cost visibility
-    - Prevents billing surprises
+   - Enables real-time cost visibility
+   - Prevents billing surprises
 
 2. **Short-term**: Deploy Prometheus + Grafana alongside Coralogix
-    - Reduces monitoring costs
-    - Provides local development observability
+   - Reduces monitoring costs
+   - Provides local development observability
 
 3. **Medium-term**: Implement K6 performance testing
-    - Establishes performance baselines
-    - Catches regressions before production
+   - Establishes performance baselines
+   - Catches regressions before production
 
 4. **Long-term**: Consider migrating from Coralogix to Prometheus stack
-    - Cost savings: ~$200-500/month
-    - Better local development experience
+   - Cost savings: ~$200-500/month
+   - Better local development experience
 
 ### For BookStore POC
 
 1. **Current State**: ✅ Production-ready monitoring
-    - All essential observability in place
-    - Better than production hub-services-latest
+   - All essential observability in place
+   - Better than production hub-services-latest
 
 2. **Nice-to-haves**:
-    - Add more Grafana alert rules
-    - Create runbook automation
-    - Add distributed tracing visualization
+   - Add more Grafana alert rules
+   - Create runbook automation
+   - Add distributed tracing visualization
 
 ---
 

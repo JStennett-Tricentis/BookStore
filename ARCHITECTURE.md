@@ -549,38 +549,38 @@ graph TB
 
 ## Technology Stack
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Runtime** | .NET 8 | Application framework |
-| **Web Framework** | ASP.NET Core | REST API |
-| **Orchestration** | .NET Aspire | Service management |
-| **Database** | MongoDB 7.0 | Document storage |
-| **Cache** | Redis 7.2 | Distributed caching |
-| **LLM - Free** | Ollama (llama3.2) | Local AI inference |
-| **LLM - Cloud** | Claude, OpenAI, Bedrock | Cloud AI services |
-| **Observability** | OpenTelemetry | Instrumentation |
-| **Metrics** | Prometheus | Time-series data |
-| **Visualization** | Grafana 10.2 | Dashboards |
-| **Tracing** | Aspire Dashboard | Distributed tracing |
-| **Load Testing** | K6 | Performance testing |
-| **CI/CD** | GitHub Actions | Automation |
-| **Containers** | Docker | Containerization |
-| **API Testing** | Postman/Newman | Smoke tests |
+| Layer             | Technology              | Purpose               |
+| ----------------- | ----------------------- | --------------------- |
+| **Runtime**       | .NET 8                  | Application framework |
+| **Web Framework** | ASP.NET Core            | REST API              |
+| **Orchestration** | .NET Aspire             | Service management    |
+| **Database**      | MongoDB 7.0             | Document storage      |
+| **Cache**         | Redis 7.2               | Distributed caching   |
+| **LLM - Free**    | Ollama (llama3.2)       | Local AI inference    |
+| **LLM - Cloud**   | Claude, OpenAI, Bedrock | Cloud AI services     |
+| **Observability** | OpenTelemetry           | Instrumentation       |
+| **Metrics**       | Prometheus              | Time-series data      |
+| **Visualization** | Grafana 10.2            | Dashboards            |
+| **Tracing**       | Aspire Dashboard        | Distributed tracing   |
+| **Load Testing**  | K6                      | Performance testing   |
+| **CI/CD**         | GitHub Actions          | Automation            |
+| **Containers**    | Docker                  | Containerization      |
+| **API Testing**   | Postman/Newman          | Smoke tests           |
 
 ## Port Reference
 
-| Service | Port | Protocol | Access |
-|---------|------|----------|--------|
-| BookStore API | 7002 | HTTP | Public |
-| BookStore API | 7001 | HTTPS | Public |
-| Performance Service | 7004 | HTTP | Public |
-| Performance Service | 7003 | HTTPS | Public |
-| Aspire Dashboard | 15888 | HTTP | Local |
-| Grafana | 3000 | HTTP | Public |
-| Prometheus | 9090 | HTTP | Public |
-| MongoDB | 27017 | TCP | Internal |
-| Redis | 6379 | TCP | Internal |
-| Ollama | 11434 | HTTP | Internal |
+| Service             | Port  | Protocol | Access   |
+| ------------------- | ----- | -------- | -------- |
+| BookStore API       | 7002  | HTTP     | Public   |
+| BookStore API       | 7001  | HTTPS    | Public   |
+| Performance Service | 7004  | HTTP     | Public   |
+| Performance Service | 7003  | HTTPS    | Public   |
+| Aspire Dashboard    | 15888 | HTTP     | Local    |
+| Grafana             | 3000  | HTTP     | Public   |
+| Prometheus          | 9090  | HTTP     | Public   |
+| MongoDB             | 27017 | TCP      | Internal |
+| Redis               | 6379  | TCP      | Internal |
+| Ollama              | 11434 | HTTP     | Internal |
 
 ## File System Structure
 

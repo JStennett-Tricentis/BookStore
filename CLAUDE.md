@@ -191,10 +191,10 @@ Key configuration patterns in Program.cs:
 - Integration Tests: `BookStore.Service.Tests.Integration/`
 - Postman Collections: `tests/postman/`
 - K6 Performance Tests: `BookStore.Performance.Tests/`
-    - Test Scenarios: `scenarios/`
-    - Test Scripts: `tests/`
-    - Utilities: `utils/`
-    - Config: `config/`
+  - Test Scenarios: `scenarios/`
+  - Test Scripts: `tests/`
+  - Utilities: `utils/`
+  - Config: `config/`
 
 ### Infrastructure
 

@@ -500,8 +500,13 @@ test: ## Run unit tests
 format: ## Auto-format all code files
 	@echo "Formatting code..."
 	@dotnet format
-	@echo "Formatting JS/JSON/YAML/MD files..."
-	@npx prettier --write .
+	@echo "Formatting markdown/JSON/YAML files..."
+	@npm run format
+
+.PHONY: format-check
+format-check: ## Check formatting without making changes
+	@echo "Checking formatting..."
+	@npm run format:check
 
 .PHONY: watch
 watch: ## Run with hot-reload enabled

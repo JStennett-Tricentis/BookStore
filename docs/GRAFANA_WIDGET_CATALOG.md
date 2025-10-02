@@ -12,7 +12,9 @@
 
 ## Executive Summary
 
-This catalog documents every widget across all Grafana dashboards to help the team decide which widgets to keep, consolidate, or remove. Widgets are categorized by business value:
+This catalog documents every widget across all Grafana dashboards to help the
+team decide which widgets to keep, consolidate, or remove. Widgets are
+categorized by business value:
 
 - **🔴 Critical** (28 widgets): Detect failures impacting users - KEEP ALL
 - **🟡 High** (18 widgets): Measure user experience/performance - KEEP MOST
@@ -75,20 +77,20 @@ rate(process_runtime_dotnet_exceptions_count_total[1m]) * 60
 
 #### Performance SLIs (14 widgets)
 
-15. **P95 Response Time** - User experience metric
-16. **P99 Response Time** - Tail latency
-17. **Requests per Second** - Traffic volume
-18. **Request Rate by Endpoint** (timeseries)
-19. **HTTP Request Duration Percentiles** (P50/P90/P95/P99)
-20. **Response Time Percentiles by Endpoint**
-21. **Active HTTP Requests** - Current load
-22. **Request Rate (req/sec)** - Throughput
-23. **HTTP Client P95 Latency** - Dependency latency
-24. **HTTP Client Request Duration Percentiles**
-25. **Total Requests (5m)** - Recent volume
-26. **Active Connections** - Connection count
-27. **Queued Connections** - Backpressure indicator
-28. **Connection Duration Percentiles**
+1. **P95 Response Time** - User experience metric
+2. **P99 Response Time** - Tail latency
+3. **Requests per Second** - Traffic volume
+4. **Request Rate by Endpoint** (timeseries)
+5. **HTTP Request Duration Percentiles** (P50/P90/P95/P99)
+6. **Response Time Percentiles by Endpoint**
+7. **Active HTTP Requests** - Current load
+8. **Request Rate (req/sec)** - Throughput
+9. **HTTP Client P95 Latency** - Dependency latency
+10. **HTTP Client Request Duration Percentiles**
+11. **Total Requests (5m)** - Recent volume
+12. **Active Connections** - Connection count
+13. **Queued Connections** - Backpressure indicator
+14. **Connection Duration Percentiles**
 
 **Queries:**
 
@@ -108,13 +110,13 @@ LLM usage directly impacts operational costs. These widgets are essential for bu
 
 #### LLM Cost Monitoring (7 widgets from bookstore-llm-metrics.json)
 
-29. **LLM Cost (Last Hour)** - Combined cost across providers
-30. **LLM Token Usage** (timeseries) - Per-second consumption
-31. **LLM Token Throughput** (timeseries) - Rate tracking
-32. **LLM Cost Over Time** (timeseries) - Spend trends
-33. **Ollama Total Tokens** - Local model usage
-34. **Claude Total Tokens** - Anthropic API usage
-35. **OpenAI Total Tokens** - OpenAI API usage
+1. **LLM Cost (Last Hour)** - Combined cost across providers
+2. **LLM Token Usage** (timeseries) - Per-second consumption
+3. **LLM Token Throughput** (timeseries) - Rate tracking
+4. **LLM Cost Over Time** (timeseries) - Spend trends
+5. **Ollama Total Tokens** - Local model usage
+6. **Claude Total Tokens** - Anthropic API usage
+7. **OpenAI Total Tokens** - OpenAI API usage
 
 **Queries:**
 
@@ -144,17 +146,17 @@ These widgets prevent resource exhaustion but many are redundant across dashboar
 
 #### Memory & GC (11 widgets - bookstore-dotnet-runtime.json)
 
-50. **GC Heap Size by Generation** (timeseries) - Gen0/1/2/LOH/POH
-51. **GC Collections per Minute** (gauge)
-52. **GC Committed Memory** (gauge)
-53. **GC Collection Rate by Generation** (timeseries)
-54. **GC Heap Fragmentation** (timeseries)
-55. **GC Pause Time** (timeseries)
-56. **Memory Allocation Rate** (timeseries)
-57. **Live Objects Size** (stat)
-58. **Memory Usage** (gauge) - Process memory
-59. **Memory Usage** (timeseries) - Over time
-60. **GC Collections per Second** (timeseries)
+1. **GC Heap Size by Generation** (timeseries) - Gen0/1/2/LOH/POH
+2. **GC Collections per Minute** (gauge)
+3. **GC Committed Memory** (gauge)
+4. **GC Collection Rate by Generation** (timeseries)
+5. **GC Heap Fragmentation** (timeseries)
+6. **GC Pause Time** (timeseries)
+7. **Memory Allocation Rate** (timeseries)
+8. **Live Objects Size** (stat)
+9. **Memory Usage** (gauge) - Process memory
+10. **Memory Usage** (timeseries) - Over time
+11. **GC Collections per Second** (timeseries)
 
 **Recommendation:**
 
@@ -164,29 +166,29 @@ These widgets prevent resource exhaustion but many are redundant across dashboar
 
 #### JIT Compilation (4 widgets)
 
-61. **JIT Methods Compiled** (stat)
-62. **JIT IL Compiled Size** (stat)
-63. **Total JIT Compilation Time** (stat)
-64. **JIT Compilation Activity** (timeseries)
+1. **JIT Methods Compiled** (stat)
+2. **JIT IL Compiled Size** (stat)
+3. **Total JIT Compilation Time** (stat)
+4. **JIT Compilation Activity** (timeseries)
 
 **Recommendation:** Keep widget 64 (timeseries), remove 61-63 (rarely actionable).
 
 #### Threading (14 widgets - bookstore-threading-concurrency.json)
 
-65. **Thread Pool Size** (stat)
-66. **Thread Pool Queue Length** (stat)
-67. **Lock Contentions per Minute** (stat)
-68. **Total Process Threads** (stat)
-69. **Thread Pool Work Item Throughput** (timeseries)
-70. **Thread Pool Activity** (timeseries)
-71. **Lock Contention Rate** (timeseries)
-72. **Process Thread Count** (timeseries)
-73. **Active Timers** (stat)
-74. **Loaded Assemblies** (stat)
-75. **Total Exceptions Thrown** (stat)
-76. **CPU Count** (stat)
-77. **Active Timers Over Time** (timeseries)
-78. **Thread Pool Metrics** (timeseries)
+1. **Thread Pool Size** (stat)
+2. **Thread Pool Queue Length** (stat)
+3. **Lock Contentions per Minute** (stat)
+4. **Total Process Threads** (stat)
+5. **Thread Pool Work Item Throughput** (timeseries)
+6. **Thread Pool Activity** (timeseries)
+7. **Lock Contention Rate** (timeseries)
+8. **Process Thread Count** (timeseries)
+9. **Active Timers** (stat)
+10. **Loaded Assemblies** (stat)
+11. **Total Exceptions Thrown** (stat)
+12. **CPU Count** (stat)
+13. **Active Timers Over Time** (timeseries)
+14. **Thread Pool Metrics** (timeseries)
 
 **Recommendation:**
 
@@ -213,15 +215,15 @@ Remove duplicates already in performance dashboard.
 
 #### HTTP Client / Outbound (9 widgets - bookstore-dependencies.json)
 
-90. **Active HTTP Client Requests** (stat)
-91. **Open HTTP Client Connections** (stat)
-92. **HTTP Client P95 Latency** (stat) - Already in Category 1
-93. **HTTP Client Request Rate** (stat)
-94. **HTTP Client Request Duration Percentiles** - Already in Category 1
-95. **HTTP Client Queue Time Percentiles** (timeseries)
-96. **HTTP Client Activity** (timeseries)
-97. **HTTP Client Connection Duration** (timeseries)
-98. **DNS Lookup Duration** (timeseries)
+1. **Active HTTP Client Requests** (stat)
+2. **Open HTTP Client Connections** (stat)
+3. **HTTP Client P95 Latency** (stat) - Already in Category 1
+4. **HTTP Client Request Rate** (stat)
+5. **HTTP Client Request Duration Percentiles** - Already in Category 1
+6. **HTTP Client Queue Time Percentiles** (timeseries)
+7. **HTTP Client Activity** (timeseries)
+8. **HTTP Client Connection Duration** (timeseries)
+9. **DNS Lookup Duration** (timeseries)
 
 **Recommendation:**
 
@@ -230,12 +232,12 @@ Remove duplicates already in performance dashboard.
 
 #### Database/Cache (6 widgets)
 
-99. **MongoDB Operations/sec** (timeseries)
-100. **MongoDB Operation Duration Percentiles** (timeseries)
-101. **Redis Operations/sec** (timeseries)
-102. **Redis Cache Hit Rate** (timeseries)
-103. **Cache Hit Ratio %** (gauge)
-104. **Redis Operation Duration Percentiles** (timeseries)
+1. **MongoDB Operations/sec** (timeseries)
+2. **MongoDB Operation Duration Percentiles** (timeseries)
+3. **Redis Operations/sec** (timeseries)
+4. **Redis Cache Hit Rate** (timeseries)
+5. **Cache Hit Ratio %** (gauge)
+6. **Redis Operation Duration Percentiles** (timeseries)
 
 **Recommendation:** **KEEP ALL** - Critical for diagnosing database bottlenecks and cache efficiency.
 
@@ -247,13 +249,13 @@ These widgets provide general observability but are rarely actionable or too gra
 
 #### System Health (13 widgets from mega dashboard)
 
-105. **CPU Usage** (gauge)
-106. **CPU Usage** (timeseries)
-107. **Memory Usage** (gauge) - Duplicate
-108. **Thread Count** (gauge)
-109. **Active HTTP Requests** (gauge) - Duplicate
-110. **Active Connections** (gauge) - Duplicate
-111. **Total Exceptions** (gauge) - Duplicate
+1. **CPU Usage** (gauge)
+2. **CPU Usage** (timeseries)
+3. **Memory Usage** (gauge) - Duplicate
+4. **Thread Count** (gauge)
+5. **Active HTTP Requests** (gauge) - Duplicate
+6. **Active Connections** (gauge) - Duplicate
+7. **Total Exceptions** (gauge) - Duplicate
 
 **Recommendation:** Remove all - duplicates of Category 1/3 widgets or OS-level metrics better tracked elsewhere.
 

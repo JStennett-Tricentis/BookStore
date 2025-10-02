@@ -142,8 +142,8 @@ make perf-comprehensive # All tests (~30 min)
 
 **Overview Dashboards (2):**
 
-9. **Demo Dashboard** - 53 curated panels (highlights for quick demos)
-10. **MEGA Dashboard** - All 91 widgets in one scrollable view
+1. **Demo Dashboard** - 53 curated panels (highlights for quick demos)
+2. **MEGA Dashboard** - All 91 widgets in one scrollable view
 
 ### Quick Access
 
@@ -274,6 +274,6 @@ lsof -Pi :11434  # Check Ollama port
 
 ## Latest Mega Dashboard
 
-_All monitoring widgets in one comprehensive view - from performance metrics to error tracking to LLM costs._
+*All monitoring widgets in one comprehensive view - from performance metrics to error tracking to LLM costs.*
 
 ![MEGA Dashboard - All 91 Widgets](src/images/latest_mega_dashboard.jpg)

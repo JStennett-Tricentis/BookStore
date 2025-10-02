@@ -33,7 +33,7 @@ Location: `postman/`
 
 Location: `../BookStore.Service.Tests.Integration/`
 
-#### Test Categories:
+#### Test Categories
 
 - **Smoke Tests**: Basic functionality tests for all endpoints
 - **Health Check Tests**: Service health and readiness checks
@@ -54,7 +54,7 @@ dotnet test BookStore.Service.Tests.Integration --filter "FullyQualifiedName~Smo
 
 ## Test Coverage
 
-### API Endpoints Tested:
+### API Endpoints Tested
 
 - ✅ GET /health
 - ✅ GET /api/v1/books
@@ -64,7 +64,7 @@ dotnet test BookStore.Service.Tests.Integration --filter "FullyQualifiedName~Smo
 - ✅ DELETE /api/v1/books/{id}
 - ✅ GET /api/v1/books/search?query={query}
 
-### Test Scenarios:
+### Test Scenarios
 
 1. **Happy Path**: Valid requests with expected responses
 2. **Error Handling**: Invalid data, missing resources, bad requests
@@ -73,13 +73,13 @@ dotnet test BookStore.Service.Tests.Integration --filter "FullyQualifiedName~Smo
 
 ## Prerequisites
 
-### For Postman Tests:
+### For Postman Tests
 
 - Postman or Newman installed
-- BookStore API running on http://localhost:7002
+- BookStore API running on <http://localhost:7002>
 - MongoDB and Redis running
 
-### For .NET Tests:
+### For .NET Tests
 
 - .NET 9.0 SDK
 - Docker (for Testcontainers)
@@ -87,7 +87,7 @@ dotnet test BookStore.Service.Tests.Integration --filter "FullyQualifiedName~Smo
 
 ## CI/CD Integration
 
-### GitHub Actions Example:
+### GitHub Actions Example
 
 ```yaml
 name: Run Tests
@@ -117,7 +117,7 @@ jobs:
 
 ## Test Maintenance
 
-### Adding New Tests:
+### Adding New Tests
 
 1. **Postman**:
    - Add new requests to the collection
@@ -129,7 +129,7 @@ jobs:
    - Follow existing naming conventions
    - Ensure proper cleanup in tests
 
-### Test Data:
+### Test Data
 
 - Tests create their own test data
 - All test data is cleaned up after test execution
@@ -137,7 +137,7 @@ jobs:
 
 ## Troubleshooting
 
-### Common Issues:
+### Common Issues
 
 1. **Connection Refused**:
    - Ensure services are running: `make run-services`

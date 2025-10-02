@@ -93,11 +93,11 @@
 
 ### Reference (2 dashboards)
 
-6. **BookStore MEGA** - 99 widgets
+1. **BookStore MEGA** - 99 widgets
    - Deep-dive debugging only
    - Not deployed to production
 
-7. **BookStore K6 Testing** - 9 widgets
+2. **BookStore K6 Testing** - 9 widgets
    - Performance test monitoring
    - Short-term use only
 

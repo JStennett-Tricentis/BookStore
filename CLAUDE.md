@@ -4,7 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-BookStore is an enterprise-grade .NET 9 performance testing application that replicates production microservice architectures. It consists of:
+BookStore is an enterprise-grade .NET 9 performance testing application that
+replicates production microservice architectures. It consists of:
 
 - **BookStore.Service** - Main API with CRUD operations for books/authors
 - **BookStore.Performance.Service** - K6 test orchestration service with Docker integration
@@ -107,7 +108,8 @@ make run-services
 - Permission denied errors on ~/.dotnet/metadata/ (requires admin privileges to fix)
 - DCP executable and Dashboard binaries missing
 
-**Solution:** Use the provided startup scripts (`./start-services.sh`) which replicate Aspire functionality without requiring workload installation.
+**Solution:** Use the provided startup scripts (`./start-services.sh`) which
+replicate Aspire functionality without requiring workload installation.
 
 ### Service Startup Issues
 

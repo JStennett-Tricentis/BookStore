@@ -2,7 +2,11 @@
 
 ## Executive Summary
 
-This proposal evaluates K6 and BenchmarkDotNet for the BookStore application's performance testing needs. **Recommendation: Use both tools** as they serve complementary purposes - BenchmarkDotNet for micro-benchmarks and code optimization, K6 for end-to-end API performance and load testing.
+This proposal evaluates K6 and BenchmarkDotNet for the BookStore application's performance testing needs.
+
+**Recommendation: Use both tools** as they serve complementary purposes -
+BenchmarkDotNet for micro-benchmarks and code optimization, K6 for end-to-end
+API performance and load testing.
 
 ## Tool Overview
 
@@ -263,7 +267,11 @@ Given Tricentis already owns NeoLoad:
 
 ## Conclusion
 
-K6 and BenchmarkDotNet are complementary tools that address different aspects of performance testing. K6 validates that the system meets user expectations under load, while BenchmarkDotNet ensures individual components are optimized. Using both provides comprehensive performance coverage from micro to macro level, essential for a production-grade microservice architecture.
+K6 and BenchmarkDotNet are complementary tools that address different aspects
+of performance testing. K6 validates that the system meets user expectations
+under load, while BenchmarkDotNet ensures individual components are optimized.
+Using both provides comprehensive performance coverage from micro to macro
+level, essential for a production-grade microservice architecture.
 
 ## Next Steps
 

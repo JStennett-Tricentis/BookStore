@@ -1,6 +1,7 @@
 # LLM Performance Testing Guide
 
-This guide covers performance testing for AI-powered features in the BookStore API, specifically the Claude-powered book summary generation endpoint.
+This guide covers performance testing for AI-powered features in the BookStore
+API, specifically the Claude-powered book summary generation endpoint.
 
 ## Overview
 

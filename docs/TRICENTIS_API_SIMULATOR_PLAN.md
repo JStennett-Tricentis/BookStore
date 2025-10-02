@@ -2,7 +2,10 @@
 
 ## Executive Summary
 
-Integrate the Tricentis API Simulator (used in hub-services-latest) into BookStore POC to enable **cost-free LLM performance testing** by mocking AI provider responses. This eliminates API costs during development and allows unlimited load testing.
+Integrate the Tricentis API Simulator (used in hub-services-latest) into
+BookStore POC to enable **cost-free LLM performance testing** by mocking AI
+provider responses. This eliminates API costs during development and allows
+unlimited load testing.
 
 ## Cost Savings Analysis
 
@@ -638,7 +641,6 @@ The Tricentis API Simulator enables zero-cost LLM performance testing by mocking
   }
 }
 ```
-````
 
 2. Start with simulator:
 

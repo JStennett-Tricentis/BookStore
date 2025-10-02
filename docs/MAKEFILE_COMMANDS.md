@@ -49,20 +49,20 @@ make perf-smoke        # Run quick performance test
 
 | Command                     | Description                         | Access URL                        |
 | --------------------------- | ----------------------------------- | --------------------------------- |
-| `make docker-observability` | Start Grafana, Prometheus, Jaeger   | Grafana: http://localhost:3333    |
+| `make docker-observability` | Start Grafana, Prometheus, Jaeger   | Grafana: <http://localhost:3333>    |
 | `make logs-bookstore`       | View BookStore API logs             | -                                 |
 | `make logs-performance`     | View Performance Service logs       | -                                 |
 | `make status`               | Show complete project status        | Service health, Docker containers |
 | `make health-check`         | Check health of all services        | Quick availability check          |
 | `make health-wait`          | Wait for all services to be healthy | Use after starting services       |
-| `make swagger`              | Open Swagger UI                     | http://localhost:7002/swagger     |
-| `make aspire-dashboard`     | Open Aspire Dashboard               | http://localhost:15889            |
+| `make swagger`              | Open Swagger UI                     | <http://localhost:7002/swagger>     |
+| `make aspire-dashboard`     | Open Aspire Dashboard               | <http://localhost:15889>            |
 
 ### Observability Stack URLs
 
-- **Grafana Dashboard**: http://localhost:3333 (admin/admin123)
-- **Prometheus**: http://localhost:9090
-- **Jaeger Tracing**: http://localhost:16686
+- **Grafana Dashboard**: <http://localhost:3333> (admin/admin123)
+- **Prometheus**: <http://localhost:9090>
+- **Jaeger Tracing**: <http://localhost:16686>
 
 ## 🔥 Performance Testing Commands
 
@@ -174,7 +174,7 @@ make reset                  # Complete cleanup and fresh setup
 ## 💡 Pro Tips
 
 1. **Use Aspire for Development**: `make run-aspire` handles all service dependencies automatically
-2. **Monitor Performance**: Keep Grafana open during tests at http://localhost:3333
+2. **Monitor Performance**: Keep Grafana open during tests at <http://localhost:3333>
 3. **Check Status First**: Run `make status` to see what's currently running
 4. **Parallel Commands**: Many commands can run simultaneously in different terminals
 5. **Use Aliases**: `make up` = `make run-aspire`, `make down` = `make docker-stop`

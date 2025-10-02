@@ -1,6 +1,7 @@
 # LLM Testing Guide
 
-This guide explains how to test the multi-provider LLM functionality in the BookStore API.
+This guide explains how to test the multi-provider LLM functionality in the
+BookStore API.
 
 ## Available Providers
 
@@ -23,7 +24,7 @@ Import it into Postman to access pre-configured requests.
 
 #### 1. Get Available Providers
 
-```
+```http
 GET http://localhost:7002/api/v1/Books/llm-providers
 ```
 
@@ -38,7 +39,7 @@ GET http://localhost:7002/api/v1/Books/llm-providers
 
 #### 2. Generate Summary (Default Provider)
 
-```
+```http
 POST http://localhost:7002/api/v1/Books/{bookId}/generate-summary
 ```
 
@@ -46,7 +47,7 @@ Uses the default provider configured in `appsettings.json` (Ollama).
 
 #### 3. Generate Summary (Specific Provider)
 
-```
+```http
 POST http://localhost:7002/api/v1/Books/{bookId}/generate-summary?provider=ollama
 POST http://localhost:7002/api/v1/Books/{bookId}/generate-summary?provider=claude
 POST http://localhost:7002/api/v1/Books/{bookId}/generate-summary?provider=openai
@@ -155,13 +156,13 @@ Expected result:
 
 After generating summaries, check Prometheus metrics:
 
-```
+```http
 GET http://localhost:7002/metrics
 ```
 
 Look for:
 
-```
+```prometheus
 # Ollama token counts
 ollama_tokens_input_tokens{model="llama3.2"} 45
 ollama_tokens_output_tokens{model="llama3.2"} 67
@@ -179,7 +180,7 @@ If you try to use a provider without configuration:
 
 **Request:**
 
-```
+```http
 POST /api/v1/Books/{id}/generate-summary?provider=claude
 ```
 
@@ -195,7 +196,7 @@ POST /api/v1/Books/{id}/generate-summary?provider=claude
 
 **Request:**
 
-```
+```http
 POST /api/v1/Books/{id}/generate-summary?provider=invalid
 ```
 
@@ -203,7 +204,8 @@ POST /api/v1/Books/{id}/generate-summary?provider=invalid
 
 ```json
 {
-  "message": "Unknown provider: invalid. Available providers: claude, openai, bedrock, ollama"
+  "message": "Unknown provider: invalid. Available providers: claude, openai,
+  bedrock, ollama"
 }
 ```
 
@@ -232,7 +234,7 @@ k6 run tests/books.js --env TEST_TYPE=load
 
 View real-time metrics:
 
-```
+```text
 http://localhost:3000
 ```
 
@@ -247,7 +249,7 @@ http://localhost:3000
 
 View traces and logs:
 
-```
+```text
 http://localhost:15888
 ```
 

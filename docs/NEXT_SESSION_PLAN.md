@@ -209,13 +209,18 @@ make clean
 
 ## Context for Next Claude Instance
 
-**What we built**: Enterprise-grade performance testing infrastructure replicating hub-services complexity but with simple BookStore domain.
+**What we built**: Enterprise-grade performance testing infrastructure
+replicating hub-services complexity but with simple BookStore domain.
 
-**Current state**: Complete, production-ready system with K6 orchestration, OpenTelemetry observability, Docker multi-profile setup, and comprehensive automation.
+**Current state**: Complete, production-ready system with K6 orchestration,
+OpenTelemetry observability, Docker multi-profile setup, and comprehensive
+automation.
 
-**Primary value**: Safe, standalone environment for performance testing investigations without exposing sensitive hub-services code.
+**Primary value**: Safe, standalone environment for performance testing
+investigations without exposing sensitive hub-services code.
 
-**Next focus**: Validate everything works perfectly, then enhance based on specific performance testing needs identified during validation.
+**Next focus**: Validate everything works perfectly, then enhance based on
+specific performance testing needs identified during validation.
 
 ---
 

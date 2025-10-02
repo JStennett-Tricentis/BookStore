@@ -89,6 +89,7 @@ docker-compose -f docker-compose.perf.yml logs -f bookstore-api
 ### .NET SDK Requirements
 
 **IMPORTANT:** This project uses a hybrid .NET version approach (same as hub-services-latest):
+
 - **Services**: .NET 8.0 (BookStore.Service, BookStore.Performance.Service)
 - **Aspire AppHost**: .NET 9.0 (required for Aspire Dashboard orchestration)
 

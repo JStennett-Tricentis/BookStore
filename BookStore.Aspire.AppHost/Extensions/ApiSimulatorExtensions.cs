@@ -19,7 +19,10 @@ public static class ApiSimulatorExtensions
         var simulator = builder.AddContainer("api-simulator", "ghcr.io/tricentis-product-integration/tpi-iris-simulator-ci", "0.2")
             .WithHttpEndpoint(port: 17070, targetPort: 17070, name: "internal-api")
             .WithHttpEndpoint(port: 28880, targetPort: 28880, name: "ui")
-            .WithHttpEndpoint(port: 5020, targetPort: 5020, name: "service");
+            .WithHttpEndpoint(port: 5020, targetPort: 5020, name: "service")
+            .WithBindMount("./appsettings.simulator.yml", "/app/appsettings.yml", isReadOnly: true)
+            .WithEnvironment("API_SIMULATOR_CONFIG_PATH", "/app/appsettings.yml")
+            .WithEnvironment("API_SIMULATOR_LOG_LEVEL", "Information");
 
         // Note: WithUrls() is available in Aspire 9.4+ for custom endpoint display text
         // Currently using Aspire 9.0.0 - endpoints will display with default names

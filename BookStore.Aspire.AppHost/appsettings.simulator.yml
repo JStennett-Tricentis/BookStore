@@ -1,0 +1,61 @@
+# configure connection to Tricentis Cloud
+AgentConnection:
+  # enable or disable the connection to Tricentis Cloud
+  Enabled: true
+
+  # enter your Tricentis Cloud tenant
+  Tenant: "{Tenant}"
+
+  # optional: enter a workspaceId within your tenant
+  Space: "{Space}"
+
+  # enter the client secret
+  ClientSecret: "{ClientSecret}"
+
+Simulator:
+  # folder where the simulator will store its data
+  Workspace:
+
+  # unique identifier for this agent
+  Identifier: "{MachineName}-{UserName}"
+
+  # default format for date expressions
+  FormatDate: "yyyy-MM-dd"
+
+  # default format for time expressions
+  FormatTime: "yyyy-MM-ddTHH:mm:ss.fffZ"
+
+  # configure variables that can be used inside simulations, e.g. 'User: John'
+  # access variables via 'var', e.g. '{var[User]}'
+  Variables:
+    Simulator__Variables__Tenant_Name: "system"
+    Simulator__Variables__Product_Name: "TestProduct"
+    Simulator__Variables__User_ID: "sap"
+    Simulator__Variables__User_Email: "test@tricentis.com"
+    Simulator__Variables__Authorization_Type: "oauth"
+
+  IdleTimeout: 60
+
+  Environment: dev
+
+# configure logging
+Logging:
+  # valid levels are 'Debug' (most verbose), 'Information', 'Warning', 'Error', 'None' (no logging)
+  LogLevel:
+    # log level for everything related to Tricentis
+    Tricentis: Debug
+
+    # log level for everything else
+    Default: Warning
+
+  # settings related to file logging
+  File:
+    # log files location
+    # FolderPath: ./logs
+
+    # log files name
+    FileName: "Simulation_{identifier}_{date}.log"
+
+    # per default the log level for the file logging is set to 'Warning'
+    LogLevel:
+      Default: Warning

@@ -23,6 +23,16 @@ const books = new SharedArray("books", function () {
 // Chaos test configuration
 export const options = {
     scenarios: {
+        // Scenario 0: Data setup - runs first to create test data
+        data_setup: {
+            executor: "shared-iterations",
+            vus: 1,
+            iterations: 1,
+            maxDuration: "30s",
+            exec: "setupTestData",
+            startTime: "0s",
+        },
+
         // Scenario 1: Random user spikes (tests HTTP metrics, Kestrel, threading)
         random_spikes: {
             executor: "ramping-vus",
@@ -38,6 +48,7 @@ export const options = {
             ],
             gracefulRampDown: "10s",
             exec: "chaosRequests",
+            startTime: "30s", // Start AFTER data setup
         },
 
         // Scenario 2: Constant LLM load (tests LLM metrics, AI costs)
@@ -46,7 +57,7 @@ export const options = {
             vus: 3,
             duration: "2m10s",
             exec: "llmChaos",
-            startTime: "10s",
+            startTime: "40s",
         },
 
         // Scenario 3: Error generator (tests error dashboards)
@@ -55,7 +66,7 @@ export const options = {
             vus: 2,
             duration: "2m",
             exec: "errorChaos",
-            startTime: "20s",
+            startTime: "50s",
         },
 
         // Scenario 4: Memory pressure (tests .NET runtime, GC metrics)
@@ -64,7 +75,7 @@ export const options = {
             vus: 5,
             duration: "1m30s",
             exec: "memoryPressure",
-            startTime: "30s",
+            startTime: "60s",
         },
 
         // Scenario 5: Database hammering (tests external dependencies)
@@ -77,7 +88,7 @@ export const options = {
                 { duration: "20s", target: 5 },
             ],
             exec: "databaseChaos",
-            startTime: "15s",
+            startTime: "45s",
         },
 
         // Scenario 6: Connection pool chaos (tests Kestrel metrics, queued connections)
@@ -90,7 +101,7 @@ export const options = {
                 { duration: "10s", target: 5 }, // Drop
             ],
             exec: "connectionChaos",
-            startTime: "25s",
+            startTime: "55s",
         },
 
         // Scenario 7: Thread pool saturation (tests threading metrics)
@@ -99,7 +110,7 @@ export const options = {
             vus: 10,
             duration: "1m",
             exec: "threadChaos",
-            startTime: "40s",
+            startTime: "70s",
         },
     },
     thresholds: {
@@ -108,6 +119,51 @@ export const options = {
         http_req_duration: ["p(95)<30000"], // 30 second timeout
     },
 };
+
+// Global array to store created book IDs
+let createdBookIds = [];
+
+// Scenario 0: Setup test data - creates books/authors to test with
+export function setupTestData() {
+    console.log("🚀 Setting up test data...");
+
+    // Create 50 books with varied data
+    for (let i = 0; i < 50; i++) {
+        const book = books[i % books.length];
+        const response = http.post(
+            `${BASE_URL}/api/v1/Books`,
+            JSON.stringify({
+                title: `${book.title} - Edition ${i + 1}`,
+                author: book.author,
+                isbn: `${book.isbn.substring(0, 10)}-${String(i).padStart(3, "0")}`,
+                publishedDate: new Date(2020 + (i % 5), (i % 12), (i % 28) + 1).toISOString(),
+                genre: ["Technology", "Science", "Business", "Fiction", "NonFiction"][i % 5],
+                price: Math.round((10 + Math.random() * 90) * 100) / 100,
+                stockQuantity: Math.floor(Math.random() * 100),
+                description: `A comprehensive guide covering ${book.title}. This edition includes updated content and examples.`,
+            }),
+            {
+                headers: { "Content-Type": "application/json" },
+            }
+        );
+
+        if (response.status === 201) {
+            const createdBook = JSON.parse(response.body);
+            createdBookIds.push(createdBook.id);
+        }
+    }
+
+    console.log(`✅ Created ${createdBookIds.length} books for testing`);
+
+    // Prime the cache by reading some books
+    for (let i = 0; i < 10; i++) {
+        if (createdBookIds[i]) {
+            http.get(`${BASE_URL}/api/v1/Books/${createdBookIds[i]}`);
+        }
+    }
+
+    console.log("✅ Test data setup complete!");
+}
 
 // Scenario 1: Random chaotic requests - hits all CRUD operations
 export function chaosRequests() {
@@ -161,35 +217,63 @@ export function chaosRequests() {
                 break;
 
             case "getBook":
-                // Try to get a random book (may 404)
-                const bookId = `507f1f77bcf86cd79943901${Math.floor(Math.random() * 10)}`;
-                response = http.get(`${BASE_URL}/api/v1/Books/${bookId}`, {
-                    tags: { chaos_op: "get_book" },
-                });
+                // Get a real book from our created list (80% success rate)
+                if (createdBookIds.length > 0 && Math.random() > 0.2) {
+                    const bookId = createdBookIds[Math.floor(Math.random() * createdBookIds.length)];
+                    response = http.get(`${BASE_URL}/api/v1/Books/${bookId}`, {
+                        tags: { chaos_op: "get_book" },
+                    });
+                } else {
+                    // 20% chance of 404
+                    response = http.get(`${BASE_URL}/api/v1/Books/000000000000000000000000`, {
+                        tags: { chaos_op: "get_book_404" },
+                    });
+                }
                 break;
 
             case "updateBook":
-                // Try to update random book (may 404)
-                const updateId = `507f1f77bcf86cd79943901${Math.floor(Math.random() * 10)}`;
-                response = http.put(
-                    `${BASE_URL}/api/v1/Books/${updateId}`,
-                    JSON.stringify({
-                        title: `Updated - ${Date.now()}`,
-                        author: "Chaos Author",
-                    }),
-                    {
-                        headers: { "Content-Type": "application/json" },
-                        tags: { chaos_op: "update_book" },
-                    }
-                );
+                // Update a real book (80% success rate)
+                if (createdBookIds.length > 0 && Math.random() > 0.2) {
+                    const updateId = createdBookIds[Math.floor(Math.random() * createdBookIds.length)];
+                    response = http.put(
+                        `${BASE_URL}/api/v1/Books/${updateId}`,
+                        JSON.stringify({
+                            title: `Updated - ${Date.now()}`,
+                            author: "Chaos Author",
+                            price: Math.round(Math.random() * 100 * 100) / 100,
+                            stockQuantity: Math.floor(Math.random() * 200),
+                        }),
+                        {
+                            headers: { "Content-Type": "application/json" },
+                            tags: { chaos_op: "update_book" },
+                        }
+                    );
+                } else {
+                    // 20% chance of 404
+                    response = http.put(
+                        `${BASE_URL}/api/v1/Books/000000000000000000000000`,
+                        JSON.stringify({ title: "Not Found" }),
+                        {
+                            headers: { "Content-Type": "application/json" },
+                            tags: { chaos_op: "update_book_404" },
+                        }
+                    );
+                }
                 break;
 
             case "deleteBook":
-                // Try to delete random book (may 404)
-                const deleteId = `507f1f77bcf86cd79943901${Math.floor(Math.random() * 10)}`;
-                response = http.del(`${BASE_URL}/api/v1/Books/${deleteId}`, null, {
-                    tags: { chaos_op: "delete_book" },
-                });
+                // Delete a real book occasionally (create new ones to replace)
+                if (createdBookIds.length > 10 && Math.random() > 0.9) {
+                    const deleteId = createdBookIds.pop(); // Remove from our list
+                    response = http.del(`${BASE_URL}/api/v1/Books/${deleteId}`, null, {
+                        tags: { chaos_op: "delete_book" },
+                    });
+                } else {
+                    // Usually try to delete non-existent (404)
+                    response = http.del(`${BASE_URL}/api/v1/Books/000000000000000000000000`, null, {
+                        tags: { chaos_op: "delete_book_404" },
+                    });
+                }
                 break;
 
             case "listAuthors":
@@ -395,11 +479,13 @@ export function databaseChaos() {
                     { headers: { "Content-Type": "application/json" } }
                 ),
 
-            // Rapid cache hits (Redis stress)
+            // Rapid cache hits (Redis stress) - use real books
             () => {
-                const bookId = "507f1f77bcf86cd799439011";
-                for (let i = 0; i < 5; i++) {
-                    http.get(`${BASE_URL}/api/v1/Books/${bookId}`);
+                if (createdBookIds.length > 0) {
+                    const bookId = createdBookIds[Math.floor(Math.random() * createdBookIds.length)];
+                    for (let i = 0; i < 5; i++) {
+                        http.get(`${BASE_URL}/api/v1/Books/${bookId}`);
+                    }
                 }
             },
 
@@ -475,10 +561,13 @@ export function threadChaos() {
 
             // Database + Cache combo (stresses both systems simultaneously)
             () => {
-                // First request hits database
-                http.get(`${BASE_URL}/api/v1/Books/507f1f77bcf86cd799439011`);
-                // Second request should hit cache (tests cache read thread pool)
-                http.get(`${BASE_URL}/api/v1/Books/507f1f77bcf86cd799439011`);
+                if (createdBookIds.length > 0) {
+                    const bookId = createdBookIds[Math.floor(Math.random() * createdBookIds.length)];
+                    // First request hits database
+                    http.get(`${BASE_URL}/api/v1/Books/${bookId}`);
+                    // Second request should hit cache (tests cache read thread pool)
+                    http.get(`${BASE_URL}/api/v1/Books/${bookId}`);
+                }
             },
         ];
 

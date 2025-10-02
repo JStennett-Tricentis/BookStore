@@ -16,7 +16,7 @@ Mock external LLM API providers (Claude, OpenAI, Bedrock) for zero-cost performa
 
 1. Start simulator: `make simulator-start`
 2. Verify running: `make simulator-status`
-3. Open UI: `make simulator-ui` → http://localhost:28880
+3. Open UI: `make simulator-ui` → <http://localhost:28880>
 4. Configure services to use: `http://localhost:5020`
 
 ## Next Steps

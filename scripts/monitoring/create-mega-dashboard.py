@@ -5,14 +5,14 @@ import json
 
 # Load all existing dashboards
 dashboards = {
-    'Performance Testing': 'dashboards/bookstore-performance.json',
-    'Errors & Diagnostics': 'dashboards/bookstore-errors-diagnostics.json',
-    'LLM Performance': 'dashboards/bookstore-llm-metrics.json',
-    '.NET Runtime': 'dashboards/bookstore-dotnet-runtime.json',
-    'HTTP & Kestrel': 'dashboards/bookstore-http-performance.json',
-    'Threading & Concurrency': 'dashboards/bookstore-threading-concurrency.json',
-    'External Dependencies': 'dashboards/bookstore-dependencies.json',
-    'System Health': 'dashboards/bookstore-system-health.json',
+    'Performance Testing': '../../monitoring/grafana/dashboards/bookstore-performance.json',
+    'Errors & Diagnostics': '../../monitoring/grafana/dashboards/bookstore-errors-diagnostics.json',
+    'LLM Performance': '../../monitoring/grafana/dashboards/bookstore-llm-metrics.json',
+    '.NET Runtime': '../../monitoring/grafana/dashboards/bookstore-dotnet-runtime.json',
+    'HTTP & Kestrel': '../../monitoring/grafana/dashboards/bookstore-http-performance.json',
+    'Threading & Concurrency': '../../monitoring/grafana/dashboards/bookstore-threading-concurrency.json',
+    'External Dependencies': '../../monitoring/grafana/dashboards/bookstore-dependencies.json',
+    'System Health': '../../monitoring/grafana/dashboards/bookstore-system-health.json',
 }
 
 # Emoji mapping
@@ -136,7 +136,7 @@ for section_name, dashboard_path in dashboards.items():
     print(f"   ✓ Added {len(source_panels)} panels")
 
 # Write mega dashboard
-with open('dashboards/bookstore-mega.json', 'w') as f:
+with open('../../monitoring/grafana/../../monitoring/grafana/dashboards/bookstore-mega.json', 'w') as f:
     json.dump(mega_dashboard, f, indent=4)
 
 print("\n" + "="*70)
@@ -146,7 +146,7 @@ print(f"  Total sections: {len(dashboards)}")
 print(f"  Total panels: {len(mega_dashboard['panels'])} ({len(mega_dashboard['panels']) - len(dashboards)} widgets + {len(dashboards)} headers)")
 print(f"  Original panels: {total_original_panels}")
 print(f"  Dashboard height: ~{current_y} units")
-print(f"  File: dashboards/bookstore-mega.json")
+print(f"  File: ../../monitoring/grafana/dashboards/bookstore-mega.json")
 print(f"  Access at: http://localhost:3000/d/bookstore-mega")
 print("\n📊 Section Breakdown:")
 for section in dashboards.keys():

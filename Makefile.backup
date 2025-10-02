@@ -89,17 +89,17 @@ restore: ## Restore NuGet packages
 
 .PHONY: run-aspire
 run-aspire: ## Start all services with Aspire [RECOMMENDED - Auto-cleans MongoDB]
-	@./scripts/startup/start-aspire.sh
+	@./start-aspire.sh
 
 .PHONY: run-services
 run-services: ## Start all services (alternative to Aspire)
 	@echo "Starting services with startup script..."
-	@./scripts/startup/start-services.sh
+	@./start-services.sh
 
 .PHONY: stop-services
 stop-services: ## Stop all running services
 	@echo "Stopping all services..."
-	@./scripts/startup/stop-services.sh
+	@./stop-services.sh
 
 .PHONY: run-bookstore
 run-bookstore: ## Run BookStore API only (port 7002)

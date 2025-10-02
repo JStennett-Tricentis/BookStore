@@ -5,14 +5,14 @@ import json
 
 # Load all existing dashboards to extract panels
 dashboards = {
-    'performance': 'dashboards/bookstore-performance.json',
-    'errors': 'dashboards/bookstore-errors-diagnostics.json',
-    'llm': 'dashboards/bookstore-llm-metrics.json',
-    'dotnet': 'dashboards/bookstore-dotnet-runtime.json',
-    'http': 'dashboards/bookstore-http-performance.json',
-    'threading': 'dashboards/bookstore-threading-concurrency.json',
-    'dependencies': 'dashboards/bookstore-dependencies.json',
-    'system': 'dashboards/bookstore-system-health.json',
+    'performance': '../../monitoring/grafana/dashboards/bookstore-performance.json',
+    'errors': '../../monitoring/grafana/dashboards/bookstore-errors-diagnostics.json',
+    'llm': '../../monitoring/grafana/dashboards/bookstore-llm-metrics.json',
+    'dotnet': '../../monitoring/grafana/dashboards/bookstore-dotnet-runtime.json',
+    'http': '../../monitoring/grafana/dashboards/bookstore-http-performance.json',
+    'threading': '../../monitoring/grafana/dashboards/bookstore-threading-concurrency.json',
+    'dependencies': '../../monitoring/grafana/dashboards/bookstore-dependencies.json',
+    'system': '../../monitoring/grafana/dashboards/bookstore-system-health.json',
 }
 
 # Read all dashboards
@@ -288,7 +288,7 @@ if sys_mem_chart:
     demo_dashboard['panels'].append(sys_mem_chart)
 
 # Write dashboard
-with open('dashboards/bookstore-demo.json', 'w') as f:
+with open('../../monitoring/grafana/../../monitoring/grafana/dashboards/bookstore-demo.json', 'w') as f:
     json.dump(demo_dashboard, f, indent=4)
 
 print("✓ Created comprehensive demo dashboard")

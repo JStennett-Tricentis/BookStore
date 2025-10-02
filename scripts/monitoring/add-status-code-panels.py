@@ -4,7 +4,7 @@
 import json
 
 # Read the dashboard
-with open('dashboards/bookstore-errors-diagnostics.json', 'r') as f:
+with open('../../monitoring/grafana/dashboards/bookstore-errors-diagnostics.json', 'r') as f:
     dashboard = json.load(f)
 
 # Status codes to add
@@ -105,7 +105,7 @@ for panel in dashboard['panels']:
         panel['gridPos']['y'] += 8  # Move down by 8 to make room for new panels
 
 # Write back
-with open('dashboards/bookstore-errors-diagnostics.json', 'w') as f:
+with open('../../monitoring/grafana/dashboards/bookstore-errors-diagnostics.json', 'w') as f:
     json.dump(dashboard, f, indent=4)
 
 print("✓ Added HTTP status code panels to Errors & Diagnostics dashboard")

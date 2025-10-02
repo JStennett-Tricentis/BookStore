@@ -272,6 +272,8 @@ lsof -Pi :7002   # Check API port
 lsof -Pi :11434  # Check Ollama port
 ```
 
-## License
+## Latest Mega Dashboard
 
-Enterprise POC for performance testing research.
+![MEGA Dashboard - All 91 Widgets](src/images/latest_mega_dashboard.jpg)
+
+*All monitoring widgets in one comprehensive view - from performance metrics to error tracking to LLM costs.*

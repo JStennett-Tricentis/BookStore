@@ -153,28 +153,12 @@ export function setupTestData() {
 // Helper: Inject random errors for TRUE CHAOS
 function maybeInjectRandomError() {
     if (Math.random() < chaosConfig.behavior.randomErrorRate) {
-        const randomErrors = [
-            () =>
-                http.post(`${BASE_URL}/api/v1/Books`, JSON.stringify({ bad: "data" }), {
-                    headers: { "Content-Type": "application/json" },
-                    tags: { injected_error: "400" },
-                }),
-            () =>
-                http.get(`${BASE_URL}/api/v1/Books/999999999999999999999999`, {
-                    tags: { injected_error: "404" },
-                }),
-            () =>
-                http.post(
-                    `${BASE_URL}/api/v1/Books`,
-                    JSON.stringify({ title: "", author: "" }),
-                    {
-                        headers: { "Content-Type": "application/json" },
-                        tags: { injected_error: "422" },
-                    }
-                ),
-        ];
-        const randomError = randomErrors[Math.floor(Math.random() * randomErrors.length)];
-        randomError();
+        // Use ErrorTestController for better distribution across all error codes
+        const errorCodes = [400, 401, 403, 404, 405, 409, 410, 415, 422, 429, 500, 502, 503, 504];
+        const randomCode = errorCodes[Math.floor(Math.random() * errorCodes.length)];
+        http.get(`${BASE_URL}/api/v1/ErrorTest/${randomCode}`, {
+            tags: { injected_error: randomCode.toString() },
+        });
     }
 }
 

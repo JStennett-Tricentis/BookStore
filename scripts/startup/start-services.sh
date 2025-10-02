@@ -59,12 +59,12 @@ sleep 5
 
 # Start BookStore API Service (using compiled DLL to avoid workload issues)
 echo "🔧 Starting BookStore API Service..."
-dotnet BookStore.Service/bin/Debug/net9.0/BookStore.Service.dll --urls "http://localhost:7002" > logs/bookstore-api.log 2>&1 &
+dotnet BookStore.Service/bin/Debug/net8.0/BookStore.Service.dll --urls "http://localhost:7002" > logs/bookstore-api.log 2>&1 &
 BOOKSTORE_PID=$!
 
 # Start Performance Service (using compiled DLL to avoid workload issues)
 echo "🎯 Starting Performance Service..."
-dotnet BookStore.Performance.Service/bin/Debug/net9.0/BookStore.Performance.Service.dll --urls "http://localhost:7004" > logs/performance-service.log 2>&1 &
+dotnet BookStore.Performance.Service/bin/Debug/net8.0/BookStore.Performance.Service.dll --urls "http://localhost:7004" > logs/performance-service.log 2>&1 &
 PERFORMANCE_PID=$!
 
 # Save PIDs for cleanup

@@ -157,9 +157,8 @@ docker-stop: ## Stop Docker services (keeps data)
 	@pkill -9 -f "BookStore.Service.dll" 2>/dev/null || true
 	@pkill -9 -f "BookStore.Performance.Service.dll" 2>/dev/null || true
 	@pkill -9 -f "BookStore.Aspire.AppHost" 2>/dev/null || true
-	@lsof -ti:7002 2>/dev/null | xargs kill -9 2>/dev/null || true
-	@lsof -ti:7004 2>/dev/null | xargs kill -9 2>/dev/null || true
-	@lsof -ti:15888 2>/dev/null | xargs kill -9 2>/dev/null || true
+	@pkill -9 -f "dotnet run.*BookStore" 2>/dev/null || true
+	@pkill -9 -f "dcpctrl" 2>/dev/null || true
 	@echo "✅ All services stopped"
 
 .PHONY: docker-clean

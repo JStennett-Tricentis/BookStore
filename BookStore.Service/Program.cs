@@ -154,10 +154,7 @@ app.MapGet("/swagger", () => Results.Redirect("/swagger/index.html"));
 
 app.UseHealthChecks("/health");
 
-// TODO: Fix Prometheus metrics scraping endpoint
-// Issue: MapPrometheusScrapingEndpoint() requires MeterProvider to be accessible
-// Temporarily disabled to allow services to start
-// app.MapPrometheusScrapingEndpoint();
+app.MapPrometheusScrapingEndpoint();
 
 app.UseCors();
 

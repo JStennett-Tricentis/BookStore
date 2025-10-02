@@ -274,6 +274,6 @@ lsof -Pi :11434  # Check Ollama port
 
 ## Latest Mega Dashboard
 
-![MEGA Dashboard - All 91 Widgets](src/images/latest_mega_dashboard.jpg)
-
 *All monitoring widgets in one comprehensive view - from performance metrics to error tracking to LLM costs.*
+
+![MEGA Dashboard - All 91 Widgets](src/images/latest_mega_dashboard.jpg)

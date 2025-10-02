@@ -43,8 +43,12 @@ make bench FILTER=*Json*
 make bench FILTER=*String*
 
 # Run with memory profiler
-cd BookStore.Benchmarks
-dotnet run -c Release -- --filter *Json* --memory
+make bench-memory
+
+# View results
+make bench-report       # Open HTML reports in browser
+make bench-results      # List available report files
+make bench-clean        # Clean all benchmark artifacts
 ```
 
 ## 📁 Available Benchmarks

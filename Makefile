@@ -721,6 +721,39 @@ bench-memory: ## Run benchmarks with detailed memory profiler
 	@echo "🔬 Running benchmarks with memory profiler..."
 	@cd BookStore.Benchmarks && dotnet run -c Release -- --memory
 
+.PHONY: bench-report
+bench-report: ## Open latest benchmark HTML reports
+	@echo "📊 Opening benchmark reports..."
+	@LATEST_HTML=$$(ls -t BookStore.Benchmarks/BenchmarkDotNet.Artifacts/results/*.html 2>/dev/null | head -1); \
+	if [ -z "$$LATEST_HTML" ]; then \
+		echo "❌ No benchmark reports found. Run 'make bench' first."; \
+	else \
+		for report in BookStore.Benchmarks/BenchmarkDotNet.Artifacts/results/*.html; do \
+			open "$$report"; \
+		done; \
+		echo "✓ Opened $$(ls BookStore.Benchmarks/BenchmarkDotNet.Artifacts/results/*.html 2>/dev/null | wc -l | xargs) report(s)"; \
+	fi
+
+.PHONY: bench-results
+bench-results: ## Show benchmark results directory
+	@echo "📂 Benchmark results location:"
+	@echo "   BookStore.Benchmarks/BenchmarkDotNet.Artifacts/results/"
+	@echo ""
+	@if [ -d "BookStore.Benchmarks/BenchmarkDotNet.Artifacts/results" ]; then \
+		echo "Available reports:"; \
+		ls -lh BookStore.Benchmarks/BenchmarkDotNet.Artifacts/results/*.html 2>/dev/null | \
+		awk '{print "   " $$9 " (" $$5 ")"}' || echo "   No reports yet"; \
+	else \
+		echo "❌ No results directory found. Run 'make bench' first."; \
+	fi
+
+.PHONY: bench-clean
+bench-clean: ## Clean benchmark artifacts
+	@echo "🧹 Cleaning benchmark artifacts..."
+	@rm -rf BookStore.Benchmarks/BenchmarkDotNet.Artifacts/
+	@rm -rf BookStore.Benchmarks/bin/Release/
+	@echo "✓ Benchmark artifacts cleaned"
+
 .PHONY: bench-help
 bench-help: ## Show BenchmarkDotNet usage guide
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -745,7 +778,12 @@ bench-help: ## Show BenchmarkDotNet usage guide
 	@echo "   make bench FILTER=*Foo* # Run specific benchmark"
 	@echo "   make bench-memory       # Run with memory profiler"
 	@echo ""
-	@echo "📊 vs K6 Load Testing:"
+	@echo "📊 Reports & Results:"
+	@echo "   make bench-report       # Open HTML reports in browser"
+	@echo "   make bench-results      # Show available report files"
+	@echo "   make bench-clean        # Clean all benchmark artifacts"
+	@echo ""
+	@echo "📈 vs K6 Load Testing:"
 	@echo "   BenchmarkDotNet → Code-level (μs, ns, memory allocations)"
 	@echo "   K6              → API-level (concurrent users, HTTP latency)"
 	@echo ""

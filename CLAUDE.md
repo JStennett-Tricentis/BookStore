@@ -54,13 +54,23 @@ make test-watch                    # Run tests in watch mode
 make test-smoke                    # Run Postman smoke tests
 make test-all                      # Run both integration and smoke tests
 
-# K6 Performance Tests (requires K6 installed)
+# K6 Performance Tests (API-level load testing)
 make perf-smoke                    # Quick test - 1 user, 2 min
 make perf-load                     # Load test - 10 users, 10 min
 make perf-stress                   # Stress test - 30 users, 15 min
 make perf-spike                    # Spike test - burst to 50 users
 make perf-chaos                    # Chaos test - random spikes, errors, LLM (2.5 min)
 make perf-comprehensive            # Run all tests (~30 min)
+
+# BenchmarkDotNet Tests (code-level micro-benchmarks)
+make bench                         # Run all micro-benchmarks
+make bench-json                    # JSON serialization benchmarks
+make bench-string                  # String manipulation benchmarks
+make bench-memory                  # Run with memory profiler
+make bench-report                  # Open HTML reports in browser
+make bench-results                 # List available report files
+make bench-clean                   # Clean benchmark artifacts
+make bench-help                    # Show detailed usage guide
 
 # Run K6 tests directly
 cd BookStore.Performance.Tests

@@ -1,4 +1,9 @@
+using BookStore.Aspire.AppHost.Extensions;
+
 var builder = DistributedApplication.CreateBuilder(args);
+
+// API Simulator (optional - enables zero-cost LLM testing)
+var apiSimulator = builder.AddApiSimulatorIfEnabled();
 
 // MongoDB - Aspire manages credentials automatically via data volumes
 var mongodb = builder.AddMongoDB("mongodb")
@@ -36,6 +41,7 @@ var grafana = builder.AddContainer("grafana", "grafana/grafana", "10.2.0")
 var bookstoreService = builder.AddProject<Projects.BookStore_Service>("bookstore-service")
     .WithReference(bookstoreDb)
     .WithReference(redis)
+    .WithApiSimulator(apiSimulator)
     .WithHttpEndpoint(port: 7002, name: "http");
 
 // Performance Service

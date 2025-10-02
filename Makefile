@@ -17,7 +17,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "📦 DEVELOPMENT SETUP"
 	@echo "──────────────────────────────────────────────────────────────────"
-	@grep -E '^(dev-setup|clean|build|build-release|restore|install-k6|install-deps|format|test|test-integration|test-smoke|test-watch|test-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^(dev-setup|clean|build|build-release|restore|install-k6|install-deps|format|format-check|test|test-integration|test-smoke|test-watch|test-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "🎯 RUN SERVICES"
 	@echo "──────────────────────────────────────────────────────────────────"
@@ -34,6 +34,10 @@ help: ## Show this help message
 	@echo "🤖 AI/LLM PERFORMANCE TESTING"
 	@echo "──────────────────────────────────────────────────────────────────"
 	@grep -E '^(perf-ai-smoke|perf-ai-load|perf-ai-stress|perf-ai-spike|perf-mixed|perf-mixed-heavy|perf-ai-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "🎭 API SIMULATOR (Zero-Cost LLM Testing)"
+	@echo "──────────────────────────────────────────────────────────────────"
+	@grep -E '^(simulator-enable|simulator-disable|simulator-status|simulator-ui|simulator-verify|run-aspire-simulator):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "📊 MONITORING & HEALTH"
 	@echo "──────────────────────────────────────────────────────────────────"
@@ -603,6 +607,58 @@ ci-build: restore build test ## CI build pipeline
 
 .PHONY: ci-test
 ci-test: docker-run health-wait perf-smoke docker-stop ## CI test pipeline
+
+# ==================== API Simulator Commands ====================
+
+.PHONY: run-aspire-simulator
+run-aspire-simulator: ## Start Aspire with API Simulator enabled [$0 LLM costs]
+	@echo "🎭 Starting with API Simulator (zero-cost LLM testing)..."
+	@ENABLE_API_SIMULATOR=true ./scripts/startup/start-aspire.sh
+
+.PHONY: simulator-enable
+simulator-enable: ## Enable API Simulator in configuration
+	@echo "Enabling API Simulator..."
+	@if grep -q "ApiSimulatorEnabled" BookStore.Aspire.AppHost/appsettings.json; then \
+		sed -i.bak 's/"ApiSimulatorEnabled": false/"ApiSimulatorEnabled": true/' BookStore.Aspire.AppHost/appsettings.json && \
+		echo "✅ API Simulator enabled in appsettings.json"; \
+	else \
+		echo "⚠️  ApiSimulatorEnabled not found in appsettings.json - needs to be added"; \
+	fi
+
+.PHONY: simulator-disable
+simulator-disable: ## Disable API Simulator (use real APIs)
+	@echo "Disabling API Simulator (switching to real APIs)..."
+	@if grep -q "ApiSimulatorEnabled" BookStore.Aspire.AppHost/appsettings.json; then \
+		sed -i.bak 's/"ApiSimulatorEnabled": true/"ApiSimulatorEnabled": false/' BookStore.Aspire.AppHost/appsettings.json && \
+		echo "✅ API Simulator disabled - will use real LLM APIs"; \
+	else \
+		echo "⚠️  ApiSimulatorEnabled not found in appsettings.json"; \
+	fi
+
+.PHONY: simulator-status
+simulator-status: ## Check if API Simulator is running
+	@echo "Checking API Simulator status..."
+	@curl -s http://localhost:17070/health > /dev/null 2>&1 && \
+		echo "✅ API Simulator: Running (Port 17070)" || \
+		echo "❌ API Simulator: Not running"
+	@curl -s http://localhost:28880 > /dev/null 2>&1 && \
+		echo "✅ Simulator UI: http://localhost:28880" || \
+		echo "❌ Simulator UI: Not accessible"
+	@curl -s http://localhost:5020 > /dev/null 2>&1 && \
+		echo "✅ Simulator API: http://localhost:5020" || \
+		echo "❌ Simulator API: Not accessible"
+
+.PHONY: simulator-ui
+simulator-ui: ## Open API Simulator UI Dashboard
+	@echo "Opening API Simulator UI..."
+	@open http://localhost:28880 || xdg-open http://localhost:28880
+
+.PHONY: simulator-verify
+simulator-verify: ## Verify Docker image access
+	@echo "Verifying API Simulator Docker image access..."
+	@docker pull ghcr.io/tricentis-product-integration/tpi-iris-simulator-ci:0.2 && \
+		echo "✅ Docker image accessible" || \
+		echo "❌ Cannot access Docker image - check credentials"
 
 # Default target
 .DEFAULT_GOAL := help

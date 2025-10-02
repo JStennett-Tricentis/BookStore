@@ -1,10 +1,10 @@
 {
     "info": {
         "name": "BookStore API",
-        "description": "Enterprise-grade BookStore API for performance testing. Includes complete CRUD operations for Books and Authors with pagination, search, and filtering capabilities.",
+        "description": "Enterprise-grade BookStore API for performance testing. Includes complete CRUD operations for Books and Authors with pagination, search, filtering, LLM testing (multi-provider support), and comprehensive error testing endpoints (400-504 status codes).",
         "_postman_id": "bookstore-api-collection",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-        "version": "1.0.0"
+        "version": "2.0.0"
     },
     "variable": [
         {
@@ -1100,6 +1100,462 @@
                 }
             ],
             "description": "LLM provider testing and metrics validation"
+        },
+        {
+            "name": "Error Testing",
+            "item": [
+                {
+                    "name": "400 Bad Request",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 400\", function () {",
+                                    "    pm.response.to.have.status(400);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Error message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('error');",
+                                    "    pm.expect(jsonData).to.have.property('message');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/400",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "400"]
+                        },
+                        "description": "Test endpoint that returns 400 Bad Request"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "401 Unauthorized",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 401\", function () {",
+                                    "    pm.response.to.have.status(401);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Error message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('error');",
+                                    "    pm.expect(jsonData.error).to.eql('Unauthorized');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/401",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "401"]
+                        },
+                        "description": "Test endpoint that returns 401 Unauthorized"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "403 Forbidden",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 403\", function () {",
+                                    "    pm.response.to.have.status(403);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Forbidden message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Forbidden');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/403",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "403"]
+                        },
+                        "description": "Test endpoint that returns 403 Forbidden"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "404 Not Found",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 404\", function () {",
+                                    "    pm.response.to.have.status(404);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Not found message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Not Found');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/404",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "404"]
+                        },
+                        "description": "Test endpoint that returns 404 Not Found"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "405 Method Not Allowed",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 405\", function () {",
+                                    "    pm.response.to.have.status(405);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Method not allowed message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Method Not Allowed');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/405",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "405"]
+                        },
+                        "description": "Test endpoint that returns 405 Method Not Allowed"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "409 Conflict",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 409\", function () {",
+                                    "    pm.response.to.have.status(409);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Conflict message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Conflict');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/409",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "409"]
+                        },
+                        "description": "Test endpoint that returns 409 Conflict"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "410 Gone",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 410\", function () {",
+                                    "    pm.response.to.have.status(410);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Gone message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Gone');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/410",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "410"]
+                        },
+                        "description": "Test endpoint that returns 410 Gone"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "415 Unsupported Media Type",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 415\", function () {",
+                                    "    pm.response.to.have.status(415);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Unsupported media type message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Unsupported Media Type');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/415",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "415"]
+                        },
+                        "description": "Test endpoint that returns 415 Unsupported Media Type"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "422 Unprocessable Entity",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 422\", function () {",
+                                    "    pm.response.to.have.status(422);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Unprocessable entity message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Unprocessable Entity');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/422",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "422"]
+                        },
+                        "description": "Test endpoint that returns 422 Unprocessable Entity"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "429 Too Many Requests",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 429\", function () {",
+                                    "    pm.response.to.have.status(429);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Too many requests message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Too Many Requests');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/429",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "429"]
+                        },
+                        "description": "Test endpoint that returns 429 Too Many Requests"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "500 Internal Server Error",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 500\", function () {",
+                                    "    pm.response.to.have.status(500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Internal server error message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Internal Server Error');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/500",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "500"]
+                        },
+                        "description": "Test endpoint that returns 500 Internal Server Error"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "502 Bad Gateway",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 502\", function () {",
+                                    "    pm.response.to.have.status(502);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Bad gateway message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Bad Gateway');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/502",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "502"]
+                        },
+                        "description": "Test endpoint that returns 502 Bad Gateway"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "503 Service Unavailable",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 503\", function () {",
+                                    "    pm.response.to.have.status(503);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Service unavailable message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Service Unavailable');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/503",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "503"]
+                        },
+                        "description": "Test endpoint that returns 503 Service Unavailable"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "504 Gateway Timeout",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 504\", function () {",
+                                    "    pm.response.to.have.status(504);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Gateway timeout message returned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.error).to.eql('Gateway Timeout');",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/ErrorTest/504",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "ErrorTest", "504"]
+                        },
+                        "description": "Test endpoint that returns 504 Gateway Timeout"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Error testing endpoints for all HTTP status codes used in performance testing"
         },
         {
             "name": "Performance Test Scenarios",

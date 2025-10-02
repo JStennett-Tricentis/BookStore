@@ -170,9 +170,11 @@ Key configuration patterns in Program.cs:
 ### Performance Testing
 
 - K6 tests in BookStore.Performance.Tests/
-- Test scenarios: smoke, load, stress, spike
+- Test scenarios: smoke, load, stress, spike, ai-load, ai-stress, errors
 - User profiles: reader, librarian, manager
 - Performance Service provides Docker-based orchestration
+- HTML report auto-generation via `generate-html-report.js`
+- Error scenarios test all HTTP status codes: 400, 401, 404, 409, 410, 422, 500, 503
 
 ## Key Files and Locations
 
@@ -201,7 +203,16 @@ Key configuration patterns in Program.cs:
 - Startup Scripts: `start-services.sh`, `stop-services.sh`
 - Makefile: Root directory (40+ automation commands)
 - Monitoring Config: `monitoring/prometheus/`, `monitoring/grafana/`
+- Dashboard Generation: `monitoring/grafana/*.py` (automation scripts)
 - Service Settings: `*/appsettings.json`
+
+### Monitoring & Dashboards
+
+- **10 Grafana Dashboards**: 91 total widgets across specialized and overview dashboards
+- **Dashboard Scripts**: Python scripts to auto-generate demo and mega dashboards
+- **Prometheus Metrics**: 36+ metric types including LLM token/cost tracking
+- **All dashboards**: 2-minute time range, 5-second refresh
+- **Access via Makefile**: Commands for mega, demo, and individual dashboards
 
 ## Development Notes
 
@@ -227,9 +238,72 @@ Key configuration patterns in Program.cs:
 ```bash
 make swagger              # Open Swagger UI
 make aspire-dashboard     # Open Aspire Dashboard
-make grafana             # Open Grafana
-make prometheus          # Open Prometheus
+make grafana              # Open Grafana
+make prometheus           # Open Prometheus
+make grafana-mega         # Open MEGA dashboard (all 91 widgets)
+make grafana-demo         # Open demo dashboard (53 curated panels)
+make grafana-dashboards   # Open all 8 specialized dashboards
 ```
+
+### Grafana Dashboards
+
+10 dashboards with 91 total widgets organized into:
+
+**Specialized Dashboards (8):**
+1. **Performance Testing** - Request rates, latency percentiles, throughput
+2. **Errors & Diagnostics** - HTTP status codes (400, 401, 404, 409, 410, 422, 500, 503), exception tracking
+3. **LLM Metrics** - Token usage, costs, multi-provider comparison
+4. **.NET Runtime** - GC, memory, assemblies, exception tracking
+5. **HTTP & Kestrel** - Server performance, connection pools, request queue
+6. **Threading & Concurrency** - Thread pools, lock contention, work items
+7. **External Dependencies** - MongoDB, Redis, HTTP client metrics
+8. **System Health** - CPU, memory, process stats, uptime
+
+**Overview Dashboards (2):**
+- **Demo Dashboard** - 53 curated panels for quick demos
+- **MEGA Dashboard** - All 91 widgets in one scrollable view
+
+All dashboards use 2-minute default time range and 5-second refresh.
+
+### LLM Multi-Provider Architecture
+
+The application supports 4 LLM providers via factory pattern:
+
+1. **Ollama** (default) - Free local models (llama3.2, mistral, phi3)
+2. **Claude** - Anthropic API (claude-3-5-sonnet-20241022)
+3. **OpenAI** - GPT models (gpt-4o, gpt-4.1-mini)
+4. **Bedrock** - AWS-hosted models (us.anthropic.claude-sonnet-4-*)
+
+**Key Components:**
+- `ILLMService` - Common interface for all providers
+- `ILLMServiceFactory` - Provider selection and instantiation
+- `ClaudeService`, `OpenAIService`, `BedrockService`, `OllamaService` - Provider implementations
+- Configuration in `appsettings.json`: `LLM.Provider` setting
+
+**Testing LLM endpoints:**
+```bash
+make perf-ai-smoke      # Quick LLM endpoint test
+make perf-ai-load       # LLM load test
+make perf-ai-stress     # LLM stress test
+
+# Test specific provider
+curl -X POST http://localhost:7002/api/v1/Books/{id}/generate-summary?provider=ollama
+curl -X POST http://localhost:7002/api/v1/Books/{id}/generate-summary?provider=claude
+```
+
+**Provider switching:** Edit `appsettings.json` and set `LLM.Provider` to "Ollama", "Claude", "OpenAI", or "Bedrock"
+
+### Performance Test Reports
+
+K6 tests automatically generate and open HTML reports:
+
+```bash
+make perf-smoke         # Opens HTML report when complete
+make perf-load          # Opens HTML report when complete
+make perf-errors        # Tests error scenarios with all HTTP status codes
+```
+
+Reports are saved to `BookStore.Performance.Tests/results/` with timestamps.
 
 ### Service Startup Methods
 

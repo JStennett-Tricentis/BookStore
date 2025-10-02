@@ -22,68 +22,68 @@ export const chaosConfig = {
     randomSpikes: {
         startTime: "30s",
         stages: [
-            { duration: "30s", target: 5 },   // Ramp up
-            { duration: "10s", target: 50 },  // SPIKE!
-            { duration: "20s", target: 2 },   // Drop
-            { duration: "10s", target: 30 },  // SPIKE!
-            { duration: "20s", target: 5 },   // Drop
-            { duration: "10s", target: 75 },  // MASSIVE SPIKE!
-            { duration: "30s", target: 3 },   // Cool down
+            { duration: "20s", target: 10 },   // Ramp up faster
+            { duration: "15s", target: 60 },   // SPIKE!
+            { duration: "15s", target: 5 },    // Drop
+            { duration: "10s", target: 40 },   // SPIKE!
+            { duration: "15s", target: 10 },   // Medium
+            { duration: "10s", target: 100 },  // MASSIVE SPIKE!
+            { duration: "20s", target: 5 },    // Cool down
         ],
         gracefulRampDown: "10s",
     },
 
     // ==================== LLM BOMBARDMENT ====================
     llmBombardment: {
-        startTime: "40s",
-        duration: "2m10s",
-        vus: 3, // Constant number of users
+        startTime: "35s",  // Start earlier for more overlap
+        duration: "2m15s",
+        vus: 5, // More constant users
     },
 
     // ==================== ERROR CHAOS ====================
     errorChaos: {
-        startTime: "50s",
-        duration: "2m",
-        vus: 2, // Constant number of users
+        startTime: "40s",  // Start earlier for more overlap
+        duration: "2m10s",
+        vus: 4, // More constant users
     },
 
     // ==================== MEMORY PRESSURE ====================
     memoryPressure: {
-        startTime: "60s",
-        duration: "1m30s",
-        vus: 5, // Constant number of users
-        booksPerIteration: 5, // Number of books created per iteration
-        rapidGets: 10, // Number of rapid GET requests per iteration
+        startTime: "50s",
+        duration: "1m40s",
+        vus: 8, // More constant users
+        booksPerIteration: 7, // Create more objects
+        rapidGets: 15, // More rapid requests
     },
 
     // ==================== DATABASE CHAOS ====================
     databaseChaos: {
-        startTime: "45s",
+        startTime: "38s",  // Start earlier for more overlap
         stages: [
-            { duration: "15s", target: 10 },
-            { duration: "30s", target: 25 },
-            { duration: "20s", target: 5 },
+            { duration: "15s", target: 15 },  // Higher initial
+            { duration: "30s", target: 35 },  // Higher peak
+            { duration: "20s", target: 10 },
         ],
     },
 
     // ==================== CONNECTION CHAOS ====================
     connectionChaos: {
-        startTime: "55s",
+        startTime: "45s",  // Start earlier for more overlap
         stages: [
-            { duration: "10s", target: 100 },  // MASSIVE spike to fill connection pools
-            { duration: "20s", target: 100 },  // Hold to test queue metrics
-            { duration: "10s", target: 5 },    // Drop
+            { duration: "10s", target: 120 },  // Higher spike
+            { duration: "25s", target: 120 },  // Hold longer
+            { duration: "10s", target: 10 },
         ],
-        batchSize: 10, // Number of concurrent requests per VU
+        batchSize: 15, // More concurrent requests per VU
     },
 
     // ==================== THREAD CHAOS ====================
     threadChaos: {
-        startTime: "70s",
-        duration: "1m",
-        vus: 10, // Constant number of users
-        rapidRequestCount: 20, // Number of rapid small requests
-        batchRequestCount: 15, // Number of requests in batch operations
+        startTime: "55s",  // Start earlier for more overlap
+        duration: "1m20s",
+        vus: 15, // More constant users
+        rapidRequestCount: 30, // More rapid requests
+        batchRequestCount: 20, // More batch requests
     },
 
     // ==================== BEHAVIOR SETTINGS ====================

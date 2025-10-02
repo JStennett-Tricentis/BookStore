@@ -366,70 +366,22 @@ export function llmChaos() {
 export function errorChaos() {
     group("Error Chaos", function () {
         const errorScenarios = [
-            // 400 Bad Request
-            () =>
-                http.post(
-                    `${BASE_URL}/api/v1/Books`,
-                    JSON.stringify({ invalid: "data" }),
-                    {
-                        headers: { "Content-Type": "application/json" },
-                        tags: { error_type: "400" },
-                    }
-                ),
-
-            // 401 Unauthorized
-            () =>
-                http.get(`${BASE_URL}/api/v1/Books`, {
-                    headers: { Authorization: "Bearer invalid_token" },
-                    tags: { error_type: "401" },
-                }),
-
-            // 404 Not Found
-            () =>
-                http.get(`${BASE_URL}/api/v1/Books/000000000000000000000000`, {
-                    tags: { error_type: "404" },
-                }),
-
-            // 409 Conflict (duplicate ISBN)
-            () =>
-                http.post(
-                    `${BASE_URL}/api/v1/Books`,
-                    JSON.stringify({
-                        title: "Duplicate Book",
-                        author: "Duplicate Author",
-                        isbn: "978-DUPLICATE-ISBN",
-                        publishedDate: new Date().toISOString(),
-                    }),
-                    {
-                        headers: { "Content-Type": "application/json" },
-                        tags: { error_type: "409" },
-                    }
-                ),
-
-            // 422 Unprocessable Entity
-            () =>
-                http.post(
-                    `${BASE_URL}/api/v1/Books`,
-                    JSON.stringify({
-                        title: "",
-                        author: "",
-                        isbn: "invalid",
-                    }),
-                    {
-                        headers: { "Content-Type": "application/json" },
-                        tags: { error_type: "422" },
-                    }
-                ),
-
-            // 500 Internal Server Error (invalid LLM provider)
-            () =>
-                http.post(
-                    `${BASE_URL}/api/v1/Books/507f1f77bcf86cd799439011/generate-summary?provider=invalid_provider`,
-                    null,
-                    {
-                        tags: { error_type: "500" },
-                    }
-                ),
+            // Use ErrorTestController endpoints for comprehensive coverage
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/400`, { tags: { error_type: "400" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/401`, { tags: { error_type: "401" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/403`, { tags: { error_type: "403" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/404`, { tags: { error_type: "404" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/405`, { tags: { error_type: "405" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/409`, { tags: { error_type: "409" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/410`, { tags: { error_type: "410" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/415`, { tags: { error_type: "415" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/422`, { tags: { error_type: "422" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/429`, { tags: { error_type: "429" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/500`, { tags: { error_type: "500" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/502`, { tags: { error_type: "502" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/503`, { tags: { error_type: "503" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/504`, { tags: { error_type: "504" } }),
+            () => http.get(`${BASE_URL}/api/v1/ErrorTest/random`, { tags: { error_type: "random" } }),
         ];
 
         // TRUE CHAOS: Execute multiple random errors simultaneously (from config)

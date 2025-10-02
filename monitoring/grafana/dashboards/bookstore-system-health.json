@@ -74,7 +74,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(process_cpu_time_seconds_total{service=\"bookstore-api\"}[1m]) * 100",
+                    "expr": "rate(process_cpu_time_seconds_total[1m]) * 100",
                     "refId": "A"
                 }
             ],
@@ -134,7 +134,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "process_memory_usage_bytes{service=\"bookstore-api\"}",
+                    "expr": "process_memory_usage_bytes",
                     "refId": "A"
                 }
             ],
@@ -186,7 +186,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "process_thread_count{service=\"bookstore-api\"}",
+                    "expr": "process_thread_count",
                     "refId": "A"
                 }
             ],
@@ -246,7 +246,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "http_server_active_requests{service=\"bookstore-api\"}",
+                    "expr": "http_server_active_requests",
                     "refId": "A"
                 }
             ],
@@ -306,7 +306,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "kestrel_active_connections{service=\"bookstore-api\"}",
+                    "expr": "kestrel_active_connections",
                     "refId": "A"
                 }
             ],
@@ -366,7 +366,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "process_runtime_dotnet_exceptions_count_total{service=\"bookstore-api\"}",
+                    "expr": "process_runtime_dotnet_exceptions_count_total",
                     "refId": "A"
                 }
             ],
@@ -451,7 +451,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(process_runtime_dotnet_gc_collections_count_total{service=\"bookstore-api\"}[1m])",
+                    "expr": "rate(process_runtime_dotnet_gc_collections_count_total[1m])",
                     "legendFormat": "Gen {{generation}}",
                     "refId": "A"
                 }
@@ -537,7 +537,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "process_runtime_dotnet_thread_pool_threads_count{service=\"bookstore-api\"}",
+                    "expr": "process_runtime_dotnet_thread_pool_threads_count",
                     "legendFormat": "Thread Pool Size",
                     "refId": "A"
                 },
@@ -545,7 +545,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "process_runtime_dotnet_thread_pool_queue_length{service=\"bookstore-api\"}",
+                    "expr": "process_runtime_dotnet_thread_pool_queue_length",
                     "legendFormat": "Queue Length",
                     "refId": "B"
                 },
@@ -553,7 +553,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(process_runtime_dotnet_thread_pool_completed_items_count_total{service=\"bookstore-api\"}[1m])",
+                    "expr": "rate(process_runtime_dotnet_thread_pool_completed_items_count_total[1m])",
                     "legendFormat": "Completed Items/sec",
                     "refId": "C"
                 }
@@ -639,7 +639,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(process_runtime_dotnet_jit_methods_compiled_count_total{service=\"bookstore-api\"}[1m])",
+                    "expr": "rate(process_runtime_dotnet_jit_methods_compiled_count_total[1m])",
                     "legendFormat": "Methods Compiled/sec",
                     "refId": "A"
                 },
@@ -647,7 +647,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(process_runtime_dotnet_jit_il_compiled_size_bytes_total{service=\"bookstore-api\"}[1m])",
+                    "expr": "rate(process_runtime_dotnet_jit_il_compiled_size_bytes_total[1m])",
                     "legendFormat": "IL Bytes Compiled/sec",
                     "refId": "B"
                 }
@@ -733,7 +733,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "kestrel_active_connections{service=\"bookstore-api\"}",
+                    "expr": "kestrel_active_connections",
                     "legendFormat": "Active Connections",
                     "refId": "A"
                 },
@@ -741,7 +741,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "kestrel_queued_connections{service=\"bookstore-api\"}",
+                    "expr": "kestrel_queued_connections",
                     "legendFormat": "Queued Connections",
                     "refId": "B"
                 },
@@ -749,7 +749,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(kestrel_connection_duration_seconds_count{service=\"bookstore-api\"}[1m])",
+                    "expr": "rate(kestrel_connection_duration_seconds_count[1m])",
                     "legendFormat": "Connection Rate",
                     "refId": "C"
                 }
@@ -835,7 +835,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "http_client_active_requests{service=\"bookstore-api\"}",
+                    "expr": "http_client_active_requests",
                     "legendFormat": "Active Requests - {{http_request_method}}",
                     "refId": "A"
                 },
@@ -843,7 +843,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "http_client_open_connections{service=\"bookstore-api\"}",
+                    "expr": "http_client_open_connections",
                     "legendFormat": "Open Connections",
                     "refId": "B"
                 }
@@ -937,7 +937,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(process_runtime_dotnet_monitor_lock_contention_count_total{service=\"bookstore-api\"}[1m])",
+                    "expr": "rate(process_runtime_dotnet_monitor_lock_contention_count_total[1m])",
                     "legendFormat": "Lock Contentions/sec",
                     "refId": "A"
                 }
@@ -957,7 +957,7 @@
         "from": "now-2m",
         "to": "now"
     },
-    "timepicker": {},
+    "timepicker": ,
     "timezone": "",
     "title": "System Health",
     "uid": "bookstore-system",

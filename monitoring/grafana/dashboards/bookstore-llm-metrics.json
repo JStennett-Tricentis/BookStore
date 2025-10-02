@@ -98,7 +98,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(ollama_tokens_input_total[1m]) or vector(0)",
+                    "expr": "rate(ollama_tokens_input[1m]) or vector(0)",
                     "legendFormat": "Ollama Input - {{model}}",
                     "refId": "A"
                 },
@@ -106,7 +106,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(ollama_tokens_output_total[1m]) or vector(0)",
+                    "expr": "rate(ollama_tokens_output[1m]) or vector(0)",
                     "legendFormat": "Ollama Output - {{model}}",
                     "refId": "B"
                 },
@@ -114,7 +114,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(claude_tokens_input_total[1m]) or vector(0)",
+                    "expr": "rate(claude_tokens_input[1m]) or vector(0)",
                     "legendFormat": "Claude Input - {{model}}",
                     "refId": "C"
                 },
@@ -122,7 +122,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(claude_tokens_output_total[1m]) or vector(0)",
+                    "expr": "rate(claude_tokens_output[1m]) or vector(0)",
                     "legendFormat": "Claude Output - {{model}}",
                     "refId": "D"
                 },
@@ -130,7 +130,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(openai_tokens_input_total[1m]) or vector(0)",
+                    "expr": "rate(openai_tokens_input[1m]) or vector(0)",
                     "legendFormat": "OpenAI Input - {{model}}",
                     "refId": "E"
                 },
@@ -138,7 +138,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(openai_tokens_output_total[1m]) or vector(0)",
+                    "expr": "rate(openai_tokens_output[1m]) or vector(0)",
                     "legendFormat": "OpenAI Output - {{model}}",
                     "refId": "F"
                 }
@@ -202,7 +202,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "sum(increase(claude_cost_usd_USD_sum[1h])) or vector(0)",
+                    "expr": "sum(increase(claude_cost_usd_sum[1h])) or vector(0)",
                     "legendFormat": "Claude (1h)",
                     "refId": "A"
                 },
@@ -210,7 +210,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "sum(increase(openai_cost_usd_USD_sum[1h])) or vector(0)",
+                    "expr": "sum(increase(openai_cost_usd_sum[1h])) or vector(0)",
                     "legendFormat": "OpenAI (1h)",
                     "refId": "B"
                 },
@@ -218,7 +218,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "sum(increase(bedrock_cost_usd_USD_sum[1h])) or vector(0)",
+                    "expr": "sum(increase(bedrock_cost_usd_sum[1h])) or vector(0)",
                     "legendFormat": "Bedrock (1h)",
                     "refId": "C"
                 }
@@ -576,7 +576,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(claude_cost_usd_USD_sum[5m]) or vector(0)",
+                    "expr": "rate(claude_cost_usd_sum[5m]) or vector(0)",
                     "legendFormat": "Claude",
                     "refId": "A"
                 },
@@ -584,7 +584,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(openai_cost_usd_USD_sum[5m]) or vector(0)",
+                    "expr": "rate(openai_cost_usd_sum[5m]) or vector(0)",
                     "legendFormat": "OpenAI",
                     "refId": "B"
                 },
@@ -592,7 +592,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(bedrock_cost_usd_USD_sum[5m]) or vector(0)",
+                    "expr": "rate(bedrock_cost_usd_sum[5m]) or vector(0)",
                     "legendFormat": "Bedrock",
                     "refId": "C"
                 },
@@ -600,7 +600,7 @@
                     "datasource": {
                         "type": "prometheus"
                     },
-                    "expr": "rate(ollama_cost_usd_USD_sum[5m]) or vector(0)",
+                    "expr": "rate(ollama_cost_usd_sum[5m]) or vector(0)",
                     "legendFormat": "Ollama (FREE)",
                     "refId": "D"
                 }
@@ -625,7 +625,7 @@
         "list": []
     },
     "time": {
-        "from": "now-1h",
+        "from": "now-2m",
         "to": "now"
     },
     "timepicker": {},

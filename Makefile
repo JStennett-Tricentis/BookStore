@@ -17,7 +17,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "📦 DEVELOPMENT SETUP"
 	@echo "──────────────────────────────────────────────────────────────────"
-	@grep -E '^(dev-setup|clean|build|build-release|restore|install-k6|install-deps|format|test):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^(dev-setup|clean|build|build-release|restore|install-k6|install-deps|format|test|test-integration|test-smoke|test-watch|test-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "🎯 RUN SERVICES"
 	@echo "──────────────────────────────────────────────────────────────────"
@@ -29,7 +29,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "🔥 PERFORMANCE TESTING"
 	@echo "──────────────────────────────────────────────────────────────────"
-	@grep -E '^(perf-smoke|perf-load|perf-stress|perf-spike|perf-comprehensive|perf-start-test|perf-list-tests|perf-results):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^(perf-smoke|perf-load|perf-stress|perf-spike|perf-comprehensive|perf-errors|perf-start-test|perf-list-tests|perf-results|perf-clean|perf-report|perf-report-latest|perf-report-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "🤖 AI/LLM PERFORMANCE TESTING"
 	@echo "──────────────────────────────────────────────────────────────────"
@@ -37,7 +37,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "📊 MONITORING & HEALTH"
 	@echo "──────────────────────────────────────────────────────────────────"
-	@grep -E '^(health-check|health-wait|status|logs-bookstore|logs-performance|swagger|aspire-dashboard):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^(health-check|health-wait|status|logs-bookstore|logs-performance|swagger|aspire-dashboard|grafana|grafana-mega|grafana-demo|grafana-dashboards|prometheus):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "💾 DATA MANAGEMENT"
 	@echo "──────────────────────────────────────────────────────────────────"

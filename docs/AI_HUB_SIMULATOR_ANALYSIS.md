@@ -42,29 +42,29 @@ The API Simulator is a sophisticated HTTP service simulator based on the Tricent
 
 **Container Architecture**:
 
-```
+```text
 ┌──────────────────────────────────────────────────────┐
-│         API Simulator Container                       │
-│                                                        │
+│         API Simulator Container                      │
+│                                                      │
 │  ┌──────────────┐  ┌──────────────┐  ┌────────────┐  │
-│  │ Internal API │  │  UI Dashboard │  │ Service API│  │
-│  │  Port 17070  │  │  Port 28880   │  │ Port 5020  │  │
+│  │ Internal API │  │ UI Dashboard │  │ Service API│  │
+│  │  Port 17070  │  │ Port 28880   │  │ Port 5020  │  │
 │  └──────────────┘  └──────────────┘  └────────────┘  │
-│         │                 │                 │         │
-│         └─────────────────┼─────────────────┘         │
-│                           │                           │
-│              ┌────────────▼────────────┐              │
-│              │ Simulation Engine       │              │
-│              │ - Rule Matching         │              │
-│              │ - Response Generation   │              │
-│              │ - Request Tracking      │              │
-│              └────────────┬────────────┘              │
-│                           │                           │
-│              ┌────────────▼────────────┐              │
-│              │ Configuration Loader    │              │
-│              │ - YAML Settings         │              │
-│              │ - Simulation Definitions│              │
-│              └─────────────────────────┘              │
+│         │                 │                 │        │
+│         └─────────────────┼─────────────────┘        │
+│                           │                          │
+│              ┌────────────▼────────────┐             │
+│              │ Simulation Engine       │             │
+│              │ - Rule Matching         │             │
+│              │ - Response Generation   │             │
+│              │ - Request Tracking      │             │
+│              └────────────┬────────────┘             │
+│                           │                          │
+│              ┌────────────▼────────────┐             │
+│              │ Configuration Loader    │             │
+│              │ - YAML Settings         │             │
+│              │ - Simulation Definitions│             │
+│              └─────────────────────────┘             │
 └──────────────────────────────────────────────────────┘
 ```
 

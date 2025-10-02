@@ -32,6 +32,7 @@ cd BookStore.Aspire.AppHost && dotnet run
 # - Performance Service (port 7004)
 # - MongoDB (managed by Aspire)
 # - Redis (managed by Aspire)
+# - API Simulator (ports 17070, 28880, 5020) - if enabled in appsettings.json
 # - Prometheus (port 9090)
 # - Grafana (port 3000, admin/admin123)
 # - Aspire Dashboard (port 15888)
@@ -58,6 +59,7 @@ make perf-smoke                    # Quick test - 1 user, 2 min
 make perf-load                     # Load test - 10 users, 10 min
 make perf-stress                   # Stress test - 30 users, 15 min
 make perf-spike                    # Spike test - burst to 50 users
+make perf-chaos                    # Chaos test - random spikes, errors, LLM (2.5 min)
 make perf-comprehensive            # Run all tests (~30 min)
 
 # Run K6 tests directly
@@ -197,11 +199,13 @@ Key configuration patterns in Program.cs:
 ### Performance Testing
 
 - K6 tests in BookStore.Performance.Tests/
-- Test scenarios: smoke, load, stress, spike, ai-load, ai-stress, errors
+- Test scenarios: smoke, load, stress, spike, chaos, ai-load, ai-stress, mixed, errors
 - User profiles: reader, librarian, manager
 - Performance Service provides Docker-based orchestration
 - HTML report auto-generation via `generate-html-report.js`
 - Error scenarios test all HTTP status codes: 400, 401, 404, 409, 410, 422, 500, 503
+- Chaos testing: random spikes, errors, and LLM calls to exercise all dashboard widgets
+- Mixed workloads: configurable CRUD/AI traffic ratios (20%-50% LLM traffic)
 
 ## Key Files and Locations
 
@@ -249,6 +253,9 @@ Key configuration patterns in Program.cs:
 - Performance Service: port 7004
 - MongoDB: port 27017
 - Redis: port 6379
+- API Simulator (internal-api): port 17070
+- API Simulator (ui): port 28880
+- API Simulator (service): port 5020
 - Aspire Dashboard: port 15888
 - Prometheus: port 9090
 - Grafana: port 3000 (credentials: admin/admin123)
@@ -344,3 +351,42 @@ The project supports two startup methods:
 2. **Startup Scripts**: `./start-services.sh` - Fallback when Aspire has issues
 
 Both methods start the same services, but Aspire provides better observability.
+
+### API Simulator (Zero-Cost LLM Testing)
+
+The API Simulator provides mock LLM endpoints for performance testing without incurring costs:
+
+**Enable/Disable:**
+Edit `BookStore.Aspire.AppHost/appsettings.json`:
+
+```json
+{
+  "ApiSimulatorEnabled": true  // or false to disable
+}
+```
+
+**Ports:**
+
+- Internal API: 17070 (service-to-service communication)
+- UI Dashboard: 28880 (web-based simulator management)
+- Service API: 5020 (external access)
+
+**Makefile Commands:**
+
+```bash
+make simulator-start     # Start API Simulator container
+make simulator-stop      # Stop API Simulator
+make simulator-restart   # Restart API Simulator
+make simulator-status    # Check if running
+make simulator-ui        # Open UI dashboard (port 28880)
+make simulator-logs      # View simulator logs
+make simulator-verify    # Verify Docker image access
+```
+
+**How it works:**
+
+- The BookStore API automatically routes LLM requests to the simulator when enabled
+- Configured via `ApiSimulator__Enabled` and `ApiSimulator__BaseUrl` environment variables
+- Returns mock responses that match real LLM providers (Claude, OpenAI, etc.)
+- Full OpenTelemetry instrumentation for realistic metrics
+- Zero API costs for load testing LLM endpoints

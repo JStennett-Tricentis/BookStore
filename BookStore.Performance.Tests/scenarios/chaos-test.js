@@ -2,6 +2,7 @@ import http from "k6/http";
 import { sleep, check, group } from "k6";
 import { SharedArray } from "k6/data";
 import { Rate, Counter, Trend } from "k6/metrics";
+import { chaosConfig } from "../config/chaos-config.js";
 
 // Import utilities
 const BASE_URL = __ENV.BASE_URL || "http://localhost:7002";
@@ -20,7 +21,7 @@ const books = new SharedArray("books", function () {
     ];
 });
 
-// Chaos test configuration
+// Chaos test configuration (loaded from config file)
 export const options = {
     scenarios: {
         // Scenario 0: Data setup - runs first to create test data
@@ -28,7 +29,7 @@ export const options = {
             executor: "shared-iterations",
             vus: 1,
             iterations: 1,
-            maxDuration: "30s",
+            maxDuration: chaosConfig.dataSetup.maxDuration,
             exec: "setupTestData",
             startTime: "0s",
         },
@@ -37,86 +38,70 @@ export const options = {
         random_spikes: {
             executor: "ramping-vus",
             startVUs: 1,
-            stages: [
-                { duration: "30s", target: 5 }, // Ramp up
-                { duration: "10s", target: 50 }, // SPIKE!
-                { duration: "20s", target: 2 }, // Drop
-                { duration: "10s", target: 30 }, // SPIKE!
-                { duration: "20s", target: 5 }, // Drop
-                { duration: "10s", target: 75 }, // MASSIVE SPIKE!
-                { duration: "30s", target: 3 }, // Cool down
-            ],
-            gracefulRampDown: "10s",
+            stages: chaosConfig.randomSpikes.stages,
+            gracefulRampDown: chaosConfig.randomSpikes.gracefulRampDown,
             exec: "chaosRequests",
-            startTime: "30s", // Start AFTER data setup
+            startTime: chaosConfig.randomSpikes.startTime,
         },
 
         // Scenario 2: Constant LLM load (tests LLM metrics, AI costs)
         llm_bombardment: {
             executor: "constant-vus",
-            vus: 3,
-            duration: "2m10s",
+            vus: chaosConfig.llmBombardment.vus,
+            duration: chaosConfig.llmBombardment.duration,
             exec: "llmChaos",
-            startTime: "40s",
+            startTime: chaosConfig.llmBombardment.startTime,
         },
 
         // Scenario 3: Error generator (tests error dashboards)
         error_chaos: {
             executor: "constant-vus",
-            vus: 2,
-            duration: "2m",
+            vus: chaosConfig.errorChaos.vus,
+            duration: chaosConfig.errorChaos.duration,
             exec: "errorChaos",
-            startTime: "50s",
+            startTime: chaosConfig.errorChaos.startTime,
         },
 
         // Scenario 4: Memory pressure (tests .NET runtime, GC metrics)
         memory_pressure: {
             executor: "constant-vus",
-            vus: 5,
-            duration: "1m30s",
+            vus: chaosConfig.memoryPressure.vus,
+            duration: chaosConfig.memoryPressure.duration,
             exec: "memoryPressure",
-            startTime: "60s",
+            startTime: chaosConfig.memoryPressure.startTime,
         },
 
         // Scenario 5: Database hammering (tests external dependencies)
         database_chaos: {
             executor: "ramping-vus",
             startVUs: 1,
-            stages: [
-                { duration: "15s", target: 10 },
-                { duration: "30s", target: 25 },
-                { duration: "20s", target: 5 },
-            ],
+            stages: chaosConfig.databaseChaos.stages,
             exec: "databaseChaos",
-            startTime: "45s",
+            startTime: chaosConfig.databaseChaos.startTime,
         },
 
         // Scenario 6: Connection pool chaos (tests Kestrel metrics, queued connections)
         connection_chaos: {
             executor: "ramping-vus",
             startVUs: 1,
-            stages: [
-                { duration: "10s", target: 100 }, // MASSIVE spike to fill connection pools
-                { duration: "20s", target: 100 }, // Hold to test queue metrics
-                { duration: "10s", target: 5 }, // Drop
-            ],
+            stages: chaosConfig.connectionChaos.stages,
             exec: "connectionChaos",
-            startTime: "55s",
+            startTime: chaosConfig.connectionChaos.startTime,
         },
 
         // Scenario 7: Thread pool saturation (tests threading metrics)
         thread_chaos: {
             executor: "constant-vus",
-            vus: 10,
-            duration: "1m",
+            vus: chaosConfig.threadChaos.vus,
+            duration: chaosConfig.threadChaos.duration,
             exec: "threadChaos",
-            startTime: "70s",
+            startTime: chaosConfig.threadChaos.startTime,
         },
     },
     thresholds: {
         // Intentionally loose thresholds - we want chaos!
-        http_req_failed: ["rate<0.5"], // Allow 50% errors
-        http_req_duration: ["p(95)<30000"], // 30 second timeout
+        http_req_failed: [`rate<${chaosConfig.thresholds.maxErrorRate}`],
+        http_req_duration: [`p(95)<${chaosConfig.thresholds.p95ResponseTime}`],
     },
 };
 
@@ -127,8 +112,8 @@ let createdBookIds = [];
 export function setupTestData() {
     console.log("🚀 Setting up test data...");
 
-    // Create 50 books with varied data
-    for (let i = 0; i < 50; i++) {
+    // Create books with varied data (amount from config)
+    for (let i = 0; i < chaosConfig.dataSetup.numberOfBooks; i++) {
         const book = books[i % books.length];
         const response = http.post(
             `${BASE_URL}/api/v1/Books`,
@@ -217,14 +202,14 @@ export function chaosRequests() {
                 break;
 
             case "getBook":
-                // Get a real book from our created list (80% success rate)
-                if (createdBookIds.length > 0 && Math.random() > 0.2) {
+                // Get a real book from our created list (uses config success rate)
+                if (createdBookIds.length > 0 && Math.random() < chaosConfig.behavior.successRate) {
                     const bookId = createdBookIds[Math.floor(Math.random() * createdBookIds.length)];
                     response = http.get(`${BASE_URL}/api/v1/Books/${bookId}`, {
                         tags: { chaos_op: "get_book" },
                     });
                 } else {
-                    // 20% chance of 404
+                    // Remaining % chance of 404
                     response = http.get(`${BASE_URL}/api/v1/Books/000000000000000000000000`, {
                         tags: { chaos_op: "get_book_404" },
                     });
@@ -232,8 +217,8 @@ export function chaosRequests() {
                 break;
 
             case "updateBook":
-                // Update a real book (80% success rate)
-                if (createdBookIds.length > 0 && Math.random() > 0.2) {
+                // Update a real book (uses config success rate)
+                if (createdBookIds.length > 0 && Math.random() < chaosConfig.behavior.successRate) {
                     const updateId = createdBookIds[Math.floor(Math.random() * createdBookIds.length)];
                     response = http.put(
                         `${BASE_URL}/api/v1/Books/${updateId}`,
@@ -249,7 +234,7 @@ export function chaosRequests() {
                         }
                     );
                 } else {
-                    // 20% chance of 404
+                    // Remaining % chance of 404
                     response = http.put(
                         `${BASE_URL}/api/v1/Books/000000000000000000000000`,
                         JSON.stringify({ title: "Not Found" }),
@@ -262,8 +247,8 @@ export function chaosRequests() {
                 break;
 
             case "deleteBook":
-                // Delete a real book occasionally (create new ones to replace)
-                if (createdBookIds.length > 10 && Math.random() > 0.9) {
+                // Delete a real book occasionally (uses config delete rate)
+                if (createdBookIds.length > chaosConfig.behavior.minBooksToKeep && Math.random() < chaosConfig.behavior.deleteRate) {
                     const deleteId = createdBookIds.pop(); // Remove from our list
                     response = http.del(`${BASE_URL}/api/v1/Books/${deleteId}`, null, {
                         tags: { chaos_op: "delete_book" },
@@ -427,8 +412,8 @@ export function errorChaos() {
 // Scenario 4: Memory pressure - creates lots of objects to stress GC
 export function memoryPressure() {
     group("Memory Pressure", function () {
-        // Create many books rapidly to pressure memory/GC
-        for (let i = 0; i < 5; i++) {
+        // Create many books rapidly to pressure memory/GC (from config)
+        for (let i = 0; i < chaosConfig.memoryPressure.booksPerIteration; i++) {
             const response = http.post(
                 `${BASE_URL}/api/v1/Books`,
                 JSON.stringify({
@@ -446,8 +431,8 @@ export function memoryPressure() {
             );
         }
 
-        // Rapid fire GETs to trigger caching
-        for (let i = 0; i < 10; i++) {
+        // Rapid fire GETs to trigger caching (from config)
+        for (let i = 0; i < chaosConfig.memoryPressure.rapidGets; i++) {
             http.get(`${BASE_URL}/api/v1/Books?page=${i}&pageSize=100`, {
                 tags: { chaos_op: "cache_pressure" },
             });
@@ -507,7 +492,7 @@ export function connectionChaos() {
         // This tests: Kestrel connection metrics, queued connections, active requests
         const batchRequests = [];
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < chaosConfig.connectionChaos.batchSize; i++) {
             // Use batch() to send parallel requests
             batchRequests.push(["GET", `${BASE_URL}/api/v1/Books?page=${i + 1}&pageSize=50`]);
             batchRequests.push(["GET", `${BASE_URL}/api/v1/Authors`]);
@@ -537,19 +522,19 @@ export function threadChaos() {
                 tags: { chaos_op: "thread_blocking" },
             }),
 
-            // Multiple rapid small requests (thread pool churn)
+            // Multiple rapid small requests (thread pool churn, from config)
             () => {
-                for (let i = 0; i < 20; i++) {
+                for (let i = 0; i < chaosConfig.threadChaos.rapidRequestCount; i++) {
                     http.get(`${BASE_URL}/api/v1/Books?page=${i + 1}&pageSize=10`, {
                         tags: { chaos_op: "thread_churn" },
                     });
                 }
             },
 
-            // Concurrent batch operations (tests thread pool queue)
+            // Concurrent batch operations (tests thread pool queue, from config)
             () => {
                 const batch = [];
-                for (let i = 0; i < 15; i++) {
+                for (let i = 0; i < chaosConfig.threadChaos.batchRequestCount; i++) {
                     batch.push({
                         method: "GET",
                         url: `${BASE_URL}/api/v1/Books?page=${i + 1}`,

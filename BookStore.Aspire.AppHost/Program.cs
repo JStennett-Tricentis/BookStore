@@ -42,11 +42,13 @@ var bookstoreService = builder.AddProject<Projects.BookStore_Service>("bookstore
     .WithReference(bookstoreDb)
     .WithReference(redis)
     .WithApiSimulator(apiSimulator)
-    .WithHttpEndpoint(port: 7002, name: "http");
+    .WithHttpEndpoint(port: 7002, name: "http")
+    .WithExternalHttpEndpoints();
 
 // Performance Service
 var performanceService = builder.AddProject<Projects.BookStore_Performance_Service>("bookstore-performance")
     .WithReference(redis)
-    .WithHttpEndpoint(port: 7004, name: "http");
+    .WithHttpEndpoint(port: 7004, name: "http")
+    .WithExternalHttpEndpoints();
 
 builder.Build().Run();

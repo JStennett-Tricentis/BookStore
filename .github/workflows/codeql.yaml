@@ -25,7 +25,7 @@ jobs:
 
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
 
             - name: Initialize CodeQL
               uses: github/codeql-action/init@v3
@@ -35,7 +35,7 @@ jobs:
 
             - name: Setup .NET (for C#)
               if: matrix.language == 'csharp'
-              uses: actions/setup-dotnet@v4
+              uses: actions/setup-dotnet@v5
               with:
                   dotnet-version: "8.0.x"
 

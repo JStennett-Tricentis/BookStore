@@ -21,7 +21,7 @@ This directory contains contract tests that verify the API Simulator mock endpoi
 
 3. Navigate to the **Contract Tests** section
 
-4. Select a test file from `simulations/tests/`
+4. Select a test file from `simulations/contract-tests/`
 
 5. Run tests and view results in the UI
 

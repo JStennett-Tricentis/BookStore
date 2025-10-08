@@ -4,7 +4,7 @@ Micro-benchmarking suite for performance testing at the code level, complementin
 
 ## 🎯 When to Use BenchmarkDotNet vs K6
 
-### Use **BenchmarkDotNet** When You Want To:
+### Use **BenchmarkDotNet** When You Want To
 
 - ✅ **Optimize algorithm implementations** - Compare different approaches (e.g., StringBuilder vs string.Create)
 - ✅ **Reduce memory allocations** - Find and eliminate GC pressure hotspots
@@ -13,7 +13,7 @@ Micro-benchmarking suite for performance testing at the code level, complementin
 - ✅ **Measure JIT effects** - Understand warmup behavior and steady-state performance
 - ✅ **Find regressions** - Detect performance degradation in code changes
 
-### Use **K6** When You Want To:
+### Use **K6** When You Want To
 
 - ✅ **Test API endpoints end-to-end** - Full HTTP request/response cycle
 - ✅ **Simulate concurrent users** - 100s-1000s of virtual users
@@ -23,14 +23,14 @@ Micro-benchmarking suite for performance testing at the code level, complementin
 
 ## 📊 Example Use Cases for This Project
 
-| Scenario | BenchmarkDotNet | K6 |
-|----------|----------------|-----|
-| **Optimize JSON serialization** | ✅ Test `JsonSerializer` options | ❌ Too low-level |
+| Scenario                               | BenchmarkDotNet                       | K6                  |
+| -------------------------------------- | ------------------------------------- | ------------------- |
+| **Optimize JSON serialization**        | ✅ Test `JsonSerializer` options      | ❌ Too low-level    |
 | **Compare ISBN formatting algorithms** | ✅ Benchmark different string methods | ❌ Not HTTP-related |
-| **Test MongoDB query performance** | ✅ Direct driver calls, no HTTP | ⚠️ Can test via API |
-| **Measure Redis cache hit/miss** | ✅ In-process cache operations | ⚠️ Can test via API |
-| **API endpoint throughput** | ❌ No HTTP testing | ✅ Realistic load |
-| **Concurrent user simulation** | ❌ Single-threaded focus | ✅ Built for this |
+| **Test MongoDB query performance**     | ✅ Direct driver calls, no HTTP       | ⚠️ Can test via API |
+| **Measure Redis cache hit/miss**       | ✅ In-process cache operations        | ⚠️ Can test via API |
+| **API endpoint throughput**            | ❌ No HTTP testing                    | ✅ Realistic load   |
+| **Concurrent user simulation**         | ❌ Single-threaded focus              | ✅ Built for this   |
 
 ## 🚀 Quick Start
 
@@ -64,13 +64,15 @@ Compares different JSON serialization approaches for Book entities.
 **Why this matters:** JSON serialization happens on every API request/response. Optimizing this can improve throughput significantly.
 
 **What it tests:**
+
 - System.Text.Json with custom options vs default options
 - Serialization vs deserialization performance
 - Round-trip (serialize + deserialize) cost
 - Memory allocations per operation
 
 **Example output:**
-```
+
+```text
 |                    Method |      Mean | Allocated |
 |-------------------------- |----------:|----------:|
 | Serialize_SystemTextJson  |   1.234 μs|     520 B |
@@ -85,12 +87,14 @@ Compares ISBN formatting algorithms.
 **Why this matters:** String operations are common in API processing. Choosing the right approach can reduce CPU and memory usage.
 
 **What it tests:**
+
 - String concatenation vs StringBuilder vs string.Create
 - Bulk operations (formatting 100 ISBNs)
 - Memory allocations (Gen0 GC pressure)
 
 **Example output:**
-```
+
+```text
 |                        Method |      Mean | Allocated |
 |------------------------------ |----------:|----------:|
 | FormatIsbn_StringCreate       |    45.2 ns|       0 B |  ← Zero allocations!
@@ -120,6 +124,7 @@ Compares ISBN formatting algorithms.
 ### Statistical Rigor
 
 BenchmarkDotNet automatically handles:
+
 - ✅ **Warmup iterations** - JIT compilation complete before measuring
 - ✅ **Multiple invocations** - Statistical confidence (mean, median, stddev)
 - ✅ **Outlier detection** - Ignores anomalies (GC pauses, OS interrupts)
@@ -170,13 +175,15 @@ dotnet run -c Release -- --filter *MyBenchmarks*
 ### 3. Analyze Results
 
 Look for:
+
 - **Mean time reduction** - How much faster is the new approach?
 - **Allocated memory** - Does it reduce GC pressure?
 - **Rank** - Is it consistently faster across runs?
 
 ## 🎓 Best Practices
 
-### DO:
+### DO
+
 - ✅ Always run benchmarks in **Release mode** (`-c Release`)
 - ✅ Use `[MemoryDiagnoser]` to track allocations
 - ✅ Mark one method as `[Benchmark(Baseline = true)]`
@@ -184,7 +191,8 @@ Look for:
 - ✅ Test realistic data sizes (not toy examples)
 - ✅ Run on representative hardware (same as production)
 
-### DON'T:
+### DON'T
+
 - ❌ Don't benchmark in Debug mode (10x slower!)
 - ❌ Don't forget to await async methods
 - ❌ Don't include I/O in benchmarks (use mocks)
@@ -195,7 +203,7 @@ Look for:
 
 Use both tools together for complete performance coverage:
 
-```
+```text
 Developer Workflow:
 ┌─────────────────────────────────────────────────────────┐
 │ 1. Write code                                           │

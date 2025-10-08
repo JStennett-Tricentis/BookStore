@@ -107,12 +107,12 @@ AgentConnection:
   ClientSecret: "{ClientSecret}"
 
 Simulator:
-  Workspace: /workspace/simulations      # Simulation definitions directory
+  Workspace: /workspace/simulations # Simulation definitions directory
   Identifier: "{MachineName}-{UserName}" # Unique agent ID
   FormatDate: "yyyy-MM-dd"
   FormatTime: "yyyy-MM-ddTHH:mm:ss.fffZ"
 
-  Variables:                             # Template variables for simulations
+  Variables: # Template variables for simulations
     Simulator__Variables__Tenant_Name: "system"
     Simulator__Variables__Product_Name: "TestProduct"
     Simulator__Variables__User_ID: "sap"
@@ -447,14 +447,14 @@ if (useSimulator)
 
 ### 3.2 Gap Analysis
 
-| Feature | Hub Services | BookStore | Gap |
-|---------|--------------|-----------|-----|
-| Provider Factory | ✅ 6 providers | ✅ 4 providers | Different interface |
-| AppHost Extensions | ✅ Comprehensive | ❌ Basic | Need extension pattern |
-| Simulator Support | ✅ Built-in | ❌ None | Full integration needed |
-| Configuration Pattern | ✅ SystemTenant.Providers | ✅ LLM.Providers | Similar, adaptable |
-| URL Override | ✅ Per-provider BaseUrl | ❌ Hardcoded clients | Need configuration layer |
-| Conditional Registration | ✅ ApiSimulatorEnabled | ❌ Static | Need conditional logic |
+| Feature                  | Hub Services              | BookStore            | Gap                      |
+| ------------------------ | ------------------------- | -------------------- | ------------------------ |
+| Provider Factory         | ✅ 6 providers            | ✅ 4 providers       | Different interface      |
+| AppHost Extensions       | ✅ Comprehensive          | ❌ Basic             | Need extension pattern   |
+| Simulator Support        | ✅ Built-in               | ❌ None              | Full integration needed  |
+| Configuration Pattern    | ✅ SystemTenant.Providers | ✅ LLM.Providers     | Similar, adaptable       |
+| URL Override             | ✅ Per-provider BaseUrl   | ❌ Hardcoded clients | Need configuration layer |
+| Conditional Registration | ✅ ApiSimulatorEnabled    | ❌ Static            | Need conditional logic   |
 
 ### 3.3 Key Differences to Address
 
@@ -1259,12 +1259,12 @@ simulator-help: ## Show simulator usage guide
 
 #### Real API Costs
 
-| Provider | Pricing | Test Scenario (1000 requests) | Monthly (30 tests) |
-|----------|---------|-------------------------------|---------------------|
-| **Claude** | $3/M input, $15/M output | ~50K tokens = $0.75 | $22.50 |
-| **OpenAI GPT-4** | $10/M input, $30/M output | ~50K tokens = $2.00 | $60.00 |
-| **AWS Bedrock** | Similar to Claude | ~$0.75 | $22.50 |
-| **Ollama** | $0 (local) | $0 | $0 |
+| Provider         | Pricing                   | Test Scenario (1000 requests) | Monthly (30 tests) |
+| ---------------- | ------------------------- | ----------------------------- | ------------------ |
+| **Claude**       | $3/M input, $15/M output  | ~50K tokens = $0.75           | $22.50             |
+| **OpenAI GPT-4** | $10/M input, $30/M output | ~50K tokens = $2.00           | $60.00             |
+| **AWS Bedrock**  | Similar to Claude         | ~$0.75                        | $22.50             |
+| **Ollama**       | $0 (local)                | $0                            | $0                 |
 
 **Monthly Testing Cost**: ~$105/month (excluding Ollama)
 
@@ -1287,13 +1287,13 @@ simulator-help: ## Show simulator usage guide
 
 #### Testing Capacity Increase
 
-| Metric | Without Simulator | With Simulator | Improvement |
-|--------|-------------------|----------------|-------------|
-| Max VUs | 10-20 (rate limits) | 1000+ | **50-100x** |
-| Test Duration | 10 minutes (cost concern) | Hours | **Unlimited** |
-| Tests per Day | 5-10 (budget) | Unlimited | **∞** |
-| Monthly Cost | $105 | $0 | **100% savings** |
-| CI/CD Runs | Limited (cost) | Every commit | **10-50x** |
+| Metric        | Without Simulator         | With Simulator | Improvement      |
+| ------------- | ------------------------- | -------------- | ---------------- |
+| Max VUs       | 10-20 (rate limits)       | 1000+          | **50-100x**      |
+| Test Duration | 10 minutes (cost concern) | Hours          | **Unlimited**    |
+| Tests per Day | 5-10 (budget)             | Unlimited      | **∞**            |
+| Monthly Cost  | $105                      | $0             | **100% savings** |
+| CI/CD Runs    | Limited (cost)            | Every commit   | **10-50x**       |
 
 ### 5.3 ROI Calculation
 
@@ -1441,15 +1441,15 @@ simulator-help: ## Show simulator usage guide
 
 ## Part 8: Risks & Mitigations
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|-----------|
-| **Simulator responses don't match real API formats** | Medium | High | Copy simulation definitions from hub-services-latest; validate against real API responses |
-| **Performance characteristics differ** | High | Medium | Document that simulator is for functional testing; use real APIs for performance validation |
-| **Team forgets to disable simulator in production** | Medium | Critical | Add startup validation; environment checks; loud warnings if simulator enabled in production |
-| **Simulations become outdated** | Medium | Medium | Schedule quarterly review; capture real API traces; automate simulation updates |
-| **Docker image unavailable** | Low | High | Verify access before starting; have fallback plan to use real APIs; document image pull process |
-| **Simulator bugs affect tests** | Low | Medium | Maintain ability to toggle simulator off; report issues to Tricentis; have fallback to real APIs |
-| **Increased test complexity** | Low | Low | Comprehensive documentation; team training; simple toggle mechanism |
+| Risk                                                 | Likelihood | Impact   | Mitigation                                                                                       |
+| ---------------------------------------------------- | ---------- | -------- | ------------------------------------------------------------------------------------------------ |
+| **Simulator responses don't match real API formats** | Medium     | High     | Copy simulation definitions from hub-services-latest; validate against real API responses        |
+| **Performance characteristics differ**               | High       | Medium   | Document that simulator is for functional testing; use real APIs for performance validation      |
+| **Team forgets to disable simulator in production**  | Medium     | Critical | Add startup validation; environment checks; loud warnings if simulator enabled in production     |
+| **Simulations become outdated**                      | Medium     | Medium   | Schedule quarterly review; capture real API traces; automate simulation updates                  |
+| **Docker image unavailable**                         | Low        | High     | Verify access before starting; have fallback plan to use real APIs; document image pull process  |
+| **Simulator bugs affect tests**                      | Low        | Medium   | Maintain ability to toggle simulator off; report issues to Tricentis; have fallback to real APIs |
+| **Increased test complexity**                        | Low        | Low      | Comprehensive documentation; team training; simple toggle mechanism                              |
 
 ---
 

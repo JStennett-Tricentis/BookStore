@@ -2,17 +2,17 @@
 
 ## System Flow Visualization
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          NEWMAN COMBINATOR FRAMEWORK                         │
-│                         Multi-Combination API Testing                        │
-└─────────────────────────────────────────────────────────────────────────────┘
+```text
+┌────────────────────────────────────────────────────────────────────────────┐
+│                          NEWMAN COMBINATOR FRAMEWORK                       │
+│                         Multi-Combination API Testing                      │
+└────────────────────────────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              INPUT LAYER                                     │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  📁 config/data-sets.json              📁 config/test-scenarios.json        │
+┌────────────────────────────────────────────────────────────────────────────┐
+│                              INPUT LAYER                                   │
+├────────────────────────────────────────────────────────────────────────────┤
+│                                                                            │
+│  📁 config/data-sets.json              📁 config/test-scenarios.json       │
 │  ┌────────────────────────────┐        ┌─────────────────────────────┐     │
 │  │ naughtyStrings: [          │        │ name: "llm-with-naughty"    │     │
 │  │   { str: "", cat: "Null" } │        │ dimensions: [               │     │
@@ -25,8 +25,8 @@
 │  │   { id: "123", ... }       │        │   statusCode: [400,404,405] │     │
 │  │ ]                          │        │ }                           │     │
 │  └────────────────────────────┘        └─────────────────────────────┘     │
-│                                                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
+│                                                                            │
+└────────────────────────────────────────────────────────────────────────────┘
                                        │
                                        │ Load Configs
                                        ↓
@@ -188,7 +188,7 @@
 
 ## Component Dependencies
 
-```
+```text
 ┌───────────────────┐
 │ CombinationEngine │
 └─────────┬─────────┘
@@ -226,7 +226,7 @@
 
 ## Data Flow
 
-```
+```text
 Configuration Files → Combination Engine → Test Combinations
                                                     ↓
                                           Test Runner (Newman)
@@ -299,14 +299,14 @@ if (summary.run.executions.length > 0) {
   if (execution.response) {
     result.statusCode = execution.response.code;
     result.responseTime = execution.response.responseTime;
-    result.responseBody = execution.response.stream?.toString();  // ← KEY LINE
+    result.responseBody = execution.response.stream?.toString(); // ← KEY LINE
   }
 }
 ```
 
 ## File Relationships
 
-```
+```text
 test-scenarios.json
         ↓ (defines)
     Scenario Config
@@ -332,7 +332,7 @@ enhanced-report-generator.js
 
 ## Execution Timeline
 
-```
+```text
 T0: Load Configurations
     ├── data-sets.json
     ├── test-scenarios.json
@@ -363,7 +363,7 @@ T4: Generate Report
 
 ## Response Body Flow
 
-```
+```text
 API Response
     ↓ (captured by)
 execution.response.stream
@@ -381,7 +381,7 @@ HTML <pre> tag
 
 ## Critical Success Path
 
-```
+```text
 1. ✅ Config Files Valid
    └── data-sets.json has correct book IDs
    └── test-scenarios.json has correct endpoints
@@ -410,7 +410,7 @@ HTML <pre> tag
 
 ## Error Handling Flow
 
-```
+```text
 Invalid Config
     ↓
 [Combination Engine]
@@ -448,15 +448,15 @@ responseBody = "Unable to capture"
 
 ## Quick Reference: What Each File Does
 
-| File | Purpose | Key Function |
-|------|---------|--------------|
-| `combination-engine.js` | Generate combinations | `cartesianProduct()` |
-| `test-runner.js` | Execute tests | `runScenario()` |
-| `enhanced-report-generator.js` | Create HTML | `buildEnhancedHTML()` |
-| `export-combinations.js` | Preview combos | `displayConsoleSummary()` |
-| `data-sets.json` | Test data | 51 naughty strings |
-| `test-scenarios.json` | Scenarios | Endpoint templates |
-| `postman_collection.json` | Test template | Dynamic requests |
+| File                           | Purpose               | Key Function              |
+| ------------------------------ | --------------------- | ------------------------- |
+| `combination-engine.js`        | Generate combinations | `cartesianProduct()`      |
+| `test-runner.js`               | Execute tests         | `runScenario()`           |
+| `enhanced-report-generator.js` | Create HTML           | `buildEnhancedHTML()`     |
+| `export-combinations.js`       | Preview combos        | `displayConsoleSummary()` |
+| `data-sets.json`               | Test data             | 51 naughty strings        |
+| `test-scenarios.json`          | Scenarios             | Endpoint templates        |
+| `postman_collection.json`      | Test template         | Dynamic requests          |
 
 ---
 

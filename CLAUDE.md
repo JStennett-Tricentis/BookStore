@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Working Guidelines
 
-**IMPORTANT: DO NOT AUTO-COMMIT*
+\*_IMPORTANT: DO NOT AUTO-COMMIT_
 
 - Never automatically commit changes without explicit user request
 - Never run `git add` or `git commit` commands unless the user specifically asks
@@ -380,7 +380,7 @@ Edit `BookStore.Aspire.AppHost/appsettings.json`:
 
 ```json
 {
-  "ApiSimulatorEnabled": true  // or false to disable
+  "ApiSimulatorEnabled": true // or false to disable
 }
 ```
 

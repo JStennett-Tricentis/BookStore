@@ -49,14 +49,14 @@ make perf-smoke        # Run quick performance test
 
 | Command                     | Description                         | Access URL                        |
 | --------------------------- | ----------------------------------- | --------------------------------- |
-| `make docker-observability` | Start Grafana, Prometheus, Jaeger   | Grafana: <http://localhost:3333>    |
+| `make docker-observability` | Start Grafana, Prometheus, Jaeger   | Grafana: <http://localhost:3333>  |
 | `make logs-bookstore`       | View BookStore API logs             | -                                 |
 | `make logs-performance`     | View Performance Service logs       | -                                 |
 | `make status`               | Show complete project status        | Service health, Docker containers |
 | `make health-check`         | Check health of all services        | Quick availability check          |
 | `make health-wait`          | Wait for all services to be healthy | Use after starting services       |
-| `make swagger`              | Open Swagger UI                     | <http://localhost:7002/swagger>     |
-| `make aspire-dashboard`     | Open Aspire Dashboard               | <http://localhost:15889>            |
+| `make swagger`              | Open Swagger UI                     | <http://localhost:7002/swagger>   |
+| `make aspire-dashboard`     | Open Aspire Dashboard               | <http://localhost:15889>          |
 
 ### Observability Stack URLs
 

@@ -8,7 +8,9 @@
 
 ## Executive Summary
 
-The Tricentis AI Hub API Simulator is a Docker-based service mocking tool that enables **zero-cost LLM performance testing** by simulating responses from external AI providers (Claude, OpenAI, Bedrock, etc.). This analysis examines the hub-services-latest implementation and provides a detailed integration plan for the BookStore project.
+The Tricentis AI Hub API Simulator is a Docker-based service mocking tool that enables **zero-cost LLM performance testing**
+by simulating responses from external AI providers (Claude, OpenAI, Bedrock, etc.).
+This analysis examines the hub-services-latest implementation and provides a detailed integration plan for the BookStore project.
 
 **Key Benefits:**
 
@@ -254,7 +256,9 @@ public class ProviderFactory
 }
 ```
 
-**Key Observation**: When simulator is enabled, the `BaseUrl` for all providers is redirected to the simulator endpoint (`http://localhost:5020`). The providers continue to make HTTP calls, but the simulator intercepts and responds instead of the real AI services.
+**Key Observation**: When simulator is enabled, the `BaseUrl` for all providers is redirected to the simulator
+
+endpoint (`http://localhost:5020`). The providers continue to make HTTP calls, but the simulator intercepts and responds instead of the real AI services.
 
 ---
 
@@ -798,7 +802,9 @@ mkdir -p BookStore.Aspire.AppHost/simulations/shared
 
 #### Step 2.2: Claude API Simulation
 
-Since the API Simulator format is proprietary to Tricentis, the exact simulation format would need to be obtained from hub-services-latest working simulations. However, based on typical patterns, here's a conceptual structure:
+Since the API Simulator format is proprietary to Tricentis, the exact simulation format would need to be
+
+obtained from hub-services-latest working simulations. However, based on typical patterns, here's a conceptual structure:
 
 **File**: `BookStore.Aspire.AppHost/simulations/claude/messages.simulation` (CONCEPTUAL)
 
@@ -1458,17 +1464,17 @@ simulator-help: ## Show simulator usage guide
 
 ### Short Term (Next 2 Weeks)
 
-5. **Complete Integration**: Implement all phases
-6. **Run Validation Tests**: Full test suite with simulator
-7. **Document Everything**: Complete all documentation
-8. **Team Training**: Walk through simulator usage
+1. **Complete Integration**: Implement all phases
+2. **Run Validation Tests**: Full test suite with simulator
+3. **Document Everything**: Complete all documentation
+4. **Team Training**: Walk through simulator usage
 
 ### Long Term (Next Month)
 
-9. **CI/CD Rollout**: Enable simulator in all pipelines
-10. **Create Simulation Library**: Build comprehensive simulation collection
-11. **Performance Baseline**: Compare simulator vs real API performance
-12. **Cost Tracking**: Monitor and report savings
+1. **CI/CD Rollout**: Enable simulator in all pipelines
+2. **Create Simulation Library**: Build comprehensive simulation collection
+3. **Performance Baseline**: Compare simulator vs real API performance
+4. **Cost Tracking**: Monitor and report savings
 
 ---
 

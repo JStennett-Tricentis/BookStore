@@ -369,11 +369,11 @@ yarn-error.log*
 
 # K6 test results
 results/
-*.json
-!monitoring/grafana/dashboards/*.json
-!*.example.json
-!BookStore.postman_collection.json
-!.prettierrc.json
+
+monitoring/grafana/dashboards/*.json
+*.example.json
+BookStore.postman_collection.json
+.prettierrc.json
 
 # Environment variables
 .env

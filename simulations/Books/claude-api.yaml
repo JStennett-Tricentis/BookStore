@@ -1,0 +1,49 @@
+schema: SimV1
+name: claude-api-mock
+
+connections:
+  - name: claude-mock
+    port: 17070
+
+services:
+  - name: ClaudeMessagesCreate
+    steps:
+      # Inbound request matcher
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/v1/messages'
+          - property: Method
+            value: POST
+          - type: Header
+            key: 'anthropic-version'
+            value: '*'
+
+      # Outbound response
+      - direction: Out
+        message:
+          statusCode: 200
+          headers:
+            - key: 'content-type'
+              value: 'application/json'
+            - key: 'request-id'
+              value: 'req_sim_{timestamp}'
+          payload: |
+            {
+              "id": "msg_{randomGuid}",
+              "type": "message",
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "This is a simulated response from Claude API. Based on the book information provided, here's a comprehensive summary: The work is a classic piece of literature that explores profound themes through compelling characters and masterful narrative techniques. It examines the human condition, societal structures, and timeless questions about morality, identity, and purpose. The author's distinctive style and insightful observations make this an enduring contribution to world literature."
+                }
+              ],
+              "model": "claude-3-5-sonnet-20241022",
+              "stop_reason": "end_turn",
+              "stop_sequence": null,
+              "usage": {
+                "input_tokens": 128,
+                "output_tokens": 256
+              }
+            }

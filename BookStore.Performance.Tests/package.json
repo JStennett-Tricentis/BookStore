@@ -1,0 +1,20 @@
+{
+  "name": "bookstore-performance-tests",
+  "version": "1.0.0",
+  "description": "K6 performance tests for BookStore API",
+  "scripts": {
+    "test:smoke": "k6 run --env SCENARIO=smoke tests/books.js",
+    "test:load": "k6 run --env SCENARIO=load tests/books.js",
+    "test:stress": "k6 run --env SCENARIO=stress tests/books.js",
+    "test:spike": "k6 run --env SCENARIO=spike tests/books.js",
+    "test:management": "k6 run --env SCENARIO=load tests/management.js",
+    "test:all": "npm run test:smoke && npm run test:load",
+    "setup": "k6 run utils/seed-data.js"
+  },
+  "devDependencies": {
+    "k6": "^0.46.0"
+  },
+  "keywords": ["k6", "performance", "testing", "api", "bookstore"],
+  "author": "BookStore Team",
+  "license": "MIT"
+}

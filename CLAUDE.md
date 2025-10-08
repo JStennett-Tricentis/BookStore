@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Working Guidelines
+
+**IMPORTANT: DO NOT AUTO-COMMIT*
+
+- Never automatically commit changes without explicit user request
+- Never run `git add` or `git commit` commands unless the user specifically asks
+- User will review and commit changes manually when ready
+
 ## Project Overview
 
 BookStore is an enterprise-grade .NET 8 performance testing application that

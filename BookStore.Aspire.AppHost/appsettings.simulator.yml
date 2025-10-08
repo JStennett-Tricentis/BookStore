@@ -1,7 +1,7 @@
 # configure connection to Tricentis Cloud
 AgentConnection:
   # enable or disable the connection to Tricentis Cloud
-  Enabled: true
+  Enabled: false
 
   # enter your Tricentis Cloud tenant
   Tenant: "{Tenant}"
@@ -14,7 +14,7 @@ AgentConnection:
 
 Simulator:
   # folder where the simulator will store its data
-  Workspace:
+  Workspace: /workspace
 
   # unique identifier for this agent
   Identifier: "{MachineName}-{UserName}"

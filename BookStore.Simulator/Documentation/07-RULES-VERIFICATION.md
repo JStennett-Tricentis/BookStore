@@ -5,6 +5,7 @@
 ## Overview
 
 **Rules** are the building blocks for:
+
 - **trigger** - Match incoming requests
 - **verify** - Validate responses
 - **buffer** - Capture data for later use
@@ -19,26 +20,26 @@ All rules use the same `RuleV1` structure from the schema.
 
 ### Basic Rule Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `property` | String | Message/connection property (StatusCode, Method, etc.) |
-| `jsonPath` | String | JSON field path (e.g., `user.email`) |
-| `xPath` | String | XML field path |
-| `type` | String | Rule type (Header, Query, Path, Payload, etc.) |
-| `key` | String | Header/query parameter name |
-| `value` | Any | Expected/injected value |
-| `operator` | String | Comparison operator (Equal, Greater, Less, etc.) |
-| `dataType` | String | Value type (String, Numeric, Date, Boolean) |
-| `exists` | Boolean | Check if field exists |
-| `count` | Number | Verify element count |
-| `name` | String | Buffer/reference name |
-| `file` | String | File path for save |
+| Property   | Type    | Description                                            |
+| ---------- | ------- | ------------------------------------------------------ |
+| `property` | String  | Message/connection property (StatusCode, Method, etc.) |
+| `jsonPath` | String  | JSON field path (e.g., `user.email`)                   |
+| `xPath`    | String  | XML field path                                         |
+| `type`     | String  | Rule type (Header, Query, Path, Payload, etc.)         |
+| `key`      | String  | Header/query parameter name                            |
+| `value`    | Any     | Expected/injected value                                |
+| `operator` | String  | Comparison operator (Equal, Greater, Less, etc.)       |
+| `dataType` | String  | Value type (String, Numeric, Date, Boolean)            |
+| `exists`   | Boolean | Check if field exists                                  |
+| `count`    | Number  | Verify element count                                   |
+| `name`     | String  | Buffer/reference name                                  |
+| `file`     | String  | File path for save                                     |
 
 ---
 
 ##
 
- 1. Verify Rules (Response Validation)
+1.  Verify Rules (Response Validation)
 
 Use `verify` in **`In`** steps to validate responses from external APIs.
 
@@ -88,6 +89,7 @@ verify:
 ```
 
 **Available Properties:**
+
 - StatusCode
 - Method
 - Endpoint
@@ -426,7 +428,7 @@ steps:
   - direction: Out
     insert:
       - jsonPath: encoded_data
-        valueBase64: "SGVsbG8gV29ybGQ="  # "Hello World" in base64
+        valueBase64: "SGVsbG8gV29ybGQ=" # "Hello World" in base64
 
     message:
       payload: '{"encoded_data": ""}'
@@ -434,13 +436,13 @@ steps:
 
 ### Dynamic Values Available
 
-| Placeholder | Example Output | Description |
-|-------------|----------------|-------------|
-| `{randomGuid}` | `550e8400-e29b-41d4-a716-446655440000` | UUID v4 |
-| `{timestamp}` | `2025-10-08T16:30:45Z` | ISO 8601 timestamp |
-| `{random[1][100]}` | `42` | Random number (min, max) |
-| `{B[bufferName]}` | `captured-value` | Buffered value |
-| `{Date[01.01.2024][][dd.MM.yyyy]}` | `2024-01-01` | Formatted date |
+| Placeholder                        | Example Output                         | Description              |
+| ---------------------------------- | -------------------------------------- | ------------------------ |
+| `{randomGuid}`                     | `550e8400-e29b-41d4-a716-446655440000` | UUID v4                  |
+| `{timestamp}`                      | `2025-10-08T16:30:45Z`                 | ISO 8601 timestamp       |
+| `{random[1][100]}`                 | `42`                                   | Random number (min, max) |
+| `{B[bufferName]}`                  | `captured-value`                       | Buffered value           |
+| `{Date[01.01.2024][][dd.MM.yyyy]}` | `2024-01-01`                           | Formatted date           |
 
 ---
 
@@ -697,12 +699,13 @@ services:
 ```yaml
 steps:
   - direction: In
-    validate:  # ❌ Wrong property name
+    validate: # ❌ Wrong property name
       - property: StatusCode
         value: 200 OK
 ```
 
 ✅ Fix:
+
 ```yaml
 steps:
   - direction: In
@@ -717,10 +720,11 @@ steps:
 steps:
   - direction: In
     verify:
-      - statusCode: 200 OK  # ❌ Wrong format
+      - statusCode: 200 OK # ❌ Wrong format
 ```
 
 ✅ Fix:
+
 ```yaml
 steps:
   - direction: In
@@ -737,10 +741,11 @@ steps:
     verify:
       - jsonPath: age
         value: 18
-        operator: Greater  # ❌ Will compare as strings!
+        operator: Greater # ❌ Will compare as strings!
 ```
 
 ✅ Fix:
+
 ```yaml
 steps:
   - direction: In
@@ -757,16 +762,17 @@ steps:
 steps:
   - direction: In
     buffer:
-      - jsonPath: user.id  # ❌ No name to reference later
+      - jsonPath: user.id # ❌ No name to reference later
 ```
 
 ✅ Fix:
+
 ```yaml
 steps:
   - direction: In
     buffer:
       - jsonPath: user.id
-        name: userId  # ✅ Can use {B[userId]} later
+        name: userId # ✅ Can use {B[userId]} later
 ```
 
 ---

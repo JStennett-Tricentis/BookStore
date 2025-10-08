@@ -5,6 +5,7 @@
 ## Overview
 
 Advanced connection features:
+
 - **Forward** - Proxy requests to real APIs
 - **Learning Mode** - Record real API responses automatically
 - **SimulateOn** - Conditional fallback to simulation
@@ -38,12 +39,12 @@ services:
 
 ### Forward Modes
 
-| Mode | Description | Use Case |
-|------|-------------|----------|
-| `PassThrough` | Forward all requests to real API | Pure proxy |
-| `ForwardFirst` | Try real API first, fallback to simulation on error | Hybrid mode |
-| `SimulateFirst` | Try simulation first, fallback to real API | Test-first approach |
-| `Learning` | Record real API responses for future simulation | Build simulation library |
+| Mode            | Description                                         | Use Case                 |
+| --------------- | --------------------------------------------------- | ------------------------ |
+| `PassThrough`   | Forward all requests to real API                    | Pure proxy               |
+| `ForwardFirst`  | Try real API first, fallback to simulation on error | Hybrid mode              |
+| `SimulateFirst` | Try simulation first, fallback to real API          | Test-first approach      |
+| `Learning`      | Record real API responses for future simulation     | Build simulation library |
 
 ### PassThrough Mode
 
@@ -63,11 +64,11 @@ connections:
     headers:
       - key: x-api-key
         value: ${ANTHROPIC_API_KEY}
-
 # No services needed - pure proxy
 ```
 
 **Usage:**
+
 ```bash
 # Call simulator port, it forwards to real API
 curl -X POST http://localhost:17000/v1/messages \
@@ -110,6 +111,7 @@ services:
 ```
 
 **Behavior:**
+
 - Real API healthy → Returns real response
 - Real API returns 500 → Returns simulated response
 - Real API timeout → Returns simulated response
@@ -145,6 +147,7 @@ services:
 ```
 
 **Behavior:**
+
 - Request matches simulation trigger → Use simulation
 - Request doesn't match → Forward to real API
 
@@ -173,6 +176,7 @@ connections:
 ```
 
 **What happens:**
+
 1. Request comes to port 20000
 2. Forwarded to real API
 3. Real API response is recorded to YAML file
@@ -180,13 +184,13 @@ connections:
 
 ### Learning Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `pathTemplate` | String | File path pattern for recordings |
-| `externalPayload` | Boolean | Store large payloads in separate files |
-| `learnOn` | Array | Conditional recording rules |
-| `patterns` | Array | Filter which requests to record |
-| `sort` | String | Sorting method (ByConnection, ByPath, ByTimestamp) |
+| Property          | Type    | Description                                        |
+| ----------------- | ------- | -------------------------------------------------- |
+| `pathTemplate`    | String  | File path pattern for recordings                   |
+| `externalPayload` | Boolean | Store large payloads in separate files             |
+| `learnOn`         | Array   | Conditional recording rules                        |
+| `patterns`        | Array   | Filter which requests to record                    |
+| `sort`            | String  | Sorting method (ByConnection, ByPath, ByTimestamp) |
 
 ### Conditional Learning
 
@@ -229,7 +233,7 @@ connections:
       to: real-api
       learning:
         pathTemplate: ./recordings/{timestamp}.yaml
-        externalPayload: true  # Payloads saved to {timestamp}_payload.json
+        externalPayload: true # Payloads saved to {timestamp}_payload.json
 
   - name: real-api
     endpoint: https://api.example.com
@@ -237,6 +241,7 @@ connections:
 ```
 
 **Generated files:**
+
 ```
 recordings/
   ├── 2025-10-08T16-30-45_request.yaml
@@ -341,6 +346,7 @@ services:
 ```
 
 **Usage:**
+
 ```bash
 # With X-Simulate header → uses simulation
 curl -H "X-Simulate: true" http://localhost:25000/api/endpoint
@@ -435,11 +441,11 @@ connections:
   - name: target-api
     endpoint: http://localhost:7002
     listen: false
-
 # No services needed - pure recording mode
 ```
 
 **Run traffic through the proxy:**
+
 ```bash
 # All requests are recorded
 curl http://localhost:28000/api/v1/Books
@@ -493,6 +499,7 @@ services:
 ```
 
 **Behavior:**
+
 - `/test/endpoint1` → Simulated (no prod call)
 - `/test/endpoint2` → Simulated (no prod call)
 - `/api/users` → Forwarded to production
@@ -508,7 +515,7 @@ Enable message capture for debugging:
 connections:
   - name: debug-connection
     port: 30000
-    capture: true  # Captures all traffic to logs
+    capture: true # Captures all traffic to logs
     forward:
       mode: PassThrough
       to: real-api
@@ -519,6 +526,7 @@ connections:
 ```
 
 **Captured data includes:**
+
 - Request headers, body, timestamp
 - Response headers, body, timestamp
 - Status codes
@@ -536,10 +544,11 @@ connections:
     port: 8000
     forward:
       mode: PassThrough
-      to: real-api  # ❌ 'real-api' not defined
+      to: real-api # ❌ 'real-api' not defined
 ```
 
 ✅ Fix:
+
 ```yaml
 connections:
   - name: proxy
@@ -548,7 +557,7 @@ connections:
       mode: PassThrough
       to: real-api
 
-  - name: real-api  # ✅ Define target
+  - name: real-api # ✅ Define target
     endpoint: https://api.example.com
     listen: false
 ```
@@ -563,7 +572,7 @@ connections:
       mode: PassThrough
       to: real-api
 
-services:  # ❌ Services ignored in PassThrough mode
+services: # ❌ Services ignored in PassThrough mode
   - steps:
       - direction: In
       - direction: Out
@@ -581,7 +590,7 @@ connections:
 
   - name: connection-b
     forward:
-      to: connection-a  # ❌ Circular reference
+      to: connection-a # ❌ Circular reference
 ```
 
 ---

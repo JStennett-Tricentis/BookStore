@@ -100,16 +100,16 @@ Created comprehensive READMEs:
 
 ## 🚀 Access Points
 
-| Service | URL | Description |
-|---------|-----|-------------|
-| **Simulator UI** | <http://localhost:28880/ui/> | Web dashboard |
-| **Settings API** | <http://localhost:28880/api/agent/settings> | Configuration |
-| **Claude Mock** | <http://localhost:17070> | Messages API |
-| **OpenAI Mock** | <http://localhost:18080> | Chat completions |
-| **Ollama Mock** | <http://localhost:11434> | Generate/Chat |
-| **Bedrock Mock** | <http://localhost:19090> | Model invocation |
-| **Books API Mock** | <http://localhost:17777> | CRUD + AI |
-| **Aspire Dashboard** | <http://localhost:15888> | Orchestration UI |
+| Service              | URL                                         | Description      |
+| -------------------- | ------------------------------------------- | ---------------- |
+| **Simulator UI**     | <http://localhost:28880/ui/>                | Web dashboard    |
+| **Settings API**     | <http://localhost:28880/api/agent/settings> | Configuration    |
+| **Claude Mock**      | <http://localhost:17070>                    | Messages API     |
+| **OpenAI Mock**      | <http://localhost:18080>                    | Chat completions |
+| **Ollama Mock**      | <http://localhost:11434>                    | Generate/Chat    |
+| **Bedrock Mock**     | <http://localhost:19090>                    | Model invocation |
+| **Books API Mock**   | <http://localhost:17777>                    | CRUD + AI        |
+| **Aspire Dashboard** | <http://localhost:15888>                    | Orchestration UI |
 
 ## 🧪 Testing Options
 

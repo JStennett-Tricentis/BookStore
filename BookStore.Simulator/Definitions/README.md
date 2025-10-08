@@ -14,6 +14,7 @@ This directory contains Tricentis API Simulator definitions for mocking LLM prov
   - Returns: Simulated Claude response with 256 output tokens
 
 **Example Request**:
+
 ```bash
 curl -X POST http://localhost:17070/v1/messages \
   -H "anthropic-version: 2023-06-01" \
@@ -37,6 +38,7 @@ curl -X POST http://localhost:17070/v1/messages \
   - Returns: Simulated GPT-4o response with 300 completion tokens
 
 **Example Request**:
+
 ```bash
 curl -X POST http://localhost:18080/v1/chat/completions \
   -H "Authorization: Bearer sk-test-key" \
@@ -63,6 +65,7 @@ curl -X POST http://localhost:18080/v1/chat/completions \
   - Returns: Chat-formatted response
 
 **Example Requests**:
+
 ```bash
 # Generate
 curl -X POST http://localhost:11434/api/generate \
@@ -85,14 +88,15 @@ curl -X POST http://localhost:11434/api/chat \
 **Internal Port**: 19090
 **Services**: 2
 
-- **POST /model/*/invoke** - Invoke Model (non-streaming)
+- **POST /model/\*/invoke** - Invoke Model (non-streaming)
   - Model: us.anthropic.claude-sonnet-4-v1:0
   - Returns: Claude-formatted response via Bedrock
 
-- **POST /model/*/invoke-with-response-stream** - Streaming Invocation
+- **POST /model/\*/invoke-with-response-stream** - Streaming Invocation
   - Returns: Simulated streaming response
 
 **Example Request**:
+
 ```bash
 curl -X POST http://localhost:19090/model/us.anthropic.claude-sonnet-4-v1:0/invoke \
   -H "Content-Type: application/json" \
@@ -120,6 +124,7 @@ Full CRUD operations for books:
 - **POST /api/v1/Books/{id}/generate-summary** - Generate AI summary
 
 **Example Requests**:
+
 ```bash
 # List books
 curl http://localhost:17777/api/v1/Books
@@ -157,16 +162,19 @@ Access the Tricentis Simulator UI to view all loaded simulations:
 All simulations include:
 
 ✅ **Dynamic Values**:
+
 - `{randomGuid}` - Generates unique IDs
 - `{timestamp}` - Current Unix timestamp
 - `{Date[{now}][][yyyy-MM-ddTHH:mm:ss.fffZ]}` - ISO 8601 formatted dates
 
 ✅ **Realistic Token Counts**:
+
 - Input/output token metrics
 - Total token usage
 - Model-specific response formats
 
 ✅ **Proper Headers**:
+
 - Content-Type
 - Request IDs
 - Model-specific headers
@@ -174,6 +182,7 @@ All simulations include:
 ## File Watching
 
 The simulator automatically reloads when simulation files change:
+
 - Add new `.yaml` files to this directory
 - Edit existing simulations
 - Changes are detected within 2-3 seconds
@@ -194,6 +203,7 @@ k6 run scenarios/ai-load-test.js --env CLAUDE_URL=http://localhost:17070
 ## Schema Validation
 
 All files follow the **SimV1** schema. See documentation in `../docs/`:
+
 - `01-SCHEMA-BASICS.md` - Basic structure
 - `03-SERVICES-STEPS.md` - Service definitions
 - `04-MESSAGES.md` - Response payloads
@@ -201,12 +211,12 @@ All files follow the **SimV1** schema. See documentation in `../docs/`:
 
 ## Summary
 
-| Simulation | Port | Services | Use Case |
-|------------|------|----------|----------|
-| claude-api | 17070 | 1 | Claude Messages API |
-| openai-api | 18080 | 1 | OpenAI Chat Completions |
-| ollama-api | 11434 | 2 | Ollama Generate/Chat |
-| bedrock-api | 19090 | 2 | AWS Bedrock (Claude) |
-| books-rest-api | 17777 | 6 | BookStore CRUD + AI |
+| Simulation     | Port  | Services | Use Case                |
+| -------------- | ----- | -------- | ----------------------- |
+| claude-api     | 17070 | 1        | Claude Messages API     |
+| openai-api     | 18080 | 1        | OpenAI Chat Completions |
+| ollama-api     | 11434 | 2        | Ollama Generate/Chat    |
+| bedrock-api    | 19090 | 2        | AWS Bedrock (Claude)    |
+| books-rest-api | 17777 | 6        | BookStore CRUD + AI     |
 
 **Total**: 12 services across 5 simulations

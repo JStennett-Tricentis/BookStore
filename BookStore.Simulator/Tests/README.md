@@ -13,6 +13,7 @@ This directory contains contract tests that verify the API Simulator mock endpoi
 ### Via API Simulator UI
 
 1. Start the API Simulator with Aspire:
+
    ```bash
    cd BookStore.Aspire.AppHost && dotnet run
    ```
@@ -28,6 +29,7 @@ This directory contains contract tests that verify the API Simulator mock endpoi
 ## Test Coverage
 
 ### Books API Tests (`books-api-tests.yaml`)
+
 - ✅ `test_list_books` - GET /api/v1/Books
 - ✅ `test_get_book_by_id` - GET /api/v1/Books/{id}
 - ✅ `test_create_book` - POST /api/v1/Books
@@ -36,10 +38,12 @@ This directory contains contract tests that verify the API Simulator mock endpoi
 - ✅ `test_generate_summary` - POST /api/v1/Books/{id}/generate-summary
 
 ### Claude API Tests (`claude-api-tests.yaml`)
+
 - ✅ `test_claude_messages_success` - POST /v1/messages (success)
 - ✅ `test_claude_messages_rate_limit` - Rate limit error (429)
 
 ### LLM Providers Tests (`llm-providers-tests.yaml`)
+
 - ✅ `test_openai_chat_completions` - OpenAI Chat API
 - ✅ `test_ollama_generate` - Ollama Generate API
 - ✅ `test_ollama_chat` - Ollama Chat API
@@ -114,26 +118,26 @@ services:
 
 ## Verification Rules
 
-| Rule | Description | Example |
-|------|-------------|---------|
-| `property: StatusCode` | Validates HTTP status | `value: 200 OK` |
-| `jsonPath` | Validates JSON field | `jsonPath: id` |
-| `exists` | Checks field exists | `exists: true` |
-| `value` | Exact value match | `value: "expected"` |
-| `operator` | Comparison operator | `operator: Greater` |
+| Rule                   | Description           | Example             |
+| ---------------------- | --------------------- | ------------------- |
+| `property: StatusCode` | Validates HTTP status | `value: 200 OK`     |
+| `jsonPath`             | Validates JSON field  | `jsonPath: id`      |
+| `exists`               | Checks field exists   | `exists: true`      |
+| `value`                | Exact value match     | `value: "expected"` |
+| `operator`             | Comparison operator   | `operator: Greater` |
 
 ## Port Configuration
 
 Ensure these ports are accessible:
 
-| Service | Port | Endpoint |
-|---------|------|----------|
-| Claude API | 17070 | http://localhost:17070 |
-| OpenAI API | 18080 | http://localhost:18080 |
-| Ollama API | 11434 | http://localhost:11434 |
-| Bedrock API | 19090 | http://localhost:19090 |
-| BookStore API | 17777 | http://localhost:17777 |
-| Simulator UI | 28880 | http://localhost:28880/ui/ |
+| Service       | Port  | Endpoint                   |
+| ------------- | ----- | -------------------------- |
+| Claude API    | 17070 | http://localhost:17070     |
+| OpenAI API    | 18080 | http://localhost:18080     |
+| Ollama API    | 11434 | http://localhost:11434     |
+| Bedrock API   | 19090 | http://localhost:19090     |
+| BookStore API | 17777 | http://localhost:17777     |
+| Simulator UI  | 28880 | http://localhost:28880/ui/ |
 
 ## Alternative Testing Methods
 
@@ -175,6 +179,7 @@ cd ../Postman
 ```
 
 Expected output:
+
 ```
 🧪 Testing API Simulator Endpoints...
 
@@ -218,7 +223,7 @@ Results: 7 passed, 0 failed
 
 ## Reference Files
 
-- **Schema Definition**: `simulations/iris_schema.json`
+- **Schema Definition**: `BookStore.Simulator/Documentation/API-SIMULATOR-SCHEMA.json`
 - **Example Tests**: `/Users/j.stennett/TAIS/hub-service/Tricentis.AI.Hub.EventSimulator/Simulations/contract-tests/`
 - **Validation Notes**: `.validation-notes.md`
 

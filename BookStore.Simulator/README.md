@@ -37,7 +37,8 @@ This directory contains all files related to the Tricentis API Simulator for zer
 │   ├── 05-TRIGGERS.md
 │   └── 06-OPENAI-LLM.md
 │
-├── iris_schema.json       # JSON schema for SimV1 format
+├── Documentation/
+│   ├── API-SIMULATOR-SCHEMA.json  # JSON schema for SimV1 format
 ├── README.md              # This file
 └── STYLE_GUIDE.md         # YAML style guide
 ```
@@ -72,6 +73,7 @@ cd simulations/postman
 ### `/definitions/` - Simulation Files
 
 5 YAML files that define mock API endpoints:
+
 - **12 services** across 5 simulations
 - Ports: 17070 (Claude), 18080 (OpenAI), 11434 (Ollama), 19090 (Bedrock), 17777 (BookStore)
 - Auto-reloaded when files change
@@ -79,6 +81,7 @@ cd simulations/postman
 ### `/contract-tests/` - Validation Tests
 
 13 test services to verify simulator behavior:
+
 - Tests use SimV1 schema format
 - Run via Simulator UI
 - Validate response structure, status codes, JSON fields
@@ -86,6 +89,7 @@ cd simulations/postman
 ### `/postman/` - Postman Collections
 
 14 requests + automated test script:
+
 - Covers all simulator endpoints
 - Includes test data CSVs
 - Bash script for CI/CD
@@ -93,6 +97,7 @@ cd simulations/postman
 ### `/docs/` - Documentation
 
 6 comprehensive guides on SimV1 schema:
+
 - Schema basics and structure
 - Connection configuration
 - Service/step definitions
@@ -102,14 +107,14 @@ cd simulations/postman
 
 ## Key Ports
 
-| Service | Port | Purpose |
-|---------|------|---------|
-| Simulator UI | 28880 | Web dashboard |
-| Claude API | 17070 | Claude Messages mock |
-| OpenAI API | 18080 | Chat Completions mock |
-| Ollama API | 11434 | Local LLM mock |
-| Bedrock API | 19090 | AWS Bedrock mock |
-| BookStore API | 17777 | CRUD + AI summary |
+| Service       | Port  | Purpose               |
+| ------------- | ----- | --------------------- |
+| Simulator UI  | 28880 | Web dashboard         |
+| Claude API    | 17070 | Claude Messages mock  |
+| OpenAI API    | 18080 | Chat Completions mock |
+| Ollama API    | 11434 | Local LLM mock        |
+| Bedrock API   | 19090 | AWS Bedrock mock      |
+| BookStore API | 17777 | CRUD + AI summary     |
 
 ## Features
 
@@ -118,7 +123,7 @@ cd simulations/postman
 ✅ **Hot Reload** - Changes detected automatically  
 ✅ **Full OpenTelemetry** - Traces, metrics, logs  
 ✅ **Contract Tests** - Validate simulator behavior  
-✅ **Postman Integration** - Ready-to-use collections  
+✅ **Postman Integration** - Ready-to-use collections
 
 ## Related Documentation
 

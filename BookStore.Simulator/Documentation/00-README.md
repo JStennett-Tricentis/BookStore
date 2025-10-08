@@ -59,14 +59,14 @@ SimV1 Schema Reference for BookStore Project
 ### Specialized Topics
 
 1. **[06-OPENAI-LLM.md](./06-OPENAI-LLM.md)** 🤖 (15 min)
-    - Claude, OpenAI, Ollama mocks
-    - Token counting
-    - Streaming responses
+   - Claude, OpenAI, Ollama mocks
+   - Token counting
+   - Streaming responses
 
 2. **[10-TROUBLESHOOTING.md](./10-TROUBLESHOOTING.md)** 🛠️ (10 min)
-    - Common errors and fixes
-    - Debugging techniques
-    - Validation tips
+   - Common errors and fixes
+   - Debugging techniques
+   - Validation tips
 
 ---
 
@@ -117,14 +117,14 @@ SimV1 Schema Reference for BookStore Project
 ### Top-Level Structure
 
 ```yaml
-schema: SimV1              # REQUIRED - Must be "SimV1"
-name: simulation-name      # Optional - Simulation identifier
+schema: SimV1 # REQUIRED - Must be "SimV1"
+name: simulation-name # Optional - Simulation identifier
 
-connections: []            # Define endpoints/listeners
-services: []               # Define request/response behavior
-resources: []              # Optional - External data files
-templates: {}              # Optional - Reusable components
-includes: []               # Optional - Import other YAML files
+connections: [] # Define endpoints/listeners
+services: [] # Define request/response behavior
+resources: [] # Optional - External data files
+templates: {} # Optional - Reusable components
+includes: [] # Optional - Import other YAML files
 ```
 
 ### Connection (Minimal HTTP)
@@ -133,7 +133,7 @@ includes: []               # Optional - Import other YAML files
 connections:
   - name: my-api
     endpoint: http://localhost:8080
-    listen: false          # false = outbound, true/port = inbound
+    listen: false # false = outbound, true/port = inbound
 ```
 
 ### Service (Minimal Request/Response)
@@ -142,10 +142,10 @@ connections:
 services:
   - name: MyService
     steps:
-      - direction: In      # Receive request
+      - direction: In # Receive request
         trigger:
           - uri: "/api/endpoint"
-      - direction: Out     # Send response
+      - direction: Out # Send response
         message:
           statusCode: 200
           payload: '{"result": "success"}'
@@ -283,24 +283,24 @@ services:
 
 ## 📊 Schema Coverage
 
-| Feature | Documentation | Example Simulations |
-|---------|---------------|---------------------|
-| HTTP Endpoints | ✅ 02-CONNECTIONS.md | ✅ BookStore, Claude, OpenAI |
-| Message Brokers | ✅ 02-CONNECTIONS.md | ⚠️ Not in BookStore examples |
-| Request Matching | ✅ 05-TRIGGERS.md | ✅ All test files |
-| Response Generation | ✅ 04-MESSAGES.md | ✅ All definition files |
-| Verification | ✅ 07-RULES-VERIFICATION.md | ✅ Contract tests |
-| Buffering | ✅ 07-RULES-VERIFICATION.md | ❌ Not in examples |
-| Resources | ✅ 08-RESOURCES-TEMPLATES.md | ❌ Not in examples |
-| Templates | ✅ 08-RESOURCES-TEMPLATES.md | ❌ Not in examples |
-| Forwarding | ✅ 09-ADVANCED-FEATURES.md | ❌ Not in examples |
-| Learning | ✅ 09-ADVANCED-FEATURES.md | ❌ Not in examples |
+| Feature             | Documentation                | Example Simulations          |
+| ------------------- | ---------------------------- | ---------------------------- |
+| HTTP Endpoints      | ✅ 02-CONNECTIONS.md         | ✅ BookStore, Claude, OpenAI |
+| Message Brokers     | ✅ 02-CONNECTIONS.md         | ⚠️ Not in BookStore examples |
+| Request Matching    | ✅ 05-TRIGGERS.md            | ✅ All test files            |
+| Response Generation | ✅ 04-MESSAGES.md            | ✅ All definition files      |
+| Verification        | ✅ 07-RULES-VERIFICATION.md  | ✅ Contract tests            |
+| Buffering           | ✅ 07-RULES-VERIFICATION.md  | ❌ Not in examples           |
+| Resources           | ✅ 08-RESOURCES-TEMPLATES.md | ❌ Not in examples           |
+| Templates           | ✅ 08-RESOURCES-TEMPLATES.md | ❌ Not in examples           |
+| Forwarding          | ✅ 09-ADVANCED-FEATURES.md   | ❌ Not in examples           |
+| Learning            | ✅ 09-ADVANCED-FEATURES.md   | ❌ Not in examples           |
 
 ---
 
 ## 🔗 Related Files
 
-- **Schema Definition**: `BookStore.Simulator/iris_schema.json`
+- **Schema Definition**: `BookStore.Simulator/Documentation/API-SIMULATOR-SCHEMA.json`
 - **Simulation Files**: `BookStore.Simulator/Definitions/*.yaml`
 - **Contract Tests**: `BookStore.Simulator/Tests/*.yaml`
 - **Postman Tests**: `BookStore.Simulator/Postman/*.json`
@@ -335,7 +335,7 @@ services:
 When working with Tricentis API Simulator files (SimV1 schema):
 
 1. **Always reference these docs** before modifying `.yaml` files
-2. **Validate against `iris_schema.json`** schema definition
+2. **Validate against `API-SIMULATOR-SCHEMA.json`** schema definition
 3. **Check existing examples** in `BookStore.Simulator/Definitions/` and `BookStore.Simulator/Tests/`
 4. **Use SimV1 format** - NOT OpenAPI, NOT Postman format
 5. **Common mistakes are documented** in each guide's "Common Mistakes" section

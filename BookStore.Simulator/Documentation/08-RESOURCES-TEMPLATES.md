@@ -16,11 +16,11 @@ Resources allow you to load data from external files and use it in your simulati
 
 ### Resource Types
 
-| Type | Description | Use Case |
-|------|-------------|----------|
-| `Value` | Single-value lists | Load list of IDs, names, etc. |
-| `KeyValue` | Key-value pairs | Load configuration settings |
-| `Table` | CSV/database tables | Load structured data with multiple columns |
+| Type       | Description         | Use Case                                   |
+| ---------- | ------------------- | ------------------------------------------ |
+| `Value`    | Single-value lists  | Load list of IDs, names, etc.              |
+| `KeyValue` | Key-value pairs     | Load configuration settings                |
+| `Table`    | CSV/database tables | Load structured data with multiple columns |
 
 ### Basic Resource Structure
 
@@ -46,7 +46,7 @@ services:
           - uri: "/books"
       - direction: Out
         message:
-          payload: "{R[books]}"  # Load all data from CSV
+          payload: "{R[books]}" # Load all data from CSV
 ```
 
 ### Value Resources
@@ -54,6 +54,7 @@ services:
 Single-column data:
 
 **File: `data/book-ids.txt`**
+
 ```
 68dedb16887eae6ff6743f51
 68e05e77604bb44693ad8e92
@@ -61,6 +62,7 @@ Single-column data:
 ```
 
 **Simulation:**
+
 ```yaml
 resources:
   - name: bookIds
@@ -72,7 +74,7 @@ services:
       - direction: Out
         insert:
           - type: Path
-            value: "/api/v1/Books/{R[bookIds][0]}"  # Use first ID
+            value: "/api/v1/Books/{R[bookIds][0]}" # Use first ID
         message:
           method: GET
 ```
@@ -82,6 +84,7 @@ services:
 Configuration pairs:
 
 **File: `data/config.properties`**
+
 ```
 apiKey=sk-test-12345
 baseUrl=http://localhost:7002
@@ -89,6 +92,7 @@ timeout=5000
 ```
 
 **Simulation:**
+
 ```yaml
 resources:
   - name: config
@@ -117,6 +121,7 @@ services:
 Multi-column structured data:
 
 **File: `data/books.csv`**
+
 ```csv
 id,title,author,price,category
 1,Book One,Author A,29.99,fiction
@@ -125,6 +130,7 @@ id,title,author,price,category
 ```
 
 **Simulation:**
+
 ```yaml
 resources:
   - name: books
@@ -164,18 +170,18 @@ services:
 
 ### Resource Properties
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `name` | String | ✅ | Resource identifier |
-| `type` | String | ✅ | Value, KeyValue, or Table |
-| `file` | String | ✅ | Path to data file (absolute or relative) |
-| `separator` | String | ⚠️ CSV | Field separator (default: comma) |
-| `properties` | Array | ⚠️ Table | Column names if not in file |
-| `table` | String | ❌ | Database table name (for DB resources) |
-| `listPrefix` | String | ❌ | Prefix for list results |
-| `listPostfix` | String | ❌ | Postfix for list results |
-| `listSeparator` | String | ❌ | Separator between list items |
-| `listEntrySeparator` | String | ❌ | Separator between entry fields |
+| Property             | Type   | Required | Description                              |
+| -------------------- | ------ | -------- | ---------------------------------------- |
+| `name`               | String | ✅       | Resource identifier                      |
+| `type`               | String | ✅       | Value, KeyValue, or Table                |
+| `file`               | String | ✅       | Path to data file (absolute or relative) |
+| `separator`          | String | ⚠️ CSV   | Field separator (default: comma)         |
+| `properties`         | Array  | ⚠️ Table | Column names if not in file              |
+| `table`              | String | ❌       | Database table name (for DB resources)   |
+| `listPrefix`         | String | ❌       | Prefix for list results                  |
+| `listPostfix`        | String | ❌       | Postfix for list results                 |
+| `listSeparator`      | String | ❌       | Separator between list items             |
+| `listEntrySeparator` | String | ❌       | Separator between entry fields           |
 
 ### Resource Step Operations
 
@@ -315,7 +321,7 @@ services:
           - uri: "/health"
       - direction: Out
         message:
-          basedOn: json-success-response  # Use template
+          basedOn: json-success-response # Use template
 
   - steps:
       - direction: In
@@ -323,7 +329,7 @@ services:
           - uri: "/create"
       - direction: Out
         message:
-          basedOn: created-response  # Use template
+          basedOn: created-response # Use template
 ```
 
 ### Service Templates
@@ -369,6 +375,7 @@ Import other simulation files to compose complex simulations.
 ### Basic Include
 
 **File: `common-connections.yaml`**
+
 ```yaml
 schema: SimV1
 name: common-connections
@@ -384,17 +391,18 @@ connections:
 ```
 
 **File: `main-simulation.yaml`**
+
 ```yaml
 schema: SimV1
 name: main-simulation
 
 includes:
-  - ./common-connections.yaml  # Import connections
+  - ./common-connections.yaml # Import connections
 
 services:
   - steps:
       - direction: Out
-        to: bookstore-api  # Use imported connection
+        to: bookstore-api # Use imported connection
         message:
           method: GET
 ```
@@ -422,6 +430,7 @@ services:
 ### Include Paths
 
 - **Relative paths** - Relative to current file location
+
   ```yaml
   includes:
     - ./common/connections.yaml
@@ -442,6 +451,7 @@ services:
 ### Example 1: Data-Driven Book API
 
 **File: `data/books.csv`**
+
 ```csv
 id,title,author,isbn,price
 1,The Great Gatsby,F. Scott Fitzgerald,9780743273565,12.99
@@ -450,6 +460,7 @@ id,title,author,isbn,price
 ```
 
 **File: `book-api-simulation.yaml`**
+
 ```yaml
 schema: SimV1
 name: data-driven-book-api
@@ -503,6 +514,7 @@ services:
 ### Example 2: Template-Based Multi-Environment
 
 **File: `templates.yaml`**
+
 ```yaml
 schema: SimV1
 name: common-templates
@@ -525,6 +537,7 @@ templates:
 ```
 
 **File: `dev-environment.yaml`**
+
 ```yaml
 schema: SimV1
 name: dev-environment
@@ -551,6 +564,7 @@ services:
 ```
 
 **File: `prod-environment.yaml`**
+
 ```yaml
 schema: SimV1
 name: prod-environment
@@ -585,10 +599,11 @@ services:
 ```yaml
 resources:
   - name: books
-    file: ./data/books.csv  # ❌ Missing type
+    file: ./data/books.csv # ❌ Missing type
 ```
 
 ✅ Fix:
+
 ```yaml
 resources:
   - name: books
@@ -599,10 +614,11 @@ resources:
 ### ❌ Wrong resource reference syntax
 
 ```yaml
-payload: "{books}"  # ❌ Missing R[] prefix
+payload: "{books}" # ❌ Missing R[] prefix
 ```
 
 ✅ Fix:
+
 ```yaml
 payload: "{R[books]}"
 ```
@@ -610,15 +626,17 @@ payload: "{R[books]}"
 ### ❌ Circular includes
 
 **File A:**
+
 ```yaml
 includes:
   - ./fileB.yaml
 ```
 
 **File B:**
+
 ```yaml
 includes:
-  - ./fileA.yaml  # ❌ Circular reference
+  - ./fileA.yaml # ❌ Circular reference
 ```
 
 ✅ Fix: Create a third file with shared components

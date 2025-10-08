@@ -1,6 +1,6 @@
 # Tricentis API Simulator - Quick Start Guide
 
-**Get your first simulation running in 5 minutes**
+Get your first simulation running in 5 minutes.
 
 ## ⚡ 1-Minute Overview
 
@@ -54,9 +54,10 @@ cd BookStore.Aspire.AppHost && dotnet run
 ```
 
 The simulator will:
+
 - Load all YAML files from `BookStore.Simulator/Definitions/`
 - Start listening on port 19999
-- Be accessible at Simulator UI: http://localhost:28880/ui/
+- Be accessible at Simulator UI: <http://localhost:28880/ui/>
 
 ### Step 3: Test Your API
 
@@ -65,6 +66,7 @@ curl http://localhost:19999/hello
 ```
 
 **Expected Output:**
+
 ```json
 {
   "message": "Hello from API Simulator!",
@@ -79,6 +81,7 @@ curl http://localhost:19999/hello
 ### 1. Schema Declaration
 
 **Every file must start with:**
+
 ```yaml
 schema: SimV1
 name: your-simulation-name
@@ -89,8 +92,8 @@ name: your-simulation-name
 ```yaml
 connections:
   - name: my-server
-    port: 8000         # Listen on port 8000
-    listen: true       # Accept incoming connections
+    port: 8000 # Listen on port 8000
+    listen: true # Accept incoming connections
 ```
 
 or
@@ -99,7 +102,7 @@ or
 connections:
   - name: external-api
     endpoint: http://api.example.com
-    listen: false      # Outbound only
+    listen: false # Outbound only
 ```
 
 ### 3. Services
@@ -110,11 +113,11 @@ Services contain **steps** that execute in order:
 services:
   - name: MyService
     steps:
-      - direction: In    # Step 1: Receive request
+      - direction: In # Step 1: Receive request
         trigger:
           - uri: "/api/endpoint"
 
-      - direction: Out   # Step 2: Send response
+      - direction: Out # Step 2: Send response
         message:
           statusCode: 200
           payload: '{"result": "success"}'
@@ -185,6 +188,7 @@ services:
 ```
 
 **Test it:**
+
 ```bash
 curl http://localhost:17777/api/v1/Books
 curl http://localhost:17777/api/v1/Books/123
@@ -241,6 +245,7 @@ services:
 ```
 
 **Test it:**
+
 ```bash
 curl -X POST http://localhost:17070/v1/messages \
   -H "Content-Type: application/json" \
@@ -288,7 +293,8 @@ services:
 ```
 
 **Run via Simulator UI:**
-1. Open http://localhost:28880/ui/
+
+1. Open <http://localhost:28880/ui/>
 2. Navigate to **Contract Tests**
 3. Select `api-contract-test.yaml`
 4. Click **Run**
@@ -309,6 +315,7 @@ payload: |-
 ```
 
 **Available placeholders:**
+
 - `{randomGuid}` - UUID
 - `{timestamp}` - Current ISO timestamp
 - `{random[min][max]}` - Random number
@@ -334,22 +341,28 @@ Before running your simulation:
 ## 🐛 Common Mistakes
 
 ### ❌ Missing Schema Declaration
+
 ```yaml
-name: my-simulation  # ❌ Missing schema!
+name: my-simulation # ❌ Missing schema!
 ```
+
 ✅ Fix:
+
 ```yaml
 schema: SimV1
 name: my-simulation
 ```
 
 ### ❌ Missing Direction
+
 ```yaml
 steps:
-  - trigger:  # ❌ No direction!
+  - trigger: # ❌ No direction!
       - uri: "/test"
 ```
+
 ✅ Fix:
+
 ```yaml
 steps:
   - direction: In
@@ -358,13 +371,16 @@ steps:
 ```
 
 ### ❌ External Call Missing 'to'
+
 ```yaml
 steps:
   - direction: Out
     message:
-      method: GET  # ❌ Where to send this?
+      method: GET # ❌ Where to send this?
 ```
+
 ✅ Fix:
+
 ```yaml
 steps:
   - direction: Out
@@ -374,15 +390,18 @@ steps:
 ```
 
 ### ❌ Using `uri:` Property
+
 ```yaml
 steps:
   - direction: Out
     to: api
     message:
       method: GET
-      uri: /api/endpoint  # ❌ Wrong!
+      uri: /api/endpoint # ❌ Wrong!
 ```
+
 ✅ Fix:
+
 ```yaml
 steps:
   - direction: Out
@@ -399,16 +418,19 @@ steps:
 ## 🎓 Next Steps
 
 ### Learn More
+
 - **[01-SCHEMA-BASICS.md](./01-SCHEMA-BASICS.md)** - YAML syntax and structure
 - **[02-CONNECTIONS.md](./02-CONNECTIONS.md)** - Connection types and config
 - **[03-SERVICES-STEPS.md](./03-SERVICES-STEPS.md)** - Service patterns
 - **[05-TRIGGERS.md](./05-TRIGGERS.md)** - Advanced request matching
 
 ### See Examples
+
 - **BookStore.Simulator/Definitions/** - 5 working simulation files
 - **BookStore.Simulator/Tests/** - 13 contract test examples
 
 ### Test Your Simulations
+
 ```bash
 # Start simulator
 cd BookStore.Aspire.AppHost && dotnet run
@@ -427,4 +449,4 @@ open http://localhost:28880/ui/
 
 - **Troubleshooting**: [10-TROUBLESHOOTING.md](./10-TROUBLESHOOTING.md)
 - **All Docs**: [00-README.md](./00-README.md)
-- **Schema Reference**: `BookStore.Simulator/iris_schema.json`
+- **Schema Reference**: `BookStore.Simulator/Documentation/API-SIMULATOR-SCHEMA.json`

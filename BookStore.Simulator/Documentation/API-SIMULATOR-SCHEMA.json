@@ -1,0 +1,1411 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SimulationV1",
+  "type": "object",
+  "description": "A simulation is the substitute for a real service that you can use when it is not available in your test environment. Simulation consists of virtual services and connections. Connections are endpoints that are required for communication with a service.",
+  "additionalProperties": false,
+  "required": [
+    "schema"
+  ],
+  "properties": {
+    "connections": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "List of connections",
+      "items": {
+        "$ref": "#/definitions/ConnectionV1"
+      }
+    },
+    "includes": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "Links to other simulation files. Simulations can be reused in multiple simulations, so you don't have to redo your work. The file path can be absolute or relative to the current schema location.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "name": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "description": "Name of the simulation"
+    },
+    "resources": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "List of resources",
+      "items": {
+        "$ref": "#/definitions/ResourceV1"
+      }
+    },
+    "schema": {
+      "description": "Version name of the schema applied to the simulation YAML file. This property is mandatory and the value must be SimV1.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/SchemaV1"
+        }
+      ]
+    },
+    "services": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "Virtual services to be simulated.",
+      "items": {
+        "$ref": "#/definitions/ServiceV1"
+      }
+    },
+    "templates": {
+      "description": "Messages and connections that can be referenced in the virtual services via the property basedOn.",
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/definitions/TemplatesV1"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "ConnectionV1": {
+      "type": "object",
+      "description": "You need connection properties to establish a connection to a service.",
+      "additionalProperties": false,
+      "properties": {
+        "accessKey": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Enter your Amazon SQS or Azure Service Bus access key."
+        },
+        "accessKeyName": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Enter the name of your Azure Service Bus access key."
+        },
+        "account": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Enter the name of your Amazon web service account (AWS)."
+        },
+        "authentication": {
+          "description": "Enter the desired authentication mechanism.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/AuthenticationTypeV1"
+            }
+          ]
+        },
+        "basedOn": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Reference to a connection by using the name of the connection."
+        },
+        "capture": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Specify if the connection should capture messages. Default: false"
+        },
+        "channel": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the name of the channel to be used for communication with the message broker."
+        },
+        "cipherSpec": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "cipherSuite": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "clientCertificateFile": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Define this property if you need SSL authentication for a connection. It is the path to the client certificate."
+        },
+        "clientCertificatePassword": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Define this property if a password is required for a client certificate file."
+        },
+        "clientPropertiesFile": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the path to the file that contains specific Kafka connection settings."
+        },
+        "create": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Directory only. Specify if the connection should create the folder if it does not exist. Default: false"
+        },
+        "endpoint": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Defines the endpoint of a connection. This can be an URI, a port or an IP address."
+        },
+        "exchange": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the name of the exchange that is used for routing the messages to different queues."
+        },
+        "fileExtension": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "You can use this property if you send files to a specific directory. It defines the file extension."
+        },
+        "folder": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Use this property if you send files to a specific directory. Specify the path that will be checked for new messages."
+        },
+        "forward": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/ForwardV1"
+            }
+          ]
+        },
+        "groupId": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the identifier of the group to be used."
+        },
+        "keepProcessed": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "You can use this property if you send files to a specific directory. It specifies whether processed messages should be kept or deleted. Set the value to true if processed messages should be kept. The default value is false."
+        },
+        "keyRepository": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "listen": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "manager": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the name of the IBM MQ queue manager to be used for communication with the message broker."
+        },
+        "name": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "The name of the connection."
+        },
+        "partition": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the number of the partition to be used."
+        },
+        "password": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify this property if an authentication is required."
+        },
+        "peerName": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify this property if an authentication is required."
+        },
+        "port": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The port used to listen for incoming messages.",
+          "format": "int32"
+        },
+        "privateKeyFile": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "If you use a client certificate file, you must define this property. It is the path to the client certificate key file."
+        },
+        "privateKeyFilePassword": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "queue": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "You need this property if you use a message broker queue for reading or writing messages. Specify the name of the queue to be used."
+        },
+        "region": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Some operations require a region to be set. For the best network performance, you can select a region that is geographically near to you.\t"
+        },
+        "routingKey": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the routing key if the broker requires it."
+        },
+        "secretKey": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Enter your Amazon SQS secret access key."
+        },
+        "selector": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Use this property in conjunction with message broker queues. The selector allows you to filter the received messages from the queue. Only those messages are received that contain the specified value. The Syntax and support of the property selector depends on the message broker used."
+        },
+        "serverCertificateFile": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "serverCertificatePassword": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify this property if the connection must be encrypted and a password is required for the provided certificate."
+        },
+        "serverCertificateThumbprint": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the thumbprint of the certificate to be used if the connection must be encrypted. When opening a connection, the thumbprint is used to search for the certificate in the certificate stores of the operating system."
+        },
+        "topic": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "You need this property if you use a message broker topic for reading or writing messages. Specify the name of the topic that should be used."
+        },
+        "trustStorePath": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify this property if the validateCertificate property is enabled. It is the path to a collection of trusted certificates."
+        },
+        "type": {
+          "description": "Specify this property if you are using a connection technology other than HTTP. For instance, to send or receive messages via message broker. The default value is HTTP.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ConnectionTypeV1"
+            }
+          ]
+        },
+        "typeName": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify this property if you are using a custom connection technology that has been provided via an extension."
+        },
+        "uri": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "username": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify this property if an authentication is required."
+        },
+        "validateCertificate": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Specify whether to trust the certificates defined in the trust store. Set the value to true to trust the certificates. The default value is false. If this property is enabled, you must specify the trustStorePath property."
+        },
+        "virtualHost": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the name of the virtual host."
+        },
+        "vpnName": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the name of the message VPN you want to join."
+        }
+      }
+    },
+    "AuthenticationTypeV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "None",
+        "Basic",
+        "ClientCertificate",
+        "Digest"
+      ],
+      "x-enum-descriptions": [
+        "None",
+        "Basic",
+        "Client Certificate",
+        "Digest"
+      ],
+      "enum": [
+        "None",
+        "Basic",
+        "ClientCertificate",
+        "Digest"
+      ]
+    },
+    "ForwardV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "learning": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/LearningV1"
+            }
+          ]
+        },
+        "mode": {
+          "$ref": "#/definitions/ForwardModeV1"
+        },
+        "simulateOn": {
+          "description": "When forwarding, you can define trigger to fallback to simulation.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/SimulateOnV1"
+            }
+          ]
+        },
+        "to": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Http only. Specify the name of the connection to forward (proxy)."
+        }
+      }
+    },
+    "LearningV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "externalPayload": {
+          "type": "boolean"
+        },
+        "learnOn": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/RuleV1"
+          }
+        },
+        "pathTemplate": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "patterns": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/RuleV1"
+          }
+        },
+        "sort": {
+          "$ref": "#/definitions/SortingV1"
+        }
+      }
+    },
+    "RuleV1": {
+      "type": "object",
+      "description": "Define rules to automate the selection of messages to send or receive. As an example, you can identify a service by comparing values. A rule is always used combined with a step and can be either true or false. You can use rules for the following steps: trigger, buffer, verify, insert or save.",
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Use this rule together with the jsonPath or xPath properties. Whenever multiple elements within a message are found with a specific path, it verifies that the number of elements in a message corresponds to the defined value.",
+          "format": "int32"
+        },
+        "dataType": {
+          "description": "Specifies the data type of the value property. Use the data types: Boolean, Date, Numeric, Password or String.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DataTypeV1"
+            }
+          ]
+        },
+        "exists": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Indicates whether the element to be verified exists or not. Set the value to True if it exists or to False if it doesn't."
+        },
+        "file": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specifies the path to a file where the payload or other message property values are saved."
+        },
+        "index": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int32"
+        },
+        "jsonPath": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Use this property to find an element in a message that is in JSON format. Enter the path to the element. Define the value of the element via the property value."
+        },
+        "key": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Use this property to find specific message elements. Enter the name of the element. Define the type of the message element using the type property and the value of the element using the value property."
+        },
+        "name": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Defines the name of the rule property."
+        },
+        "operator": {
+          "description": "Use this property to find specific property value ranges, such as greater than or less than. Possible operators are: Equal, NotEqual, Less, LessOrEqual, Greater, GreaterOrEqual or In",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/OperatorV1"
+            }
+          ]
+        },
+        "property": {
+          "description": "References a connection or message property to be used to specify a rule. For example: Endpoint, Path, Queue, and so on.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/PropertyV1"
+            }
+          ]
+        },
+        "range": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify this property to use a specific part of a value. Specify the range of the substring: <from>..<to>"
+        },
+        "tree": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Use this property to define an entire JSON or XML tree as the value of an element."
+        },
+        "type": {
+          "description": "Defines what type of rule it is. Possible types are: Header, MessagingProperty or Query.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/RuleTypeV1"
+            }
+          ]
+        },
+        "uri": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Defines the URI, or a part of it, which will be used as the value for a rule."
+        },
+        "value": {
+          "description": "Defines the value of a rule property.",
+          "oneOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valueBase64": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "This property can be used as an alternative to value if the value contains special characters that are not allowed in YAML files. The value must be BASE64 encoded."
+        },
+        "xPath": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Use this property to find an element in a message that is in xPath format. Enter the path to the element. Define the value of the element via the property value."
+        }
+      }
+    },
+    "DataTypeV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "String",
+        "Boolean",
+        "Date",
+        "Numeric",
+        "Password"
+      ],
+      "enum": [
+        "String",
+        "Boolean",
+        "Date",
+        "Numeric",
+        "Password"
+      ]
+    },
+    "OperatorV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "Equal",
+        "NotEqual",
+        "Less",
+        "LessOrEqual",
+        "Greater",
+        "GreaterOrEqual",
+        "In"
+      ],
+      "enum": [
+        "Equal",
+        "NotEqual",
+        "Less",
+        "LessOrEqual",
+        "Greater",
+        "GreaterOrEqual",
+        "In"
+      ]
+    },
+    "PropertyV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "None",
+        "AccessKey",
+        "Account",
+        "Channel",
+        "Delay",
+        "Encoding",
+        "Endpoint",
+        "Exchange",
+        "GroupId",
+        "MessageId",
+        "Manager",
+        "Method",
+        "Operation",
+        "Password",
+        "Partition",
+        "Region",
+        "Queue",
+        "SecretKey",
+        "Selector",
+        "StatusCode",
+        "Topic",
+        "Type",
+        "Username",
+        "VirtualHost"
+      ],
+      "enum": [
+        "None",
+        "AccessKey",
+        "Account",
+        "Channel",
+        "Delay",
+        "Encoding",
+        "Endpoint",
+        "Exchange",
+        "GroupId",
+        "MessageId",
+        "Manager",
+        "Method",
+        "Operation",
+        "Password",
+        "Partition",
+        "Region",
+        "Queue",
+        "SecretKey",
+        "Selector",
+        "StatusCode",
+        "Topic",
+        "Type",
+        "Username",
+        "VirtualHost"
+      ]
+    },
+    "RuleTypeV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "None",
+        "Connection",
+        "Header",
+        "MessagingProperty",
+        "Multipart",
+        "Payload",
+        "Path",
+        "Query",
+        "Uri",
+        "FormUrlEncoded"
+      ],
+      "enum": [
+        "None",
+        "Connection",
+        "Header",
+        "MessagingProperty",
+        "Multipart",
+        "Payload",
+        "Path",
+        "Query",
+        "Uri",
+        "FormUrlEncoded"
+      ]
+    },
+    "SortingV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "ByConnection",
+        "ByPath",
+        "ByTimestamp"
+      ],
+      "enum": [
+        "ByConnection",
+        "ByPath",
+        "ByTimestamp"
+      ]
+    },
+    "ForwardModeV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "PassThrough",
+        "ForwardFirst",
+        "SimulateFirst",
+        "Learning"
+      ],
+      "enum": [
+        "PassThrough",
+        "ForwardFirst",
+        "SimulateFirst",
+        "Learning"
+      ]
+    },
+    "SimulateOnV1": {
+      "type": "object",
+      "description": "When ForwardTo is set, you can define trigger to fallback to simulation.",
+      "additionalProperties": false,
+      "properties": {
+        "statusCodes": {
+          "description": "Http only. Status Codes that lead to fallback to simulating the response (e.g. 200, 500, 3xx). The default value is 5xx",
+          "oneOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timeout": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Http only. Timeout in milliseconds that lead to fallback to simulating the response.",
+          "format": "int32"
+        },
+        "trigger": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/RuleV1"
+          }
+        }
+      }
+    },
+    "ConnectionTypeV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "Http",
+        "AmazonSqs",
+        "Amqp",
+        "AzureSb",
+        "Folder",
+        "IbmMq",
+        "Kafka",
+        "RabbitMq",
+        "Solace",
+        "Custom"
+      ],
+      "enum": [
+        "Http",
+        "AmazonSqs",
+        "Amqp",
+        "AzureSb",
+        "Folder",
+        "IbmMq",
+        "Kafka",
+        "RabbitMq",
+        "Solace",
+        "Custom"
+      ]
+    },
+    "ResourceV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "file": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Path to the resource."
+        },
+        "listEntrySeparator": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Entry separator when reading from the resource."
+        },
+        "listPostfix": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Postfix for results returned from the resource."
+        },
+        "listPrefix": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Prefix for results returned from the resource."
+        },
+        "listSeparator": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "List separator when reading from the resource."
+        },
+        "name": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Name of the resource."
+        },
+        "properties": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Names of properties if not already defined in the resource.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "separator": {
+          "type": "string",
+          "description": "Separator when reading or writing CSV files."
+        },
+        "table": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Name of the table to be used."
+        },
+        "type": {
+          "description": "Type of the resource.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ResourceTypeV1"
+            }
+          ]
+        }
+      }
+    },
+    "ResourceTypeV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "KeyValue",
+        "Value",
+        "Table"
+      ],
+      "enum": [
+        "KeyValue",
+        "Value",
+        "Table"
+      ]
+    },
+    "SchemaV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "SimV1"
+      ],
+      "enum": [
+        "SimV1"
+      ]
+    },
+    "ServiceV1": {
+      "type": "object",
+      "description": "Use service properties to specify the order in which messages are sent or received.",
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "An optional description of the service defined."
+        },
+        "name": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the name of the service."
+        },
+        "steps": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Specify the steps that the virtual service should execute. Depending on what type of virtual service it is, this can be done in two or more steps. For instance, the first step is incoming and the second outgoing (request response pair) or vice verse (contract). Or several steps can be defined to simulate messages in a specific order (scenario).",
+          "items": {
+            "$ref": "#/definitions/ServiceStepV1"
+          }
+        }
+      }
+    },
+    "ServiceStepV1": {
+      "type": "object",
+      "description": "Use steps properties to define the process of a service. In doing so, describe the simulation that will be performed.",
+      "additionalProperties": false,
+      "properties": {
+        "buffer": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Use buffer in messages to save values. This property includes a collection of rules that are applied to create buffers.",
+          "items": {
+            "$ref": "#/definitions/RuleV1"
+          }
+        },
+        "connection": {
+          "description": "Specify a connection for sending or receiving messages. To do this, use the connection properties.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/ConnectionV1"
+            }
+          ]
+        },
+        "counter": {
+          "type": "integer",
+          "description": "Set how many times the specified message should be sent or received before proceeding to the next step.",
+          "format": "int32"
+        },
+        "description": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Description what the step does."
+        },
+        "direction": {
+          "description": "Specify whether the step is used to send or receive messages. For sending messages enter the value Out. To receive messages enter the value 'In'.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DirectionV1"
+            }
+          ]
+        },
+        "from": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Reference to a connection by using the name of the connection to receive messages. The step direction property must be set to In."
+        },
+        "insert": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Collection of rules used to insert values.",
+          "items": {
+            "$ref": "#/definitions/RuleV1"
+          }
+        },
+        "message": {
+          "description": "Specify the message to send. To do this, use the message properties.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/MessageV1"
+            }
+          ]
+        },
+        "name": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Specify the name of the step."
+        },
+        "order": {
+          "description": "This property defines whether messages should be received in a certain order or not. Enter STRICT to use the specified order or ANY to accept any order. The default value is STRICT.",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/ServiceStepOrderV1"
+            }
+          ]
+        },
+        "resource": {
+          "description": "TECHNICAL PREVIEW: Use this property to modify data in resources defined in the simulation.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/ServiceStepResourceV1"
+            }
+          ]
+        },
+        "save": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Collection of rules used to store message payloads or other properties of a message.",
+          "items": {
+            "$ref": "#/definitions/RuleV1"
+          }
+        },
+        "to": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Reference to a connection by using the name of the connection to send messages. The step direction property must be set to Out."
+        },
+        "trigger": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Collection of rules used to start a services. The service will be started if all rules apply.",
+          "items": {
+            "$ref": "#/definitions/RuleV1"
+          }
+        },
+        "use": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Reference to service steps by using the name of the service template."
+        },
+        "verify": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Collection of rules used for message verification. If a rule doesn't apply, a warning is written in the log.",
+          "items": {
+            "$ref": "#/definitions/RuleV1"
+          }
+        }
+      }
+    },
+    "DirectionV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "Implicit",
+        "In",
+        "Out"
+      ],
+      "enum": [
+        "Implicit",
+        "In",
+        "Out"
+      ]
+    },
+    "MessageV1": {
+      "type": "object",
+      "description": "Use message properties to define outgoing messages. A message should contain all information that your service requires.",
+      "additionalProperties": false,
+      "properties": {
+        "basedOn": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Reference to a message by using the name of the message template."
+        },
+        "delay": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Waiting time in milliseconds before a response is sent.",
+          "format": "int32"
+        },
+        "encoding": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Sets the character encoding."
+        },
+        "headers": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Collection of additional information that can be sent with a request or received with a response message.",
+          "items": {
+            "$ref": "#/definitions/KeyValueV1"
+          }
+        },
+        "messagingProperties": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Collection of addition information that can be sent with a request or received with a response message. This property is only supported for messaging technologies, for example IBM MQ.",
+          "items": {
+            "$ref": "#/definitions/KeyValueV1"
+          }
+        },
+        "method": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Method for sending messages. Possible values are: PUT, POST, GET or DELETE."
+        },
+        "name": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Name of the message."
+        },
+        "payload": {
+          "description": "The actual content of the message. It's the data that is transported during a communication between two services.",
+          "oneOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payloadBase64": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "This property can be used as an alternative to payload if the payload contains special characters that are not allowed in YAML files. The value must be BASE64 encoded."
+        },
+        "payloadFile": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "This property can be used as an alternative to payload. The value must be a file path. The path can be either absolute or relative to the simulation file."
+        },
+        "statusCode": {
+          "description": "The HTTP status code of a response message. Specify the number or number and description.",
+          "oneOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "KeyValueV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "value": {
+          "oneOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ServiceStepOrderV1": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "Strict",
+        "Any"
+      ],
+      "enum": [
+        "Strict",
+        "Any"
+      ]
+    },
+    "ServiceStepResourceV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "delete": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/ResourceRuleV1"
+          }
+        },
+        "insert": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/ResourceRuleV1"
+          }
+        },
+        "insertOrUpdate": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/ResourceRuleV1"
+          }
+        },
+        "read": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/ResourceRuleV1"
+          }
+        },
+        "update": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/ResourceRuleV1"
+          }
+        }
+      }
+    },
+    "ResourceRuleV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "one": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ref": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "template": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "value": {
+          "oneOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "where": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "TemplatesV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "connections": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "List of connection templates",
+          "items": {
+            "$ref": "#/definitions/ConnectionV1"
+          }
+        },
+        "messages": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "List of message templates",
+          "items": {
+            "$ref": "#/definitions/MessageV1"
+          }
+        },
+        "services": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "List of service templates",
+          "items": {
+            "$ref": "#/definitions/ServiceV1"
+          }
+        }
+      }
+    }
+  }
+}

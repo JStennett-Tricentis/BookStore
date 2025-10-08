@@ -416,9 +416,10 @@ When working with API Simulator YAML files, **ALWAYS** reference the comprehensi
 
 - **Start here**: `BookStore.Simulator/Documentation/00-README.md` - Navigation guide
 - **Quick reference**: `BookStore.Simulator/Documentation/QUICK-START.md` - Copy-paste examples
-- **Schema definition**: `BookStore.Simulator/iris_schema.json` - JSON schema
+- **Schema definition**: `BookStore.Simulator/Documentation/API-SIMULATOR-SCHEMA.json` - JSON schema
 
 **Key Documentation Files:**
+
 1. `01-SCHEMA-BASICS.md` - SimV1 format fundamentals
 2. `02-CONNECTIONS.md` - HTTP, message brokers, authentication
 3. `03-SERVICES-STEPS.md` - Service definitions and step flow
@@ -431,6 +432,7 @@ When working with API Simulator YAML files, **ALWAYS** reference the comprehensi
 10. `10-TROUBLESHOOTING.md` - Common errors and debugging
 
 **⚠️ CRITICAL: SimV1 Format Rules**
+
 - Every file MUST start with `schema: SimV1`
 - Use `verify` NOT `validate`
 - Use `property: StatusCode` NOT `statusCode:`
@@ -439,6 +441,7 @@ When working with API Simulator YAML files, **ALWAYS** reference the comprehensi
 - External API calls need `to: connection-name`
 
 **Example Files:**
+
 - Simulations: `BookStore.Simulator/Definitions/*.yaml` (5 files, 12 services)
 - Contract Tests: `BookStore.Simulator/Tests/*.yaml` (3 files, 13 test services)
 - Postman Tests: `BookStore.Simulator/Postman/*.json`

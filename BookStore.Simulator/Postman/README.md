@@ -45,5 +45,5 @@ newman run API-Simulator-Tests.postman_collection.json \
 
 ## Related Documentation
 
-- [Simulation Files](../../simulations/definitions/README.md)
+- [Simulation Files](../../BookStore.Simulator/Definitions/README.md)
 - [Project Overview](../../CLAUDE.md)

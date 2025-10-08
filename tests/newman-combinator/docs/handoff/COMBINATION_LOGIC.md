@@ -9,6 +9,7 @@ The Newman Combinator framework uses **Cartesian Product** logic to generate tes
 **Scenario:** `llm-summary-with-ollama`
 
 **Input Data:**
+
 - Dimension: `validBookIds`
 - Values: 3 book IDs
 
@@ -25,10 +26,12 @@ Combination 3: Book "1984" (68e05e7d604bb44693ad8e94)
 **Scenario:** `book-isbn-combinations`
 
 **Input Data:**
+
 - Dimension 1: `isbnFormats` → 10 different ISBN formats
 - Dimension 2: `bookEndpoints` → 3 endpoints (search, by-isbn, validate-isbn)
 
 **Cartesian Product Formula:**
+
 ```
 Total Combinations = Dimension1 × Dimension2
                    = 10 ISBNs × 3 endpoints
@@ -36,6 +39,7 @@ Total Combinations = Dimension1 × Dimension2
 ```
 
 **Generated Combinations:**
+
 ```
 1. ISBN "978-0-123456-78-9" + endpoint "search"
 2. ISBN "978-0-123456-78-9" + endpoint "by-isbn"
@@ -50,6 +54,7 @@ Total Combinations = Dimension1 × Dimension2
 **Scenario:** `llm-with-naughty-book-ids`
 
 **Config:**
+
 ```json
 {
   "name": "llm-with-naughty-book-ids",
@@ -65,6 +70,7 @@ Total Combinations = Dimension1 × Dimension2
 **Process:**
 
 1. **Load Naughty Strings** from `data-sets.json`:
+
    ```json
    {
      "naughtyStrings": [
@@ -83,12 +89,13 @@ Total Combinations = Dimension1 × Dimension2
    - ... (51 total combinations)
 
 3. **Template Replacement**:
+
    ```javascript
    // Original template
-   "/api/v1/Books/{{naughtyString}}/generate-summary?provider=ollama"
+   "/api/v1/Books/{{naughtyString}}/generate-summary?provider=ollama";
 
    // After replacement with "null"
-   "/api/v1/Books/null/generate-summary?provider=ollama"
+   "/api/v1/Books/null/generate-summary?provider=ollama";
    ```
 
 4. **Execute Test**:
@@ -103,6 +110,7 @@ Total Combinations = Dimension1 × Dimension2
 **Scenario:** `comprehensive-error-scenarios`
 
 **Config:**
+
 ```json
 {
   "dataDimensions": ["errorCodes", "httpMethods"],
@@ -112,10 +120,12 @@ Total Combinations = Dimension1 × Dimension2
 ```
 
 **Data:**
+
 - `errorCodes`: [400, 401, 404, 500, ...] → 14 codes
 - `httpMethods`: [GET, POST, PUT, DELETE, PATCH] → 5 methods
 
 **Cartesian Product:**
+
 ```
 Total = 14 error codes × 5 HTTP methods = 70 combinations
 
@@ -134,6 +144,7 @@ Examples:
 The framework supports nested object properties:
 
 ### Simple Value Replacement:
+
 ```javascript
 // Template
 "/api/v1/Books/{{bookId}}"
@@ -146,6 +157,7 @@ The framework supports nested object properties:
 ```
 
 ### Nested Object Replacement:
+
 ```javascript
 // Template
 "/api/v1/Books/{{bookId}}/generate-summary?provider=ollama"
@@ -206,21 +218,25 @@ Each combination includes:
 ## How to View Combinations
 
 ### Console Output (Quick View):
+
 ```bash
 node src/export-combinations.js --scenario llm-with-naughty-book-ids
 ```
 
 ### JSON Export (Full Data):
+
 ```bash
 node src/export-combinations.js --scenario llm-with-naughty-book-ids --format json --output combinations.json
 ```
 
 ### Markdown Export (Documentation):
+
 ```bash
 node src/export-combinations.js --all --format md --output combinations.md
 ```
 
 ### List All Scenarios:
+
 ```bash
 node src/export-combinations.js
 ```
@@ -228,36 +244,41 @@ node src/export-combinations.js
 ## Key Insights
 
 ### 1. **Single Dimension = Simple Loop**
+
 - `validBookIds` (3 items) → 3 tests
 - `naughtyStrings` (51 items) → 51 tests
 
 ### 2. **Multiple Dimensions = Cartesian Product**
+
 - `isbnFormats` (10) × `bookEndpoints` (3) → 30 tests
 - `errorCodes` (14) × `httpMethods` (5) → 70 tests
 
 ### 3. **Template Variables Are Replaced Dynamically**
+
 - `{{bookId}}` → Replaced with actual book ID
 - `{{naughtyString}}` → Replaced with naughty string value
 - `{{errorCode}}` → Replaced with error code number
 
 ### 4. **Expected Results Define Validation**
+
 - `statusCode: [200, 404]` → Test passes if response is 200 OR 404
 - `statusCode: 500` → Test passes only if response is exactly 500
 
 ### 5. **Response Bodies Enable Deep Validation**
+
 - Stored in results JSON
 - Displayed in HTML reports with "View" buttons
 - Can validate response structure, error messages, LLM-generated content
 
 ## Common Scenarios
 
-| Scenario Name | Dimensions | Formula | Total Tests |
-|---------------|------------|---------|-------------|
-| `llm-summary-with-ollama` | validBookIds (3) | 3 | 3 |
-| `llm-with-naughty-book-ids` | naughtyStrings (51) | 51 | 51 |
-| `book-isbn-combinations` | isbnFormats (10) × bookEndpoints (3) | 10 × 3 | 30 |
-| `comprehensive-error-scenarios` | errorCodes (14) × httpMethods (5) | 14 × 5 | 70 |
-| `mixed-payload-attacks` | payloadTypes (8) × targetFields (4) | 8 × 4 | 32 |
+| Scenario Name                   | Dimensions                           | Formula | Total Tests |
+| ------------------------------- | ------------------------------------ | ------- | ----------- |
+| `llm-summary-with-ollama`       | validBookIds (3)                     | 3       | 3           |
+| `llm-with-naughty-book-ids`     | naughtyStrings (51)                  | 51      | 51          |
+| `book-isbn-combinations`        | isbnFormats (10) × bookEndpoints (3) | 10 × 3  | 30          |
+| `comprehensive-error-scenarios` | errorCodes (14) × httpMethods (5)    | 14 × 5  | 70          |
+| `mixed-payload-attacks`         | payloadTypes (8) × targetFields (4)  | 8 × 4   | 32          |
 
 ## Summary
 

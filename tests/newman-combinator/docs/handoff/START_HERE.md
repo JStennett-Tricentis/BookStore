@@ -9,14 +9,18 @@ I'm a comprehensive multi-combination API testing framework that generates hundr
 ## 📚 Read These Docs in Order
 
 ### 1. **QUICK_REFERENCE.md** (5 minutes) ⚡
+
 **Start here for immediate context**
+
 - One-minute overview
 - 8 critical files to copy
 - Top 3 gotchas
 - 3-step validation
 
 ### 2. **CLAUDE_HANDOFF.md** (15 minutes) 📖
+
 **Your comprehensive setup guide**
+
 - Complete architecture explanation
 - Step-by-step setup instructions
 - All bugs fixed and why
@@ -24,21 +28,27 @@ I'm a comprehensive multi-combination API testing framework that generates hundr
 - Troubleshooting guide
 
 ### 3. **ARCHITECTURE_DIAGRAM.md** (10 minutes) 🎨
+
 **Visual understanding of the system**
+
 - System flow diagrams
 - Component dependencies
 - Data flow visualization
 - Key algorithms explained
 
 ### 4. **COMBINATION_LOGIC.md** (10 minutes) 🧮
+
 **Deep dive into combination math**
+
 - How Cartesian products work
 - Single vs multi-dimensional examples
 - Template replacement logic
 - Validation explained
 
 ### 5. **COMBINATION_EXAMPLE.md** (5 minutes) 💡
+
 **Step-by-step visual walkthrough**
+
 - Real examples with actual data
 - Shows exact combinations generated
 - Multi-dimensional illustrated
@@ -75,22 +85,26 @@ node src/enhanced-report-generator.js --latest --open
 ## 🎯 What This Framework Does
 
 **Generates API test combinations automatically:**
+
 - 51 naughty strings → 51 security tests
 - 10 ISBNs × 3 endpoints → 30 combinations
 - 14 error codes × 5 methods → 70 tests
 
 **Finds bugs:**
+
 - API returns 500 for "null" input → BUG!
 - API returns 500 for "undefined" → BUG!
 - XSS strings handled correctly → PASS
 
 **Captures everything:**
+
 - Full response bodies
 - Status codes
 - Response times
 - Test results
 
 **Beautiful reports:**
+
 - Interactive HTML with heatmaps
 - "View" buttons for responses
 - Combination analytics
@@ -101,6 +115,7 @@ node src/enhanced-report-generator.js --latest --open
 ## 🔑 Key Concepts (60 Seconds)
 
 ### Cartesian Product
+
 ```
 naughtyStrings (51) → 51 tests
 isbnFormats (10) × endpoints (3) → 30 tests
@@ -109,6 +124,7 @@ Formula: Dimension1 × Dimension2 = Total Tests
 ```
 
 ### Template Replacement
+
 ```
 Template: "/api/v1/Books/{{naughtyString}}/summary"
 Data: { naughtyString: "null" }
@@ -116,6 +132,7 @@ Result: "/api/v1/Books/null/summary"
 ```
 
 ### Response Validation
+
 ```
 Expected: [400, 404, 405]
 Actual: 500
@@ -210,12 +227,14 @@ node src/enhanced-report-generator.js --latest --open
 ## 🆘 Common Issues & Fixes
 
 ### Issue 1: "Configuration not found"
+
 ```bash
 # Check files exist
 ls config/data-sets.json config/test-scenarios.json
 ```
 
 ### Issue 2: Export shows 0 combinations
+
 ```bash
 # Verify scenario exists
 node src/export-combinations.js
@@ -223,6 +242,7 @@ node src/export-combinations.js
 ```
 
 ### Issue 3: All tests fail with Newman error
+
 ```bash
 # Check Postman collection
 # Ensure method is "POST" not "{{dynamicMethod}}"
@@ -230,6 +250,7 @@ node src/export-combinations.js
 ```
 
 ### Issue 4: Response bodies empty
+
 ```bash
 # Check test-runner.js line 178
 # Should have: result.responseBody = execution.response.stream?.toString();
@@ -265,6 +286,7 @@ node src/export-combinations.js
 ## 🛠️ Customization Guide
 
 ### Add New Naughty String:
+
 ```json
 // config/data-sets.json
 {
@@ -279,6 +301,7 @@ node src/export-combinations.js
 ```
 
 ### Add New Scenario:
+
 ```json
 // config/test-scenarios.json
 {
@@ -293,6 +316,7 @@ node src/export-combinations.js
 ```
 
 ### Update API Endpoint:
+
 ```json
 // config/test-scenarios.json
 {
@@ -330,6 +354,7 @@ node src/export-combinations.js
 ## 📦 What's Included
 
 ### Documentation (5 files):
+
 - ✅ START_HERE.md (this file)
 - ✅ QUICK_REFERENCE.md (cheat sheet)
 - ✅ CLAUDE_HANDOFF.md (comprehensive guide)
@@ -338,6 +363,7 @@ node src/export-combinations.js
 - ✅ COMBINATION_EXAMPLE.md (step-by-step)
 
 ### Code (8 files):
+
 - ✅ src/combination-engine.js (core logic)
 - ✅ src/test-runner.js (test execution)
 - ✅ src/enhanced-report-generator.js (HTML reports)
@@ -348,6 +374,7 @@ node src/export-combinations.js
 - ✅ collections/bookstore-combinator.postman_collection.json
 
 ### Extras:
+
 - ✅ Makefile commands
 - ✅ Example results
 - ✅ Sample HTML reports
@@ -380,6 +407,7 @@ node src/export-combinations.js
 ## 🎉 You're Ready!
 
 This framework is **production-ready** and has successfully:
+
 - ✅ Generated 51+ naughty string tests automatically
 - ✅ Found multiple API bugs (500 errors)
 - ✅ Captured full LLM responses for validation
@@ -392,6 +420,7 @@ Now go build something awesome! 🚀
 ---
 
 **Questions? Check the docs in this order:**
+
 1. QUICK_REFERENCE.md
 2. CLAUDE_HANDOFF.md
 3. ARCHITECTURE_DIAGRAM.md

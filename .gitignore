@@ -434,5 +434,7 @@ BookStore.Performance.Tests/results/
 *.har
 
 # Local configuration overrides
+appsettings.json
+appsettings.development.local.json
 appsettings.local.json
 appsettings.development.local.json

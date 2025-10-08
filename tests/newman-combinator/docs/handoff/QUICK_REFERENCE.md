@@ -7,6 +7,7 @@
 **Why:** Find API bugs with naughty strings, error codes, edge cases
 
 **Formula:** `N dimensions × M values = Total Tests`
+
 - 51 naughty strings = 51 tests
 - 10 ISBNs × 3 endpoints = 30 tests
 - 14 error codes × 5 methods = 70 tests
@@ -31,25 +32,31 @@
 ## ⚡ Critical Fixes Applied (Don't Skip!)
 
 ### Fix 1: Postman Collection Method
+
 **LINE 114:** Change `"method": "{{dynamicMethod}}"` to `"method": "POST"`
 **Why:** Variable replacement was broken
 
 ### Fix 2: Assertion Error
+
 **LINES 43, 199:** Change `pm.response.to.be.ok` to `pm.expect(pm.response).to.be.an('object')`
 **Why:** POST returns 201 Created, not 200 OK
 
 ### Fix 3: Response Capture
+
 **LINES 109-121:** Add response body storage
+
 ```javascript
 let responseBody = pm.response.text();
 pm.collectionVariables.set(`result_${testId}_response`, responseBody);
 ```
 
 ### Fix 4: Remove Duplicate Request
+
 **DELETE:** "POST with Payload" request (lines 134-248)
 **Why:** Caused double execution
 
 ### Fix 5: Expected Status Codes
+
 **LINE 61:** Allow 500 errors: `const validCodes = [...expectedStatusCode, 500]`
 **Why:** Naughty strings find API bugs (500 for "null", "undefined")
 
@@ -76,7 +83,9 @@ node src/enhanced-report-generator.js --latest --open
 ## 🔧 Configuration Quick Edit
 
 ### Update Book IDs (Critical!)
+
 **File:** `config/data-sets.json`
+
 ```json
 "validBookIds": [
   { "bookId": "YOUR_ACTUAL_BOOK_ID", "description": "Book 1" },
@@ -85,7 +94,9 @@ node src/enhanced-report-generator.js --latest --open
 ```
 
 ### Update API URL
+
 **File:** `config/environments.json`
+
 ```json
 {
   "dev": {
@@ -95,7 +106,9 @@ node src/enhanced-report-generator.js --latest --open
 ```
 
 ### Update Endpoint Template
+
 **File:** `config/test-scenarios.json`
+
 ```json
 {
   "name": "llm-summary-with-ollama",
@@ -125,6 +138,7 @@ node src/enhanced-report-generator.js --latest --open
 ## 📊 How Combinations Work (30 Seconds)
 
 ### Single Dimension
+
 ```
 naughtyStrings (51 items) → 51 tests
 
@@ -134,6 +148,7 @@ naughtyStrings (51 items) → 51 tests
 ```
 
 ### Multi-Dimensional (Cartesian Product)
+
 ```
 isbnFormats (10) × endpoints (3) → 30 tests
 
@@ -149,21 +164,27 @@ ISBN "9780123..." × endpoint "search" → GET /books/search?isbn=9780123...
 ## ✅ 3-Step Validation
 
 ### Step 1: Export Combinations
+
 ```bash
 node src/export-combinations.js --scenario YOUR_SCENARIO
 ```
+
 **Expected:** Shows correct number of combinations, endpoints look right
 
 ### Step 2: Run Test
+
 ```bash
 node src/test-runner.js --scenario YOUR_SCENARIO --env dev
 ```
+
 **Expected:** Tests execute, no Newman errors, some pass/fail
 
 ### Step 3: Check Report
+
 ```bash
 node src/enhanced-report-generator.js --latest --open
 ```
+
 **Expected:** HTML opens, "View" buttons work, response bodies visible
 
 ---
@@ -181,6 +202,7 @@ node src/enhanced-report-generator.js --latest --open
 ## 📈 Success Metrics
 
 **You know it's working when:**
+
 - Export shows correct # of combinations (e.g., 51 for naughty strings)
 - Tests execute without Newman errors
 - Response bodies appear in JSON results
@@ -192,6 +214,7 @@ node src/enhanced-report-generator.js --latest --open
 ## 🆘 Emergency Fixes
 
 ### Problem: "Configuration not found"
+
 ```bash
 # Check files exist
 ls config/data-sets.json
@@ -199,18 +222,21 @@ ls config/test-scenarios.json
 ```
 
 ### Problem: "Scenario not found"
+
 ```bash
 # List available scenarios
 node src/export-combinations.js
 ```
 
 ### Problem: All tests fail
+
 ```bash
 # Run with verbose to see Newman output
 node src/test-runner.js --scenario XXX --env dev -v
 ```
 
 ### Problem: Response bodies empty
+
 ```bash
 # Check test-runner.js line 178
 result.responseBody = execution.response.stream?.toString();
@@ -277,6 +303,7 @@ combinator-report:
 ```
 
 **Usage:**
+
 ```bash
 make combinator-export SCENARIO=llm-with-naughty-book-ids
 make combinator-test SCENARIO=llm-summary-with-ollama ENV=dev

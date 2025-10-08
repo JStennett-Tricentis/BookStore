@@ -445,3 +445,49 @@ When working with API Simulator YAML files, **ALWAYS** reference the comprehensi
 - Simulations: `BookStore.Simulator/Definitions/*.yaml` (5 files, 12 services)
 - Contract Tests: `BookStore.Simulator/Tests/*.yaml` (3 files, 13 test services)
 - Postman Tests: `BookStore.Simulator/Postman/*.json`
+
+---
+
+## Migration to hub-services-latest
+
+**Purpose:** This project serves as a reference implementation for migrating monitoring infrastructure to the production hub-services-latest project.
+
+**Migration Guide:**
+
+- **Primary Document**: `docs/MIGRATION_TO_HUB_SERVICES.md` - Comprehensive migration guide
+- **Quick Reference**: `docs/MIGRATION_CHECKLIST.md` - Phase 1 checklist
+
+**What to Migrate (Phase 1 - Bare Minimum):**
+
+1. **Prometheus** - Metrics collection and storage
+2. **Grafana** - System metrics dashboard (CPU, RAM, GC, HTTP)
+3. **OpenTelemetry** - .NET instrumentation
+4. **Aspire Integration** - Orchestration with monitoring containers
+
+**Key Files to Reference:**
+
+- `BookStore.Common.Instrumentation/OpenTelemetryExtensions.cs` - Complete OTel setup
+- `BookStore.Service/Program.cs` - Service integration example
+- `BookStore.Aspire.AppHost/Program.cs` - Aspire orchestration with Prometheus/Grafana
+- `monitoring/prometheus/prometheus.yml` - Prometheus configuration
+- `monitoring/grafana/dashboards/system-health.json` - System metrics dashboard
+
+**Starting a Migration Session:**
+
+```bash
+# In hub-services-latest directory:
+cat /Users/j.stennett/TAIS/AiHubPerfExample/docs/MIGRATION_TO_HUB_SERVICES.md
+
+# Tell Claude:
+# "Review the monitoring setup in /Users/j.stennett/TAIS/AiHubPerfExample
+#  and help me integrate it following the MIGRATION_TO_HUB_SERVICES.md guide"
+```
+
+**Success Criteria:**
+
+- ✅ Prometheus collecting metrics from hub-services
+- ✅ Grafana System Health dashboard showing CPU, RAM, request metrics
+- ✅ Baseline performance metrics documented
+- ✅ Ability to measure impact of payload size increases
+
+**Estimated Integration Time:** 2-3 hours

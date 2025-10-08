@@ -167,10 +167,10 @@ curl -X POST http://localhost:18080/v1/chat/completions \
 
 ### Method 2: Automated Test Script
 
-Use the test script in `tests/postman/`:
+Use the test script in `BookStore.Simulator/Postman/`:
 
 ```bash
-cd ../../tests/postman
+cd ../Postman
 ./test-simulator.sh
 ```
 
@@ -225,5 +225,5 @@ Results: 7 passed, 0 failed
 ## Related Documentation
 
 - [API Simulator Summary](../../API-SIMULATOR-SUMMARY.md)
-- [Simulation Files](../Books/README.md)
-- [Postman Tests](../../tests/postman/README.md)
+- [Simulation Files](../Definitions/README.md)
+- [Postman Tests](../Postman/README.md)

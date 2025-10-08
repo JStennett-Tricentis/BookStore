@@ -409,3 +409,36 @@ make simulator-verify    # Verify Docker image access
 - Returns mock responses that match real LLM providers (Claude, OpenAI, etc.)
 - Full OpenTelemetry instrumentation for realistic metrics
 - Zero API costs for load testing LLM endpoints
+
+**Simulator Documentation (SimV1 Schema):**
+
+When working with API Simulator YAML files, **ALWAYS** reference the comprehensive documentation:
+
+- **Start here**: `BookStore.Simulator/Documentation/00-README.md` - Navigation guide
+- **Quick reference**: `BookStore.Simulator/Documentation/QUICK-START.md` - Copy-paste examples
+- **Schema definition**: `BookStore.Simulator/iris_schema.json` - JSON schema
+
+**Key Documentation Files:**
+1. `01-SCHEMA-BASICS.md` - SimV1 format fundamentals
+2. `02-CONNECTIONS.md` - HTTP, message brokers, authentication
+3. `03-SERVICES-STEPS.md` - Service definitions and step flow
+4. `04-MESSAGES.md` - Message structure and payloads
+5. `05-TRIGGERS.md` - Request matching with JSONPath/XPath
+6. `06-OPENAI-LLM.md` - LLM API mocking patterns
+7. `07-RULES-VERIFICATION.md` - Verify, buffer, insert, save
+8. `08-RESOURCES-TEMPLATES.md` - Reusable components and data files
+9. `09-ADVANCED-FEATURES.md` - Forward, learning, conditional simulation
+10. `10-TROUBLESHOOTING.md` - Common errors and debugging
+
+**⚠️ CRITICAL: SimV1 Format Rules**
+- Every file MUST start with `schema: SimV1`
+- Use `verify` NOT `validate`
+- Use `property: StatusCode` NOT `statusCode:`
+- Use `insert` with `type: Path` NOT `uri:`
+- All steps need `direction: In` or `Out`
+- External API calls need `to: connection-name`
+
+**Example Files:**
+- Simulations: `BookStore.Simulator/Definitions/*.yaml` (5 files, 12 services)
+- Contract Tests: `BookStore.Simulator/Tests/*.yaml` (3 files, 13 test services)
+- Postman Tests: `BookStore.Simulator/Postman/*.json`

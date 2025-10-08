@@ -1,0 +1,247 @@
+naughty_string,category,expected_behavior
+undefined,reserved_keywords,should_handle_gracefully
+null,cjk,should_accept
+NULL,reserved_keywords,should_handle_gracefully
+(null),cjk,should_accept
+nil,cjk,should_accept
+NIL,cjk,should_accept
+true,cjk,should_accept
+false,cjk,should_accept
+True,cjk,should_accept
+False,cjk,should_accept
+TRUE,cjk,should_accept
+FALSE,cjk,should_accept
+None,cjk,should_accept
+hasOwnProperty,cjk,should_accept
+\,cjk,should_accept
+\\,cjk,should_accept
+0,reserved_keywords,should_handle_gracefully
+1,reserved_keywords,should_handle_gracefully
+1.00,cjk,should_accept
+$1.00,special_characters,should_accept
+1/2,cjk,should_accept
+1E2,cjk,should_accept
+1E02,cjk,should_accept
+1E+02,cjk,should_accept
+-1,cjk,should_accept
+-1.00,cjk,should_accept
+-$1.00,special_characters,should_accept
+-1/2,cjk,should_accept
+-1E2,cjk,should_accept
+-1E02,cjk,should_accept
+-1E+02,cjk,should_accept
+1/0,cjk,should_accept
+0/0,cjk,should_accept
+-2147483648/-1,cjk,should_accept
+-9223372036854775808/-1,cjk,should_accept
+-0,cjk,should_accept
+-0.0,cjk,should_accept
++0,cjk,should_accept
++0.0,cjk,should_accept
+0.00,cjk,should_accept
+0..0,cjk,should_accept
+.,cjk,should_accept
+0.0.0,cjk,should_accept
+0,00,cjk,should_accept
+0,,0,cjk,should_accept
+,,cjk,should_accept
+0,0,0,cjk,should_accept
+0.0/0,cjk,should_accept
+1.0/0.0,cjk,should_accept
+0.0/0.0,cjk,should_accept
+1,0/0,0,cjk,should_accept
+0,0/0,0,cjk,should_accept
+--1,cjk,should_accept
+-,cjk,should_accept
+-.,cjk,should_accept
+-,,cjk,should_accept
+999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999,cjk,should_accept
+NaN,numeric_edge_cases,should_handle_gracefully
+Infinity,numeric_edge_cases,should_handle_gracefully
+-Infinity,numeric_edge_cases,should_handle_gracefully
+INF,cjk,should_accept
+1#INF,special_characters,should_accept
+-1#IND,special_characters,should_accept
+1#QNAN,special_characters,should_accept
+1#SNAN,special_characters,should_accept
+1#IND,special_characters,should_accept
+0x0,numeric_edge_cases,should_handle_gracefully
+0xffffffff,numeric_edge_cases,should_handle_gracefully
+0xffffffffffffffff,numeric_edge_cases,should_handle_gracefully
+0xabad1dea,numeric_edge_cases,should_handle_gracefully
+123456789012345678901234567890123456789,cjk,should_accept
+1,000.00,cjk,should_accept
+1 000.00,cjk,should_accept
+1'000.00,cjk,should_accept
+1,000,000.00,cjk,should_accept
+1 000 000.00,cjk,should_accept
+1'000'000.00,cjk,should_accept
+1.000,00,cjk,should_accept
+1 000,00,cjk,should_accept
+1'000,00,cjk,should_accept
+1.000.000,00,cjk,should_accept
+1 000 000,00,cjk,should_accept
+1'000'000,00,cjk,should_accept
+01000,cjk,should_accept
+08,cjk,should_accept
+09,cjk,should_accept
+2.2250738585072011e-308,cjk,should_accept
+<script>alert('XSS')</script>,xss_injection,should_not_execute
+<script>alert("XSS")</script>,xss_injection,should_not_execute
+<img src=x onerror=alert('XSS')>,xss_injection,should_not_execute
+<svg/onload=alert('XSS')>,cjk,should_accept
+javascript:alert('XSS'),xss_injection,should_not_execute
+<iframe src=javascript:alert('XSS')>,xss_injection,should_not_execute
+<body onload=alert('XSS')>,cjk,should_accept
+"><script>alert(String.fromCharCode(88,83,83))</script>,xss_injection,should_not_execute
+'><script>alert(String.fromCharCode(88,83,83))</script>,xss_injection,should_not_execute
+<IMG SRC="javascript:alert('XSS');">,xss_injection,should_not_execute
+<IMG SRC=javascript:alert('XSS')>,xss_injection,should_not_execute
+<IMG SRC=JaVaScRiPt:alert('XSS')>,cjk,should_accept
+<IMG SRC=`javascript:alert("RSnake says, 'XSS'")`>,xss_injection,should_not_execute
+<IMG """><SCRIPT>alert("XSS")</SCRIPT>">,cjk,should_accept
+<IMG SRC=javascript:alert(String.fromCharCode(88,83,83))>,xss_injection,should_not_execute
+<<SCRIPT>alert("XSS");//<</SCRIPT>,cjk,should_accept
+<SCRIPT SRC=http://xss.rocks/xss.js></SCRIPT>,cjk,should_accept
+<SCRIPT/XSS SRC="http://xss.rocks/xss.js"></SCRIPT>,cjk,should_accept
+<BODY onload!#$%&()*~+-_.,:;?@[/|\]^`=alert("XSS")>,special_characters,should_accept
+<SCRIPT/SRC="http://xss.rocks/xss.js"></SCRIPT>,cjk,should_accept
+' OR '1'='1' --,cjk,should_accept
+' OR '1'='1' /*,special_characters,should_accept
+' OR 1=1--,sql_injection,should_not_execute
+' OR 1=1/*,sql_injection,should_not_execute
+' OR 1=1#,sql_injection,should_not_execute
+' OR 1=1;--,sql_injection,should_not_execute
+' OR 1=1;/*,sql_injection,should_not_execute
+' OR 1=1;#,sql_injection,should_not_execute
+' OR a=a--,cjk,should_accept
+' OR a=a/*,special_characters,should_accept
+' OR a=a#,special_characters,should_accept
+'/**/OR/**/1=1--,sql_injection,should_not_execute
+'/**/OR/**/1=1/*,sql_injection,should_not_execute
+'/**/OR/**/1=1#,sql_injection,should_not_execute
+admin'--,cjk,should_accept
+admin' #,special_characters,should_accept
+admin'/*,special_characters,should_accept
+admin' or '1'='1,cjk,should_accept
+admin' or '1'='1'--,cjk,should_accept
+admin' or '1'='1'#,special_characters,should_accept
+admin' or '1'='1'/*,special_characters,should_accept
+admin'or 1=1 or ''=',cjk,should_accept
+admin' or 1=1,cjk,should_accept
+admin' or 1=1--,cjk,should_accept
+admin' or 1=1#,special_characters,should_accept
+admin' or 1=1/*,special_characters,should_accept
+admin') or ('1'='1,cjk,should_accept
+admin') or ('1'='1'--,cjk,should_accept
+admin') or ('1'='1'#,special_characters,should_accept
+admin') or ('1'='1'/*,special_characters,should_accept
+admin') or '1'='1,cjk,should_accept
+admin') or '1'='1'--,cjk,should_accept
+admin') or '1'='1'#,special_characters,should_accept
+admin') or '1'='1'/*,special_characters,should_accept
+1234 ' AND 1=0 UNION ALL SELECT 'admin', '81dc9bdb52d04dc20036dbd8313ed055,cjk,should_accept
+SELECT * FROM users,special_characters,should_accept
+SELECT * FROM users WHERE id = 1,special_characters,should_accept
+SELECT * FROM users; DROP TABLE users;--,sql_injection,should_not_execute
+'; DROP TABLE users--,sql_injection,should_not_execute
+1; DROP TABLE users,sql_injection,should_not_execute
+' UNION SELECT NULL--,sql_injection,should_not_execute
+' UNION SELECT NULL, NULL--,sql_injection,should_not_execute
+' UNION SELECT NULL, NULL, NULL--,sql_injection,should_not_execute
+/etc/passwd,path_traversal,should_block
+/etc/hosts,cjk,should_accept
+../../../../../../../../../../etc/passwd,path_traversal,should_block
+../../../../../../../../../../etc/hosts,cjk,should_accept
+C:\boot.ini,path_traversal,should_block
+C:\Windows\System32\drivers\etc\hosts,cjk,should_accept
+file:///etc/passwd,path_traversal,should_block
+file:///etc/hosts,cjk,should_accept
+!@#$%^&*(){}[]<>?/\|`~,special_characters,should_accept
+'",cjk,should_accept
+'''',cjk,should_accept
+"""",cjk,should_accept
+`````,cjk,should_accept
+,,,,,,cjk,should_accept
+.....,cjk,should_accept
+;;;;;,cjk,should_accept
+:::::,cjk,should_accept
+!!!!!,special_characters,should_accept
+?????,cjk,should_accept
+/////,cjk,should_accept
+\\\\\,cjk,should_accept
+|||||,cjk,should_accept
+_____,cjk,should_accept
+-----,cjk,should_accept
++++++,cjk,should_accept
+=====,cjk,should_accept
+*****,special_characters,should_accept
+&&&&&,special_characters,should_accept
+%%%%%,special_characters,should_accept
+$$$$$,special_characters,should_accept
+@@@@@,special_characters,should_accept
+^^^^^,special_characters,should_accept
+Ω≈ç√∫˜µ≤≥÷,unicode_symbols,should_accept
+åß∂ƒ©˙∆˚¬…æ,cjk,should_accept
+œ∑´®†¥¨ˆøπ"',cjk,should_accept
+¡™£¢∞§¶•ªº–≠,cjk,should_accept
+¸˛Ç◊ı˜Â¯˘¿,cjk,should_accept
+ÅÍÎÏ˝ÓÔÒÚÆ☃,cjk,should_accept
+Œ„´‰ˇÁ¨ˆØ∏"',cjk,should_accept
+`⁄€‹›ﬁﬂ‡°·‚—±,cjk,should_accept
+⅛⅜⅝⅞,cjk,should_accept
+ЁЂЃЄЅІЇЈЉЊЋЌЍЎЏАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя,cyrillic,should_accept
+٠١٢٣٤٥٦٧٨٩,cjk,should_accept
+⁰⁴⁵,cjk,should_accept
+₀₁₂,cjk,should_accept
+田中さんにあげて下さい,cjk,should_accept
+パーティーへ行かないか,cjk,should_accept
+和製漢語,cjk,should_accept
+部落格,cjk,should_accept
+사회과학원 어학연구소,cjk,should_accept
+찦차를 타고 온 펲시맨과 쑛다리 똠방각하,cjk,should_accept
+社會科學院語學研究所,cjk,should_accept
+울란바토르,cjk,should_accept
+𝐓𝐡𝐞 𝐪𝐮𝐢𝐜𝐤 𝐛𝐫𝐨𝐰𝐧 𝐟𝐨𝐱 𝐣𝐮𝐦𝐩𝐬 𝐨𝐯𝐞𝐫 𝐭𝐡𝐞 𝐥𝐚𝐳𝐲 𝐝𝐨𝐠,cjk,should_accept
+𝕿𝖍𝖊 𝖖𝖚𝖎𝖈𝖐 𝖇𝖗𝖔𝖜𝖓 𝖋𝖔𝖝 𝖏𝖚𝖒𝖕𝖘 𝖔𝖛𝖊𝖗 𝖙𝖍𝖊 𝖑𝖆𝖟𝖞 𝖉𝖔𝖌,cjk,should_accept
+𝑻𝒉𝒆 𝒒𝒖𝒊𝒄𝒌 𝒃𝒓𝒐𝒘𝒏 𝒇𝒐𝒙 𝒋𝒖𝒎𝒑𝒔 𝒐𝒗𝒆𝒓 𝒕𝒉𝒆 𝒍𝒂𝒛𝒚 𝒅𝒐𝒈,cjk,should_accept
+𝓣𝓱𝓮 𝓺𝓾𝓲𝓬𝓴 𝓫𝓻𝓸𝔀𝓷 𝓯𝓸𝔁 𝓳𝓾𝓶𝓹𝓼 𝓸𝓿𝓮𝓻 𝓽𝓱𝓮 𝓵𝓪𝔃𝔂 𝓭𝓸𝓰,cjk,should_accept
+𝕋𝕙𝕖 𝕢𝕦𝕚𝕔𝕜 𝕓𝕣𝕠𝕨𝕟 𝕗𝕠𝕩 𝕛𝕦𝕞𝕡𝕤 𝕠𝕧𝕖𝕣 𝕥𝕙𝕖 𝕝𝕒𝕫𝕪 𝕕𝕠𝕘,cjk,should_accept
+𝚃𝚑𝚎 𝚚𝚞𝚒𝚌𝚔 𝚋𝚛𝚘𝚠𝚗 𝚏𝚘𝚡 𝚓𝚞𝚖𝚙𝚜 𝚘𝚟𝚎𝚛 𝚝𝚑𝚎 𝚕𝚊𝚣𝚢 𝚍𝚘𝚐,cjk,should_accept
+⒯⒣⒠ ⒬⒰⒤⒞⒦ ⒝⒭⒪⒲⒩ ⒡⒪⒳ ⒥⒰⒨⒫⒮ ⒪⒱⒠⒭ ⒯⒣⒠ ⒧⒜⒵⒴ ⒟⒪⒢,cjk,should_accept
+😀😃😄😁😆😅🤣😂🙂🙃😉😊😇,cjk,should_accept
+🥰😍🤩😘😗☺😚😙🥲😋😛😜,cjk,should_accept
+🤪😝🤑🤗🤭🤫🤔🤐🤨😐😑😶,cjk,should_accept
+😏😒🙄😬🤥😌😔😪🤤😴😷🤒,cjk,should_accept
+🤕🤢🤮🤧🥵🥶🥴😵🤯🤠🥳,cjk,should_accept
+😎🤓🧐😕😟🙁☹😮😯😲😳,cjk,should_accept
+🥺😦😧😨😰😥😢😭😱😖😣,cjk,should_accept
+😞😓😩😫🥱😤😡😠🤬😈👿,cjk,should_accept
+💀☠💩🤡👹👺👻👽👾🤖,cjk,should_accept
+​‌‍,cjk,should_accept
+<200B><200C><200D>,cjk,should_accept
+Hello​World,cjk,should_accept
+Test‌String,cjk,should_accept
+Zero‍Width,cjk,should_accept
+Аdmin,cjk,should_accept
+pаypal,cyrillic,should_accept
+αpple,cjk,should_accept
+𝓪dmin,cjk,should_accept
+Ⅿicrosoft,cjk,should_accept
+test‮txet,cjk,should_accept
+user‮resu,cjk,should_accept
+admin‮nimda,cjk,should_accept
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,cjk,should_accept
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,cjk,should_accept
+%s%s%s%s%s%s%s%s%s%s,special_characters,should_accept
+%p%p%p%p%p%p%p%p%p%p,special_characters,should_accept
+%n%n%n%n%n%n%n%n%n%n,special_characters,should_accept
+%d%d%d%d%d%d%d%d%d%d,special_characters,should_accept
+{{7*7}},special_characters,should_accept
+${7*7},special_characters,should_accept
+<%= 7*7 %>,special_characters,should_accept
+${{7*7}},special_characters,should_accept
+*{7*7},special_characters,should_accept
+田中さん,cjk,should_accept
+ﾊﾝｶｸｶﾅ,cjk,should_accept
+표준,cjk,should_accept

@@ -1,0 +1,181 @@
+schema: SimV1
+name: bookstore-api-tests
+
+# Contract tests for BookStore REST API simulation
+# Verifies CRUD operations work correctly via the API Simulator
+
+connections:
+  - name: bookstore-api
+    endpoint: http://localhost:17777
+    listen: false
+
+services:
+  - name: test_list_books
+    description: Tests GET /api/v1/Books endpoint
+    steps:
+      - direction: Out
+        name: sendListBooksRequest
+        to: bookstore-api
+        message:
+          method: GET
+        insert:
+          - type: Path
+            value: /api/v1/Books
+
+      - direction: In
+        name: receiveListBooksResponse
+        verify:
+          - property: StatusCode
+            value: 200 OK
+          - jsonPath: $[0].id
+            exists: true
+          - jsonPath: $[0].title
+            exists: true
+          - jsonPath: $[0].author
+            exists: true
+
+  - name: test_get_book_by_id
+    description: Tests GET /api/v1/Books/{id} endpoint
+    steps:
+      - direction: Out
+        name: sendGetBookRequest
+        to: bookstore-api
+        message:
+          method: GET
+        insert:
+          - type: Path
+            value: /api/v1/Books/68dedb16887eae6ff6743f51
+
+      - direction: In
+        name: receiveGetBookResponse
+        verify:
+          - property: StatusCode
+            value: 200 OK
+          - jsonPath: id
+            value: "68dedb16887eae6ff6743f51"
+          - jsonPath: title
+            exists: true
+          - jsonPath: author
+            exists: true
+          - jsonPath: pageCount
+            exists: true
+
+  - name: test_create_book
+    description: Tests POST /api/v1/Books endpoint
+    steps:
+      - direction: Out
+        name: sendCreateBookRequest
+        to: bookstore-api
+        message:
+          method: POST
+          headers:
+            - key: Content-Type
+              value: application/json
+          payload: |-
+            {
+              "title": "Test Book",
+              "author": "Test Author",
+              "isbn": "978-0-123-45678-9",
+              "publishedDate": "2024-01-15T00:00:00Z",
+              "genre": "Fiction",
+              "pageCount": 250,
+              "description": "A test book for contract testing"
+            }
+        insert:
+          - type: Path
+            value: /api/v1/Books
+
+      - direction: In
+        name: receiveCreateBookResponse
+        verify:
+          - property: StatusCode
+            value: 201 Created
+          - jsonPath: id
+            exists: true
+          - jsonPath: title
+            value: "The New Beginning"
+
+  - name: test_update_book
+    description: Tests PUT /api/v1/Books/{id} endpoint
+    steps:
+      - direction: Out
+        name: sendUpdateBookRequest
+        to: bookstore-api
+        message:
+          method: PUT
+          headers:
+            - key: Content-Type
+              value: application/json
+          payload: |-
+            {
+              "id": "68dedb16887eae6ff6743f51",
+              "title": "Updated Title",
+              "author": "Updated Author",
+              "isbn": "978-0-123-45678-9",
+              "publishedDate": "2024-01-15T00:00:00Z",
+              "genre": "Fiction",
+              "pageCount": 300
+            }
+        insert:
+          - type: Path
+            value: /api/v1/Books/68dedb16887eae6ff6743f51
+
+      - direction: In
+        name: receiveUpdateBookResponse
+        verify:
+          - property: StatusCode
+            value: 200 OK
+          - jsonPath: id
+            value: "68dedb16887eae6ff6743f51"
+          - jsonPath: title
+            exists: true
+
+  - name: test_delete_book
+    description: Tests DELETE /api/v1/Books/{id} endpoint
+    steps:
+      - direction: Out
+        name: sendDeleteBookRequest
+        to: bookstore-api
+        message:
+          method: DELETE
+        insert:
+          - type: Path
+            value: /api/v1/Books/temp-id-for-delete
+
+      - direction: In
+        name: receiveDeleteBookResponse
+        verify:
+          - property: StatusCode
+            value: 204 No Content
+
+  - name: test_generate_summary
+    description: Tests POST /api/v1/Books/{id}/generate-summary endpoint
+    steps:
+      - direction: Out
+        name: sendGenerateSummaryRequest
+        to: bookstore-api
+        message:
+          method: POST
+          headers:
+            - key: Content-Type
+              value: application/json
+          payload: |-
+            {
+              "provider": "simulated",
+              "model": "simulation-v1"
+            }
+        insert:
+          - type: Path
+            value: /api/v1/Books/68dedb16887eae6ff6743f51/generate-summary
+
+      - direction: In
+        name: receiveGenerateSummaryResponse
+        verify:
+          - property: StatusCode
+            value: 200 OK
+          - jsonPath: summary
+            exists: true
+          - jsonPath: generatedAt
+            exists: true
+          - jsonPath: provider
+            value: "simulated"

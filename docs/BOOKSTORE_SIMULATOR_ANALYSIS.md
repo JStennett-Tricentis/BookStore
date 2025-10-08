@@ -1,16 +1,16 @@
-# AI Hub API Simulator - Comprehensive Analysis & Integration Plan
+# BookStore API Simulator - Comprehensive Analysis & Integration Plan
 
 **Date**: October 2, 2025
 **Project**: BookStore Performance Testing POC
-**Source Analysis**: hub-services-latest codebase
+**Source Analysis**: hub-services-latest codebase (original AI Hub project)
 
 ---
 
 ## Executive Summary
 
-The Tricentis AI Hub API Simulator is a Docker-based service mocking tool that enables **zero-cost LLM performance testing**
+The Tricentis API Simulator is a Docker-based service mocking tool that enables **zero-cost LLM performance testing**
 by simulating responses from external AI providers (Claude, OpenAI, Bedrock, etc.).
-This analysis examines the hub-services-latest implementation and provides a detailed integration plan for the BookStore project.
+This analysis examines the hub-services-latest implementation (original AI Hub project) and provides a detailed integration plan for the BookStore project.
 
 **Key Benefits:**
 

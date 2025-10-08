@@ -1,0 +1,54 @@
+schema: SimV1
+name: openai-api-mock
+
+connections:
+  - name: openai-mock
+    port: 18080
+
+services:
+  - name: OpenAIChatCompletions
+    steps:
+      # Inbound request matcher
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/v1/chat/completions'
+          - property: Method
+            value: POST
+          - type: Header
+            key: 'authorization'
+            value: 'Bearer *'
+
+      # Outbound response
+      - direction: Out
+        message:
+          statusCode: 200
+          headers:
+            - key: 'content-type'
+              value: 'application/json'
+            - key: 'x-request-id'
+              value: 'chatcmpl_{randomGuid}'
+          payload: |
+            {
+              "id": "chatcmpl_{randomGuid}",
+              "object": "chat.completion",
+              "created": {timestamp},
+              "model": "gpt-4o",
+              "choices": [
+                {
+                  "index": 0,
+                  "message": {
+                    "role": "assistant",
+                    "content": "This is a simulated OpenAI response. The book you're asking about is a remarkable work of literature that demonstrates exceptional narrative craft and thematic depth. Through vivid characterization and compelling prose, the author explores fundamental questions about human nature, society, and the search for meaning. The work's enduring relevance and artistic merit have secured its place as a significant contribution to world literature."
+                  },
+                  "logprobs": null,
+                  "finish_reason": "stop"
+                }
+              ],
+              "usage": {
+                "prompt_tokens": 150,
+                "completion_tokens": 300,
+                "total_tokens": 450
+              },
+              "system_fingerprint": "fp_sim_{timestamp}"
+            }

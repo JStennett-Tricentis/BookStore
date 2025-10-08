@@ -1,0 +1,178 @@
+schema: SimV1
+name: books-rest-api-mock
+
+connections:
+  - name: books-api
+    port: 17777
+
+services:
+  # GET /api/v1/Books - List all books
+  - name: GetBooks
+    steps:
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/api/v1/Books'
+          - property: Method
+            value: GET
+
+      - direction: Out
+        message:
+          statusCode: 200
+          headers:
+            - key: 'content-type'
+              value: 'application/json'
+          payload: |
+            [
+              {
+                "id": "68dedb16887eae6ff6743f51",
+                "title": "To Kill a Mockingbird",
+                "author": "Harper Lee",
+                "isbn": "978-0-06-112008-4",
+                "publishedDate": "1960-07-11T00:00:00Z",
+                "genre": "Fiction",
+                "pageCount": 324,
+                "description": "A gripping tale of racial injustice and childhood innocence."
+              },
+              {
+                "id": "68dedb16887eae6ff6743f52",
+                "title": "1984",
+                "author": "George Orwell",
+                "isbn": "978-0-452-28423-4",
+                "publishedDate": "1949-06-08T00:00:00Z",
+                "genre": "Dystopian",
+                "pageCount": 328,
+                "description": "A dystopian social science fiction novel and cautionary tale."
+              }
+            ]
+
+  # GET /api/v1/Books/{id} - Get specific book
+  - name: GetBookById
+    steps:
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/api/v1/Books/*'
+          - property: Method
+            value: GET
+
+      - direction: Out
+        message:
+          statusCode: 200
+          headers:
+            - key: 'content-type'
+              value: 'application/json'
+          payload: |
+            {
+              "id": "68dedb16887eae6ff6743f51",
+              "title": "The Great Gatsby",
+              "author": "F. Scott Fitzgerald",
+              "isbn": "978-0-7432-7356-5",
+              "publishedDate": "1925-04-10T00:00:00Z",
+              "genre": "Fiction",
+              "pageCount": 180,
+              "description": "A critique of the American Dream set in the Jazz Age.",
+              "summary": "This simulated book summary provides insight into the themes and significance of the work."
+            }
+
+  # POST /api/v1/Books - Create new book
+  - name: CreateBook
+    steps:
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/api/v1/Books'
+          - property: Method
+            value: POST
+
+      - direction: Out
+        message:
+          statusCode: 201
+          headers:
+            - key: 'content-type'
+              value: 'application/json'
+            - key: 'location'
+              value: '/api/v1/Books/{randomGuid}'
+          payload: |
+            {
+              "id": "{randomGuid}",
+              "title": "New Book Title",
+              "author": "New Author",
+              "isbn": "978-0-123-45678-9",
+              "publishedDate": "{Date[{now}][][yyyy-MM-ddTHH:mm:ss.fffZ]}",
+              "genre": "Fiction",
+              "pageCount": 250,
+              "description": "A newly created book entry."
+            }
+
+  # PUT /api/v1/Books/{id} - Update book
+  - name: UpdateBook
+    steps:
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/api/v1/Books/*'
+          - property: Method
+            value: PUT
+
+      - direction: Out
+        message:
+          statusCode: 200
+          headers:
+            - key: 'content-type'
+              value: 'application/json'
+          payload: |
+            {
+              "id": "68dedb16887eae6ff6743f51",
+              "title": "Updated Book Title",
+              "author": "Updated Author",
+              "isbn": "978-0-123-45678-9",
+              "publishedDate": "2024-01-01T00:00:00Z",
+              "genre": "Updated Genre",
+              "pageCount": 300,
+              "description": "This book has been updated."
+            }
+
+  # DELETE /api/v1/Books/{id} - Delete book
+  - name: DeleteBook
+    steps:
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/api/v1/Books/*'
+          - property: Method
+            value: DELETE
+
+      - direction: Out
+        message:
+          statusCode: 204
+
+  # POST /api/v1/Books/{id}/generate-summary - Generate AI summary
+  - name: GenerateBookSummary
+    steps:
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/api/v1/Books/*/generate-summary'
+          - property: Method
+            value: POST
+
+      - direction: Out
+        message:
+          statusCode: 200
+          headers:
+            - key: 'content-type'
+              value: 'application/json'
+          payload: |
+            {
+              "id": "68dedb16887eae6ff6743f51",
+              "summary": "This is a simulated AI-generated summary. The book represents a masterwork of literature, exploring profound themes through compelling characters and masterful storytelling. The author's distinctive voice and insightful observations make this an enduring contribution to the literary canon.",
+              "generatedAt": "{Date[{now}][][yyyy-MM-ddTHH:mm:ss.fffZ]}",
+              "provider": "simulated",
+              "model": "simulation-v1",
+              "tokensUsed": {
+                "input": 150,
+                "output": 200,
+                "total": 350
+              }
+            }

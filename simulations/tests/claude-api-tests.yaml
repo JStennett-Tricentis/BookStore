@@ -1,0 +1,110 @@
+schema: SimV1
+name: claude-api-tests
+
+# Contract tests for Claude Messages API simulation
+# Tests the /v1/messages endpoint on port 17070
+
+connections:
+  - name: claude-api
+    endpoint: http://localhost:17070
+    listen: false
+
+services:
+  - name: test_claude_messages_success
+    description: Tests Claude Messages API with valid request
+    steps:
+      - direction: Out
+        name: sendClaudeMessagesRequest
+        to: claude-api
+        message:
+          method: POST
+          headers:
+            - key: Content-Type
+              value: application/json
+            - key: anthropic-version
+              value: "2023-06-01"
+            - key: x-api-key
+              value: sk-ant-test-key
+          payload: |-
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "max_tokens": 1024,
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Please summarize the key themes of this book."
+                }
+              ]
+            }
+        insert:
+          - type: Path
+            value: /v1/messages
+
+      - direction: In
+        name: receiveClaudeMessagesResponse
+        buffer:
+          - name: messageId
+            jsonPath: id
+        verify:
+          - property: StatusCode
+            value: 200 OK
+          - jsonPath: id
+            exists: true
+          - jsonPath: type
+            value: "message"
+          - jsonPath: role
+            value: "assistant"
+          - jsonPath: model
+            value: "claude-3-5-sonnet-20241022"
+          - jsonPath: content[0].type
+            value: "text"
+          - jsonPath: content[0].text
+            exists: true
+          - jsonPath: usage.input_tokens
+            exists: true
+          - jsonPath: usage.output_tokens
+            exists: true
+          - jsonPath: stop_reason
+            value: "end_turn"
+
+  - name: test_claude_messages_rate_limit
+    description: Tests Claude API rate limiting (simulated)
+    steps:
+      - direction: Out
+        name: sendClaudeRateLimitRequest
+        to: claude-api
+        message:
+          method: POST
+          headers:
+            - key: Content-Type
+              value: application/json
+            - key: anthropic-version
+              value: "2023-06-01"
+            - key: x-api-key
+              value: sk-ant-test-key
+            - key: x-trigger-error
+              value: rate_limit
+          payload: |-
+            {
+              "model": "claude-3-5-sonnet-20241022",
+              "max_tokens": 100,
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "test"
+                }
+              ]
+            }
+        insert:
+          - type: Path
+            value: /v1/messages
+
+      - direction: In
+        name: receiveClaudeRateLimitResponse
+        verify:
+          - property: StatusCode
+            value: 429 Too Many Requests
+          - jsonPath: type
+            value: "error"
+          - jsonPath: error.type
+            value: "rate_limit_error"

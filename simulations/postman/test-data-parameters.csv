@@ -1,0 +1,17 @@
+param_name,param_value,expected_status,description
+temperature,0.0,200,Minimum temperature
+temperature,0.7,200,Normal temperature
+temperature,1.0,200,High temperature
+temperature,2.0,200,Maximum temperature
+temperature,2.5,400,Above maximum (should fail)
+temperature,-0.5,400,Negative (should fail)
+max_tokens,1,200,Minimum tokens
+max_tokens,100,200,Normal tokens
+max_tokens,4096,200,Large token count
+max_tokens,-100,400,Negative tokens (should fail)
+max_tokens,999999,400,Excessive tokens (should fail)
+top_p,0.0,200,Minimum top_p
+top_p,0.5,200,Normal top_p
+top_p,1.0,200,Maximum top_p
+top_p,1.5,400,Above maximum (should fail)
+top_p,-0.5,400,Negative (should fail)

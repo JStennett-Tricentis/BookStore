@@ -1,0 +1,225 @@
+schema: SimV1
+name: llm-providers-tests
+
+# Contract tests for all LLM provider simulations
+# Tests OpenAI, Ollama, and Bedrock API endpoints
+
+connections:
+  - name: openai-api
+    endpoint: http://localhost:18080
+    listen: false
+  - name: ollama-api
+    endpoint: http://localhost:11434
+    listen: false
+  - name: bedrock-api
+    endpoint: http://localhost:19090
+    listen: false
+
+services:
+  - name: test_openai_chat_completions
+    description: Tests OpenAI Chat Completions API
+    steps:
+      - direction: Out
+        name: sendOpenAIChatRequest
+        to: openai-api
+        message:
+          method: POST
+          headers:
+            - key: Content-Type
+              value: application/json
+            - key: Authorization
+              value: Bearer sk-test-key-12345
+          payload: |-
+            {
+              "model": "gpt-4o",
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "You are a literary analysis expert."
+                },
+                {
+                  "role": "user",
+                  "content": "Summarize the main themes of this book."
+                }
+              ],
+              "temperature": 0.7,
+              "max_tokens": 500
+            }
+        insert:
+          - type: Path
+            value: /v1/chat/completions
+
+      - direction: In
+        name: receiveOpenAIChatResponse
+        verify:
+          - property: StatusCode
+            value: 200 OK
+          - jsonPath: id
+            exists: true
+          - jsonPath: object
+            value: "chat.completion"
+          - jsonPath: model
+            value: "gpt-4o"
+          - jsonPath: choices[0].message.role
+            value: "assistant"
+          - jsonPath: choices[0].message.content
+            exists: true
+          - jsonPath: choices[0].finish_reason
+            value: "stop"
+          - jsonPath: usage.prompt_tokens
+            exists: true
+          - jsonPath: usage.completion_tokens
+            exists: true
+          - jsonPath: usage.total_tokens
+            exists: true
+
+  - name: test_ollama_generate
+    description: Tests Ollama Generate API
+    steps:
+      - direction: Out
+        name: sendOllamaGenerateRequest
+        to: ollama-api
+        message:
+          method: POST
+          headers:
+            - key: Content-Type
+              value: application/json
+          payload: |-
+            {
+              "model": "llama3.2",
+              "prompt": "Provide a literary analysis of this book.",
+              "stream": false
+            }
+        insert:
+          - type: Path
+            value: /api/generate
+
+      - direction: In
+        name: receiveOllamaGenerateResponse
+        verify:
+          - property: StatusCode
+            value: 200 OK
+          - jsonPath: model
+            value: "llama3.2"
+          - jsonPath: response
+            exists: true
+          - jsonPath: done
+            value: true
+
+  - name: test_ollama_chat
+    description: Tests Ollama Chat API
+    steps:
+      - direction: Out
+        name: sendOllamaChatRequest
+        to: ollama-api
+        message:
+          method: POST
+          headers:
+            - key: Content-Type
+              value: application/json
+          payload: |-
+            {
+              "model": "llama3.2",
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Analyze the literary significance of this work."
+                }
+              ],
+              "stream": false
+            }
+        insert:
+          - type: Path
+            value: /api/chat
+
+      - direction: In
+        name: receiveOllamaChatResponse
+        verify:
+          - property: StatusCode
+            value: 200 OK
+          - jsonPath: model
+            value: "llama3.2"
+          - jsonPath: message.role
+            value: "assistant"
+          - jsonPath: message.content
+            exists: true
+          - jsonPath: done
+            value: true
+
+  - name: test_bedrock_invoke
+    description: Tests AWS Bedrock Invoke Model (Claude)
+    steps:
+      - direction: Out
+        name: sendBedrockInvokeRequest
+        to: bedrock-api
+        message:
+          method: POST
+          headers:
+            - key: Content-Type
+              value: application/json
+            - key: X-Amzn-Bedrock-Accept
+              value: application/json
+          payload: |-
+            {
+              "anthropic_version": "bedrock-2023-05-31",
+              "max_tokens": 1024,
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Provide a comprehensive summary of this book."
+                }
+              ]
+            }
+        insert:
+          - type: Path
+            value: /model/us.anthropic.claude-sonnet-4-v1:0/invoke
+
+      - direction: In
+        name: receiveBedrockInvokeResponse
+        verify:
+          - property: StatusCode
+            value: 200 OK
+          - jsonPath: type
+            value: "message"
+          - jsonPath: role
+            value: "assistant"
+          - jsonPath: content[0].type
+            value: "text"
+          - jsonPath: content[0].text
+            exists: true
+          - jsonPath: usage.input_tokens
+            exists: true
+          - jsonPath: usage.output_tokens
+            exists: true
+
+  - name: test_bedrock_invoke_stream
+    description: Tests AWS Bedrock Streaming Invoke
+    steps:
+      - direction: Out
+        name: sendBedrockStreamRequest
+        to: bedrock-api
+        message:
+          method: POST
+          headers:
+            - key: Content-Type
+              value: application/json
+          payload: |-
+            {
+              "anthropic_version": "bedrock-2023-05-31",
+              "max_tokens": 512,
+              "messages": [
+                {
+                  "role": "user",
+                  "content": "Briefly summarize this book."
+                }
+              ]
+            }
+        insert:
+          - type: Path
+            value: /model/us.anthropic.claude-sonnet-4-v1:0/invoke-with-response-stream
+
+      - direction: In
+        name: receiveBedrockStreamResponse
+        verify:
+          - property: StatusCode
+            value: 200 OK

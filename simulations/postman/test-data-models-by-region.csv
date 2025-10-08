@@ -1,0 +1,27 @@
+model_id,region,environment,expected_status,expected_error_code,expected_error_message,test_description
+gpt-4-turbo,us-east-1,development,200,,,GPT-4 Turbo in US East Dev
+gpt-4-turbo,us-east-1,production,200,,,GPT-4 Turbo in US East Prod
+gpt-4-turbo,eu-west-2,development,200,,,GPT-4 Turbo in EU West Dev
+gpt-4-turbo,eu-west-2,production,404,model_not_found,Model not available in this region,GPT-4 Turbo not available in EU Prod
+claude-3-opus,us-east-1,development,200,,,Claude Opus in US East Dev
+claude-3-opus,us-east-1,production,200,,,Claude Opus in US East Prod
+claude-3-opus,eu-west-2,development,403,forbidden,Model not available for this tenant,Claude Opus forbidden in EU Dev
+claude-3-opus,eu-west-2,production,403,forbidden,Model not available for this tenant,Claude Opus forbidden in EU Prod
+claude-sonnet-4,us-east-1,development,200,,,Claude Sonnet 4 in US East Dev
+claude-sonnet-4,us-east-1,production,200,,,Claude Sonnet 4 in US East Prod
+claude-sonnet-4,eu-west-2,development,200,,,Claude Sonnet 4 in EU West Dev
+claude-sonnet-4,eu-west-2,production,200,,,Claude Sonnet 4 in EU West Prod
+gpt-3.5-turbo,us-east-1,development,200,,,GPT-3.5 in US East Dev
+gpt-3.5-turbo,us-east-1,production,410,model_deprecated,This model has been deprecated,GPT-3.5 deprecated in US Prod
+gpt-3.5-turbo,eu-west-2,development,200,,,GPT-3.5 in EU West Dev
+gpt-3.5-turbo,eu-west-2,production,410,model_deprecated,This model has been deprecated,GPT-3.5 deprecated in EU Prod
+text-davinci-003,us-east-1,development,410,model_deprecated,Legacy model no longer supported,Davinci deprecated in US Dev
+text-davinci-003,us-east-1,production,410,model_deprecated,Legacy model no longer supported,Davinci deprecated in US Prod
+text-davinci-003,eu-west-2,development,410,model_deprecated,Legacy model no longer supported,Davinci deprecated in EU Dev
+text-davinci-003,eu-west-2,production,410,model_deprecated,Legacy model no longer supported,Davinci deprecated in EU Prod
+invalid-model-xyz,us-east-1,development,404,model_not_found,Model does not exist,Invalid model in US Dev
+invalid-model-xyz,us-east-1,production,404,model_not_found,Model does not exist,Invalid model in US Prod
+invalid-model-xyz,eu-west-2,development,404,model_not_found,Model does not exist,Invalid model in EU Dev
+invalid-model-xyz,eu-west-2,production,404,model_not_found,Model does not exist,Invalid model in EU Prod
+,us-east-1,development,400,invalid_request_error,model field is required,Missing model in US Dev
+,us-east-1,production,400,invalid_request_error,model field is required,Missing model in US Prod

@@ -1,0 +1,11 @@
+model,input_text,encoding_format,dimensions,expected_status,description
+text-embedding-3-small,"Hello, world!",float,512,200,Small model with dimensions
+text-embedding-3-small,"The quick brown fox jumps over the lazy dog.",float,,200,Small model default dimensions
+text-embedding-3-large,"Technical documentation about APIs",float,3072,200,Large model max dimensions
+text-embedding-3-large,"Short text",float,1536,200,Large model medium dimensions
+text-embedding-ada-002,"Legacy model test",float,,200,Ada-002 (no dimensions support)
+text-embedding-3-small,"<!DOCTYPE html><html><body>HTML content</body></html>",float,,200,HTML content (should work)
+text-embedding-3-small,"<script>alert('xss')</script>",float,,200,XSS content (should work)
+text-embedding-3-small,"SELECT * FROM users WHERE id=1",float,,200,SQL content (should work)
+text-embedding-3-small,"",float,,400,Empty string (should fail)
+invalid-model,"Test",float,,404,Invalid model (should fail)

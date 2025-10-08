@@ -1,0 +1,9 @@
+model_id,expected_status,test_description
+gpt-4-turbo,200,GPT-4 Turbo
+gpt-4,200,GPT-4
+gpt-3.5-turbo,200,GPT-3.5 Turbo
+claude-3-opus,200,Claude 3 Opus
+claude-3-sonnet,200,Claude 3 Sonnet
+claude-sonnet-4,200,Claude Sonnet 4
+invalid-model-xyz,404,Invalid model (should fail)
+,400,Missing model (should fail)

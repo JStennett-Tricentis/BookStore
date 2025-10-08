@@ -1,0 +1,73 @@
+schema: SimV1
+name: ollama-api-mock
+
+connections:
+  - name: ollama-mock
+    port: 11434
+
+services:
+  - name: OllamaGenerate
+    steps:
+      # Inbound request matcher
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/api/generate'
+          - property: Method
+            value: POST
+
+      # Outbound response
+      - direction: Out
+        message:
+          statusCode: 200
+          headers:
+            - key: 'content-type'
+              value: 'application/json'
+          payload: |
+            {
+              "model": "llama3.2",
+              "created_at": "{Date[{now}][][yyyy-MM-ddTHH:mm:ss.fffZ]}",
+              "response": "This is a simulated Ollama response. The literary work in question represents a significant achievement in narrative art. Through careful attention to character development, thematic exploration, and stylistic innovation, the author has created a text that resonates with readers across generations. The work examines timeless questions about identity, morality, and the human experience with insight and artistic skill.",
+              "done": true,
+              "context": [1, 2, 3, 4, 5],
+              "total_duration": 1500000000,
+              "load_duration": 500000000,
+              "prompt_eval_count": 100,
+              "prompt_eval_duration": 300000000,
+              "eval_count": 200,
+              "eval_duration": 700000000
+            }
+
+  - name: OllamaChatCompletions
+    steps:
+      # Inbound request matcher
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/api/chat'
+          - property: Method
+            value: POST
+
+      # Outbound response
+      - direction: Out
+        message:
+          statusCode: 200
+          headers:
+            - key: 'content-type'
+              value: 'application/json'
+          payload: |
+            {
+              "model": "llama3.2",
+              "created_at": "{Date[{now}][][yyyy-MM-ddTHH:mm:ss.fffZ]}",
+              "message": {
+                "role": "assistant",
+                "content": "This is a simulated Ollama chat response. Based on the book information provided, I can offer this analysis: The work stands as a testament to the author's literary mastery, combining compelling storytelling with profound thematic exploration. Through nuanced character development and sophisticated narrative techniques, the text engages with enduring questions about human nature and society."
+              },
+              "done": true,
+              "total_duration": 1200000000,
+              "load_duration": 400000000,
+              "prompt_eval_count": 85,
+              "prompt_eval_duration": 250000000,
+              "eval_count": 175,
+              "eval_duration": 550000000
+            }

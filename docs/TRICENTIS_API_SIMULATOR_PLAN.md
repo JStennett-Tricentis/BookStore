@@ -37,7 +37,7 @@ From hub-services-latest analysis:
 - Three endpoints:
   - Internal API: Port 17070
   - UI Dashboard: Port 28880
-  - Service API: Port 5020 (AI Hub API mock)
+  - Service API: Port 5020 (BookStore API mock)
 
 ### Integration Points in BookStore POC
 

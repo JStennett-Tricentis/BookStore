@@ -1,0 +1,87 @@
+schema: SimV1
+name: bedrock-api-mock
+
+connections:
+  - name: bedrock-mock
+    port: 19090
+
+services:
+  - name: BedrockInvokeModel
+    steps:
+      # Inbound request matcher for Claude on Bedrock
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/model/*/invoke'
+          - property: Method
+            value: POST
+          - type: Header
+            key: 'content-type'
+            value: 'application/json'
+
+      # Outbound response
+      - direction: Out
+        message:
+          statusCode: 200
+          headers:
+            - key: 'content-type'
+              value: 'application/json'
+            - key: 'x-amzn-requestid'
+              value: '{randomGuid}'
+          payload: |
+            {
+              "id": "msg_{randomGuid}",
+              "type": "message",
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "This is a simulated AWS Bedrock (Claude) response. The literary work you've inquired about demonstrates exceptional artistic merit and cultural significance. Through masterful prose and deep thematic exploration, the author has crafted a narrative that speaks to universal human experiences. The text's examination of complex moral questions, social dynamics, and individual psychology showcases the power of literature to illuminate the human condition."
+                }
+              ],
+              "model": "us.anthropic.claude-sonnet-4-v1:0",
+              "stop_reason": "end_turn",
+              "stop_sequence": null,
+              "usage": {
+                "input_tokens": 135,
+                "output_tokens": 270
+              }
+            }
+
+  - name: BedrockInvokeModelStream
+    steps:
+      # Inbound request matcher for streaming
+      - direction: In
+        trigger:
+          - type: Path
+            value: '/model/*/invoke-with-response-stream'
+          - property: Method
+            value: POST
+
+      # Outbound response (non-streaming simulation)
+      - direction: Out
+        message:
+          statusCode: 200
+          headers:
+            - key: 'content-type'
+              value: 'application/json'
+            - key: 'x-amzn-requestid'
+              value: '{randomGuid}'
+          payload: |
+            {
+              "id": "msg_{randomGuid}",
+              "type": "message",
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "This is a simulated streaming response from AWS Bedrock. The book represents a significant literary achievement with lasting cultural impact."
+                }
+              ],
+              "model": "us.anthropic.claude-sonnet-4-v1:0",
+              "stop_reason": "end_turn",
+              "usage": {
+                "input_tokens": 120,
+                "output_tokens": 180
+              }
+            }

@@ -50,7 +50,7 @@ docker network prune -f
 ```json
 // BookStore.Aspire.AppHost/appsettings.json
 {
-  "ApiSimulatorEnabled": false  // <-- Set to false
+  "ApiSimulatorEnabled": false // <-- Set to false
 }
 ```
 
@@ -177,7 +177,7 @@ If you're experiencing performance issues:
 
    ```json
    // appsettings.json
-   {"ApiSimulatorEnabled": false}
+   { "ApiSimulatorEnabled": false }
    ```
 
 2. **Run Without Grafana/Prometheus**:

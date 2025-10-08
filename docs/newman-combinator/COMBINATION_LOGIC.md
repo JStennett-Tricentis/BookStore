@@ -2,7 +2,8 @@
 
 ## How Combinations Work
 
-The Newman Combinator framework uses **Cartesian Product** logic to generate test combinations. This means it creates every possible combination of test inputs across multiple dimensions.
+The Newman Combinator framework uses **Cartesian Product** logic to generate test combinations.
+This means it creates every possible combination of test inputs across multiple dimensions.
 
 ### Simple Example: Single Dimension
 
@@ -15,7 +16,7 @@ The Newman Combinator framework uses **Cartesian Product** logic to generate tes
 
 **Result:** 3 combinations (1 test per book)
 
-```
+```text
 Combination 1: Book "The Great Gatsby" (68e05e77604bb44693ad8e92)
 Combination 2: Book "To Kill a Mockingbird" (68e05e7d604bb44693ad8e93)
 Combination 3: Book "1984" (68e05e7d604bb44693ad8e94)
@@ -32,7 +33,7 @@ Combination 3: Book "1984" (68e05e7d604bb44693ad8e94)
 
 **Cartesian Product Formula:**
 
-```
+```text
 Total Combinations = Dimension1 × Dimension2
                    = 10 ISBNs × 3 endpoints
                    = 30 combinations
@@ -40,7 +41,7 @@ Total Combinations = Dimension1 × Dimension2
 
 **Generated Combinations:**
 
-```
+```text
 1. ISBN "978-0-123456-78-9" + endpoint "search"
 2. ISBN "978-0-123456-78-9" + endpoint "by-isbn"
 3. ISBN "978-0-123456-78-9" + endpoint "validate-isbn"
@@ -99,6 +100,7 @@ Total Combinations = Dimension1 × Dimension2
    ```
 
 4. **Execute Test**:
+
    ```bash
    POST /api/v1/Books/null/generate-summary?provider=ollama
    Expected: 400, 404, or 405
@@ -126,7 +128,7 @@ Total Combinations = Dimension1 × Dimension2
 
 **Cartesian Product:**
 
-```
+```text
 Total = 14 error codes × 5 HTTP methods = 70 combinations
 
 Examples:
@@ -143,7 +145,7 @@ Examples:
 
 The framework supports nested object properties:
 
-### Simple Value Replacement:
+### Simple Value Replacement
 
 ```javascript
 // Template
@@ -156,7 +158,7 @@ The framework supports nested object properties:
 "/api/v1/Books/12345"
 ```
 
-### Nested Object Replacement:
+### Nested Object Replacement
 
 ```javascript
 // Template
@@ -190,7 +192,7 @@ Each combination includes:
 5. **Expected Results**: Status codes to validate against
 6. **Response Body**: Captured API response (stored for validation)
 
-### Example Combination Structure:
+### Example Combination Structure
 
 ```json
 {
@@ -217,25 +219,25 @@ Each combination includes:
 
 ## How to View Combinations
 
-### Console Output (Quick View):
+### Console Output (Quick View)
 
 ```bash
 node src/export-combinations.js --scenario llm-with-naughty-book-ids
 ```
 
-### JSON Export (Full Data):
+### JSON Export (Full Data)
 
 ```bash
 node src/export-combinations.js --scenario llm-with-naughty-book-ids --format json --output combinations.json
 ```
 
-### Markdown Export (Documentation):
+### Markdown Export (Documentation)
 
 ```bash
 node src/export-combinations.js --all --format md --output combinations.md
 ```
 
-### List All Scenarios:
+### List All Scenarios
 
 ```bash
 node src/export-combinations.js

@@ -22,11 +22,13 @@ Quick reference checklist for migrating monitoring infrastructure to hub-service
 
 ## Copy Files
 
-### Prometheus
+### Prometheus 1
+
 - [ ] Copy `monitoring/prometheus/prometheus.yml`
 - [ ] Update service names and ports in prometheus.yml
 
-### Grafana
+### Grafana 1
+
 - [ ] Copy `monitoring/grafana/dashboards/system-health.json`
 - [ ] Copy `monitoring/grafana/provisioning/` directory
 - [ ] Copy `monitoring/grafana/grafana.ini`
@@ -35,6 +37,7 @@ Quick reference checklist for migrating monitoring infrastructure to hub-service
 ## NuGet Packages (Each Service)
 
 Core packages:
+
 - [ ] `OpenTelemetry`
 - [ ] `OpenTelemetry.Extensions.Hosting`
 - [ ] `OpenTelemetry.Instrumentation.AspNetCore`
@@ -43,12 +46,14 @@ Core packages:
 - [ ] `OpenTelemetry.Exporter.Prometheus.AspNetCore`
 
 Database-specific:
+
 - [ ] `OpenTelemetry.Instrumentation.SqlClient` (if using SQL Server)
 - [ ] `OpenTelemetry.Instrumentation.EntityFrameworkCore` (if using EF)
 
 ## Code Changes (Each Service)
 
 ### Program.cs
+
 - [ ] Add using statements for OpenTelemetry
 - [ ] Add `AddOpenTelemetry()` configuration before `builder.Build()`
 - [ ] Add `UseOpenTelemetryPrometheusScrapingEndpoint()` after `app = builder.Build()`
@@ -56,6 +61,7 @@ Database-specific:
 - [ ] Add `/health` endpoint mapping
 
 ### appsettings.json
+
 - [ ] Add `ServiceName` setting
 - [ ] Add `OpenTelemetry` configuration section
 - [ ] Configure appropriate log levels
@@ -72,21 +78,25 @@ Database-specific:
 ## Testing
 
 ### Service Startup
+
 - [ ] `dotnet build` succeeds
 - [ ] Services start without errors
 - [ ] Aspire Dashboard accessible (port 15888)
 
 ### Metrics Endpoint
+
 - [ ] `curl http://localhost:PORT/metrics` returns data
 - [ ] Metrics include `process_`, `dotnet_`, `http_` prefixes
 
-### Prometheus
+### Prometheus 2
+
 - [ ] Prometheus UI accessible (port 9090)
 - [ ] Navigate to Status → Targets
 - [ ] All services showing "UP" status
 - [ ] Metrics visible in Prometheus query browser
 
-### Grafana
+### Grafana 2
+
 - [ ] Grafana UI accessible (port 3000)
 - [ ] Login with admin/admin123
 - [ ] System Health dashboard exists
@@ -96,20 +106,22 @@ Database-specific:
 - [ ] HTTP request panel shows data
 
 ### Health Checks
+
 - [ ] `curl http://localhost:PORT/health` returns 200 OK
 - [ ] Health endpoint shows healthy status
 
 ## Baseline Metrics
 
 Document baseline under normal load:
-- [ ] CPU usage average: _____%
-- [ ] CPU usage peak: _____%
-- [ ] RAM usage average: _____ MB
-- [ ] RAM usage peak: _____ MB
-- [ ] Request latency average: _____ ms
-- [ ] Request latency P95: _____ ms
-- [ ] Request rate: _____ req/s
-- [ ] Error rate: _____%
+
+- [ ] CPU usage average: **\_**%
+- [ ] CPU usage peak: **\_**%
+- [ ] RAM usage average: **\_** MB
+- [ ] RAM usage peak: **\_** MB
+- [ ] Request latency average: **\_** ms
+- [ ] Request latency P95: **\_** ms
+- [ ] Request rate: **\_** req/s
+- [ ] Error rate: **\_**%
 - [ ] Screenshots saved to `docs/baseline/`
 
 ## Documentation
@@ -138,20 +150,16 @@ Document baseline under normal load:
 
 ## Time Tracking
 
-- Setup: _____ minutes
-- Code changes: _____ minutes
-- Testing: _____ minutes
-- Baseline measurement: _____ minutes
-- Total: _____ minutes
+- Setup: **\_** minutes
+- Code changes: **\_** minutes
+- Testing: **\_** minutes
+- Baseline measurement: **\_** minutes
+- Total: **\_** minutes
 
 ## Notes
 
-```
+```text
 [Space for troubleshooting notes, issues encountered, solutions found]
-
-
-
-
 ```
 
 ---

@@ -2,17 +2,21 @@
 
 ## Purpose
 
-This document outlines the migration of monitoring and observability infrastructure from the BookStore performance testing project to the hub-services-latest production project. The goal is to implement bare minimum monitoring to measure current load and track performance after payload size increases.
+This document outlines the migration of monitoring and observability infrastructure from the BookStore performance testing project to the
+hub-services-latest production project. The goal is to implement bare minimum monitoring to measure current load and track performance
+after payload size increases.
 
 ## Migration Phases
 
 ### Phase 1: Core Monitoring Infrastructure (Start Here)
+
 - Prometheus metrics collection
 - Grafana dashboards for system metrics (CPU, RAM, etc.)
 - .NET Aspire integration for orchestration
 - Basic OpenTelemetry instrumentation
 
 ### Phase 2: Advanced Features (Later)
+
 - LLM token/cost tracking
 - Custom performance dashboards
 - K6 performance testing integration
@@ -25,6 +29,7 @@ This document outlines the migration of monitoring and observability infrastruct
 ### Overview
 
 **What you're getting:**
+
 - Prometheus metrics scraping (port 9090)
 - Grafana dashboards (port 3000)
 - System metrics: CPU, RAM, GC, thread pool, HTTP requests
@@ -32,6 +37,7 @@ This document outlines the migration of monitoring and observability infrastruct
 - OpenTelemetry instrumentation
 
 **Why these components:**
+
 - **Prometheus**: Collects and stores metrics from .NET applications
 - **Grafana**: Visualizes metrics with pre-built dashboards
 - **Aspire**: Orchestrates all services with health checks and logging
@@ -44,10 +50,12 @@ This document outlines the migration of monitoring and observability infrastruct
 ### 1. Monitoring Configuration Files
 
 #### A. Prometheus Configuration
+
 **Source:** `AiHubPerfExample/monitoring/prometheus/`
 
 **Files to copy:**
-```
+
+```yaml
 monitoring/
 ├── prometheus/
 │   ├── prometheus.yml           # Main Prometheus config
@@ -55,18 +63,20 @@ monitoring/
 ```
 
 **Key sections in `prometheus.yml`:**
+
 ```yaml
 scrape_configs:
-  - job_name: 'bookstore-api'
+  - job_name: "bookstore-api"
     static_configs:
-      - targets: ['bookstore-api:8080']  # Change to your service name/port
+      - targets: ["bookstore-api:8080"] # Change to your service name/port
 
-  - job_name: 'performance-service'
+  - job_name: "performance-service"
     static_configs:
-      - targets: ['performance-service:8080']  # Add your services here
+      - targets: ["performance-service:8080"] # Add your services here
 ```
 
 **Action Required:**
+
 - [ ] Copy `monitoring/prometheus/` directory
 - [ ] Update `prometheus.yml` with hub-services endpoints
 - [ ] Replace `bookstore-api` with your actual service names
@@ -75,10 +85,12 @@ scrape_configs:
 ---
 
 #### B. Grafana Dashboards
+
 **Source:** `AiHubPerfExample/monitoring/grafana/`
 
 **Files to copy for Phase 1 (System Metrics Only):**
-```
+
+```yaml
 monitoring/
 ├── grafana/
 │   ├── dashboards/
@@ -96,13 +108,16 @@ monitoring/
 ```
 
 **⭐ Recommended Starting Dashboard:**
+
 - **system-health.json** - CPU, RAM, uptime, process stats (most important for initial measurement)
 
 **Optional dashboards (add later if needed):**
+
 - `dotnet-runtime.json` - .NET-specific GC and memory metrics
 - `http-kestrel.json` - HTTP request rates and latency
 
 **Action Required:**
+
 - [ ] Copy `monitoring/grafana/` directory
 - [ ] Review `system-health.json` dashboard panels
 - [ ] Update dashboard variables to match your service names
@@ -111,9 +126,11 @@ monitoring/
 ---
 
 #### C. Docker Compose Configuration
+
 **Source:** `AiHubPerfExample/docker-compose.perf.yml`
 
 **Sections to extract:**
+
 ```yaml
 # Prometheus service
 prometheus:
@@ -125,8 +142,8 @@ prometheus:
     - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     - prometheus_data:/prometheus
   command:
-    - '--config.file=/etc/prometheus/prometheus.yml'
-    - '--storage.tsdb.path=/prometheus'
+    - "--config.file=/etc/prometheus/prometheus.yml"
+    - "--storage.tsdb.path=/prometheus"
 
 # Grafana service
 grafana:
@@ -147,6 +164,7 @@ volumes:
 ```
 
 **Action Required:**
+
 - [ ] Add Prometheus and Grafana services to hub-services docker-compose
 - [ ] Update volume paths to match hub-services structure
 - [ ] Ensure ports don't conflict with existing services
@@ -157,10 +175,12 @@ volumes:
 ### 2. .NET Code and Configuration
 
 #### A. OpenTelemetry Instrumentation
+
 **Source:** `AiHubPerfExample/BookStore.Common.Instrumentation/`
 
 **Files to review:**
-```
+
+```yaml
 BookStore.Common.Instrumentation/
 ├── OpenTelemetryExtensions.cs           # Main OTel setup ⭐ CRITICAL
 ├── TracerProviderBuilderExtensions.cs   # Tracing config
@@ -168,6 +188,7 @@ BookStore.Common.Instrumentation/
 ```
 
 **Key method in `OpenTelemetryExtensions.cs`:**
+
 ```csharp
 public static IServiceCollection AddBookStoreOpenTelemetry(
     this IServiceCollection services,
@@ -193,6 +214,7 @@ public static IServiceCollection AddBookStoreOpenTelemetry(
 ```
 
 **Action Required:**
+
 - [ ] Create similar instrumentation project or add to existing Common library
 - [ ] Install NuGet packages (see section 3 below)
 - [ ] Adapt to hub-services data stores (SQL Server vs MongoDB, etc.)
@@ -201,9 +223,11 @@ public static IServiceCollection AddBookStoreOpenTelemetry(
 ---
 
 #### B. Service Integration (Program.cs)
+
 **Source:** `AiHubPerfExample/BookStore.Service/Program.cs`
 
 **Key sections to copy:**
+
 ```csharp
 // 1. Add OpenTelemetry
 builder.Services.AddBookStoreOpenTelemetry(builder.Configuration);
@@ -222,6 +246,7 @@ app.MapHealthChecks("/health/live");
 ```
 
 **Action Required:**
+
 - [ ] Add OpenTelemetry registration to each service's Program.cs
 - [ ] Add Prometheus endpoint middleware
 - [ ] Configure health checks for SQL Server, Redis, etc.
@@ -230,12 +255,14 @@ app.MapHealthChecks("/health/live");
 ---
 
 #### C. Configuration Files (appsettings.json)
+
 **Source:** `AiHubPerfExample/BookStore.Service/appsettings.json`
 
 **Sections to add:**
+
 ```json
 {
-  "ServiceName": "hub-service-api",  // Change per service
+  "ServiceName": "hub-service-api", // Change per service
   "OpenTelemetry": {
     "Enabled": true,
     "PrometheusPort": 8080,
@@ -251,6 +278,7 @@ app.MapHealthChecks("/health/live");
 ```
 
 **Action Required:**
+
 - [ ] Add ServiceName to each microservice
 - [ ] Enable OpenTelemetry configuration
 - [ ] Configure appropriate log levels
@@ -262,6 +290,7 @@ app.MapHealthChecks("/health/live");
 **Source:** `AiHubPerfExample/BookStore.Common.Instrumentation/BookStore.Common.Instrumentation.csproj`
 
 **Essential packages for Phase 1:**
+
 ```xml
 <ItemGroup>
   <!-- Core OpenTelemetry -->
@@ -281,6 +310,7 @@ app.MapHealthChecks("/health/live");
 ```
 
 **Optional packages (if using specific data stores):**
+
 ```xml
 <!-- If using MongoDB -->
 <PackageReference Include="OpenTelemetry.Instrumentation.MongoDB" Version="1.0.0-beta.1" />
@@ -296,6 +326,7 @@ app.MapHealthChecks("/health/live");
 ```
 
 **Action Required:**
+
 - [ ] Install core OpenTelemetry packages
 - [ ] Add instrumentation packages for your data stores
 - [ ] Update to latest stable versions (check nuget.org)
@@ -305,10 +336,12 @@ app.MapHealthChecks("/health/live");
 ### 4. .NET Aspire Integration
 
 #### A. Aspire AppHost Project
+
 **Source:** `AiHubPerfExample/BookStore.Aspire.AppHost/`
 
 **Files to review:**
-```
+
+```yaml
 BookStore.Aspire.AppHost/
 ├── Program.cs                    # Main Aspire orchestration ⭐ KEY FILE
 ├── appsettings.json              # Aspire settings
@@ -318,6 +351,7 @@ BookStore.Aspire.AppHost/
 ```
 
 **Key sections in `Program.cs`:**
+
 ```csharp
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -348,6 +382,7 @@ builder.Build().Run();
 ```
 
 **Action Required:**
+
 - [ ] Review existing Aspire setup in hub-services-latest
 - [ ] Add Prometheus container to Aspire
 - [ ] Add Grafana container to Aspire
@@ -357,6 +392,7 @@ builder.Build().Run();
 ---
 
 #### B. Aspire NuGet Packages
+
 **Source:** `AiHubPerfExample/BookStore.Aspire.AppHost/BookStore.Aspire.AppHost.csproj`
 
 ```xml
@@ -370,6 +406,7 @@ builder.Build().Run();
 **Note:** Requires .NET 9 SDK for Aspire AppHost project only. Services can remain .NET 8.
 
 **Action Required:**
+
 - [ ] Verify .NET 9 SDK installed (`dotnet --list-sdks`)
 - [ ] Update Aspire packages to latest version
 - [ ] Configure global.json if needed to specify SDK version
@@ -381,28 +418,30 @@ builder.Build().Run();
 **Source:** `AiHubPerfExample/Makefile`
 
 **Commands to copy for monitoring:**
+
 ```makefile
 # Start services with Aspire
 run-aspire:
-	cd BookStore.Aspire.AppHost && dotnet run
+ cd BookStore.Aspire.AppHost && dotnet run
 
 # Open monitoring tools
 grafana:
-	open http://localhost:3000
+ open http://localhost:3000
 
 prometheus:
-	open http://localhost:9090
+ open http://localhost:9090
 
 aspire-dashboard:
-	open http://localhost:15888
+ open http://localhost:15888
 
 # Health checks
 health-check:
-	@echo "Checking service health..."
-	@curl -s http://localhost:7002/health | jq . || echo "❌ Service down"
+ @echo "Checking service health..."
+ @curl -s http://localhost:7002/health | jq . || echo "❌ Service down"
 ```
 
 **Action Required:**
+
 - [ ] Add monitoring commands to hub-services Makefile
 - [ ] Update ports to match hub-services configuration
 - [ ] Test commands after integration
@@ -412,6 +451,7 @@ health-check:
 ## Step-by-Step Integration Plan
 
 ### Step 1: Prerequisites (5 min)
+
 ```bash
 # In hub-services-latest root:
 # 1. Verify .NET SDKs
@@ -426,6 +466,7 @@ mkdir -p monitoring/grafana/{provisioning/dashboards,provisioning/datasources,da
 ```
 
 ### Step 2: Copy Configuration Files (10 min)
+
 ```bash
 # From AiHubPerfExample to hub-services-latest:
 
@@ -446,6 +487,7 @@ cp AiHubPerfExample/monitoring/grafana/grafana.ini \
 ```
 
 ### Step 3: Update Configuration (15 min)
+
 ```bash
 # 1. Edit prometheus.yml
 # Update scrape targets to match hub-services service names and ports
@@ -460,6 +502,7 @@ cp AiHubPerfExample/monitoring/grafana/grafana.ini \
 ```
 
 ### Step 4: Add NuGet Packages (10 min)
+
 ```bash
 # In each service project:
 cd Tricentis.AI.Hub.Service  # or your main service
@@ -476,6 +519,7 @@ dotnet add package OpenTelemetry.Instrumentation.SqlClient  # if using SQL Serve
 ```
 
 ### Step 5: Add OpenTelemetry Code (20 min)
+
 ```csharp
 // In Program.cs of each service:
 
@@ -500,6 +544,7 @@ app.UseOpenTelemetryPrometheusScrapingEndpoint();
 ```
 
 ### Step 6: Update Aspire AppHost (15 min)
+
 ```csharp
 // In hub-services Aspire AppHost Program.cs:
 
@@ -517,6 +562,7 @@ var grafana = builder.AddContainer("grafana", "grafana/grafana")
 ```
 
 ### Step 7: Test the Integration (10 min)
+
 ```bash
 # 1. Build solution
 dotnet build
@@ -538,6 +584,7 @@ curl http://localhost:YOUR_SERVICE_PORT/metrics
 ```
 
 ### Step 8: Baseline Measurement (15 min)
+
 ```bash
 # 1. Run services for 5 minutes under normal load
 # 2. Open Grafana System Health dashboard
@@ -556,23 +603,28 @@ curl http://localhost:YOUR_SERVICE_PORT/metrics
 ### System Health Dashboard (system-health.json)
 
 **CPU Metrics:**
+
 - `process_cpu_usage` - Process CPU utilization (%)
 - `process_cpu_seconds_total` - Total CPU time consumed
 
 **Memory Metrics:**
+
 - `process_working_set_bytes` - RAM usage by process
 - `process_private_memory_bytes` - Private memory bytes
 - `dotnet_total_memory_bytes` - .NET managed memory
 
 **Process Metrics:**
+
 - `process_uptime_seconds` - Service uptime
 - `process_num_threads` - Active thread count
 
 **HTTP Metrics:**
+
 - `http_server_request_duration_seconds` - Request latency
 - `http_server_active_requests` - Concurrent requests
 
 **Prometheus Queries to Understand:**
+
 ```promql
 # CPU usage percentage
 rate(process_cpu_seconds_total[1m]) * 100
@@ -594,11 +646,11 @@ histogram_quantile(0.95, rate(http_server_request_duration_seconds_bucket[5m]))
 After integration, verify:
 
 - [ ] Prometheus scraping metrics from all services
-  - Visit http://localhost:9090/targets
+  - Visit <http://localhost:9090/targets>
   - All targets should show "UP" status
 
 - [ ] Grafana dashboards loading data
-  - Login to http://localhost:3000 (admin/admin123)
+  - Login to <http://localhost:3000> (admin/admin123)
   - Open System Health dashboard
   - Verify all panels showing data (not "No Data")
 
@@ -607,7 +659,7 @@ After integration, verify:
   - Should return Prometheus-format metrics
 
 - [ ] Aspire Dashboard showing services
-  - Visit http://localhost:15888
+  - Visit <http://localhost:15888>
   - All services, Prometheus, Grafana should be green
 
 - [ ] Health checks working
@@ -619,18 +671,22 @@ After integration, verify:
 ## Common Issues and Solutions
 
 ### Issue 1: Prometheus shows "DOWN" targets
+
 **Symptoms:** Targets page shows services as unreachable
 
 **Solutions:**
+
 - Check service ports in `prometheus.yml` match actual ports
 - Verify services expose `/metrics` endpoint
 - Check Docker networking (services in same network)
 - Ensure `UseOpenTelemetryPrometheusScrapingEndpoint()` called
 
 ### Issue 2: Grafana dashboards show "No Data"
+
 **Symptoms:** Dashboard panels are empty
 
 **Solutions:**
+
 - Verify Prometheus datasource configured correctly
   - Grafana → Configuration → Data Sources → Prometheus
   - URL should be `http://prometheus:9090` (Docker) or `http://localhost:9090` (local)
@@ -639,18 +695,22 @@ After integration, verify:
 - Wait 1-2 minutes for initial data collection
 
 ### Issue 3: Missing metrics in Prometheus
+
 **Symptoms:** Some metrics not appearing in Prometheus
 
 **Solutions:**
+
 - Verify NuGet packages installed for specific instrumentation
 - Check `AddMetrics()` includes necessary instrumentation
 - Ensure services generating traffic (metrics appear on activity)
 - Check Prometheus scrape interval (default 15s)
 
 ### Issue 4: .NET Aspire won't start
+
 **Symptoms:** Aspire AppHost crashes on startup
 
 **Solutions:**
+
 - Verify .NET 9 SDK installed: `dotnet --list-sdks`
 - Check bind mount paths are correct (relative to AppHost project)
 - Ensure monitoring directories exist
@@ -658,9 +718,11 @@ After integration, verify:
 - Review Aspire logs in terminal
 
 ### Issue 5: Port conflicts
+
 **Symptoms:** "Port already in use" errors
 
 **Solutions:**
+
 - Check what's using the port: `lsof -i :9090`
 - Update port mappings in Aspire/docker-compose
 - Update Grafana datasource URL if Prometheus port changed
@@ -671,27 +733,30 @@ After integration, verify:
 ## Performance Measurement Strategy
 
 ### Before Payload Increase (Baseline)
+
 1. Run system under normal load for 15-30 minutes
 2. Record metrics:
-   - Average CPU: ____%
-   - Peak CPU: ____%
-   - Average RAM: ____ MB
-   - Peak RAM: ____ MB
-   - Average request latency: ____ ms
-   - P95 latency: ____ ms
-   - Request rate: ____ req/s
-   - Error rate: ____%
+   - Average CPU: \_\_\_\_%
+   - Peak CPU: \_\_\_\_%
+   - Average RAM: \_\_\_\_ MB
+   - Peak RAM: \_\_\_\_ MB
+   - Average request latency: \_\_\_\_ ms
+   - P95 latency: \_\_\_\_ ms
+   - Request rate: \_\_\_\_ req/s
+   - Error rate: \_\_\_\_%
 
 ### After Payload Increase
+
 1. Increase payload size
 2. Run system under same load conditions
 3. Record same metrics
 4. Calculate differences:
-   - CPU increase: ____% → ____% (+____%)
-   - RAM increase: ____ MB → ____ MB (+____ MB)
-   - Latency impact: ____ ms → ____ ms (+____ ms)
+   - CPU increase: \_**\_% → \_\_**% (+\_\_\_\_%)
+   - RAM increase: \_**\_ MB → \_\_** MB (+\_\_\_\_ MB)
+   - Latency impact: \_**\_ ms → \_\_** ms (+\_\_\_\_ ms)
 
 ### Grafana Dashboard Time Ranges
+
 - Use "Last 5 minutes" for real-time monitoring
 - Use "Last 1 hour" for trend analysis
 - Use "Last 24 hours" for daily patterns
@@ -702,6 +767,7 @@ After integration, verify:
 ## Reference Files in AiHubPerfExample
 
 ### Essential References
+
 1. **OpenTelemetry Setup:**
    - `BookStore.Common.Instrumentation/OpenTelemetryExtensions.cs`
    - Shows complete metrics configuration
@@ -729,17 +795,18 @@ After integration, verify:
    - Project overview and commands
 
 ### Optional References (Phase 2)
-7. **LLM Metrics:**
+
+1. **LLM Metrics:**
    - `BookStore.Service/Services/LLMServiceBase.cs:95-120`
    - Token tracking implementation
    - `monitoring/grafana/dashboards/bookstore-llm-metrics.json`
    - LLM-specific dashboard
 
-8. **K6 Testing:**
+2. **K6 Testing:**
    - `BookStore.Performance.Tests/scenarios/load-test.js`
    - Performance test examples
 
-9. **Advanced Dashboards:**
+3. **Advanced Dashboards:**
    - `monitoring/grafana/dashboards/*.json`
    - All 10 specialized dashboards
 
@@ -812,10 +879,10 @@ cat /Users/j.stennett/TAIS/AiHubPerfExample/docs/MIGRATION_TO_HUB_SERVICES.md
 
 ## Support Resources
 
-- **OpenTelemetry .NET Docs:** https://opentelemetry.io/docs/languages/net/
-- **Prometheus Query Docs:** https://prometheus.io/docs/prometheus/latest/querying/basics/
-- **Grafana Dashboard Docs:** https://grafana.com/docs/grafana/latest/dashboards/
-- **.NET Aspire Docs:** https://learn.microsoft.com/en-us/dotnet/aspire/
+- **OpenTelemetry .NET Docs:** <https://opentelemetry.io/docs/languages/net/>
+- **Prometheus Query Docs:** <https://prometheus.io/docs/prometheus/latest/querying/basics/>
+- **Grafana Dashboard Docs:** <https://grafana.com/docs/grafana/latest/dashboards/>
+- **.NET Aspire Docs:** <https://learn.microsoft.com/en-us/dotnet/aspire/>
 
 ---
 

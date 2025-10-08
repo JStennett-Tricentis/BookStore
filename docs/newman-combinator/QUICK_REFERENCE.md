@@ -16,11 +16,11 @@
 
 ## 📁 File Checklist (Copy These 8 Files)
 
-```
+```text
 ✅ src/combination-engine.js          # Cartesian product logic
-✅ src/test-runner.js                  # Newman orchestration
-✅ src/enhanced-report-generator.js    # HTML reports
-✅ src/export-combinations.js          # Combination viewer
+✅ src/test-runner.js                 # Newman orchestration
+✅ src/enhanced-report-generator.js   # HTML reports
+✅ src/export-combinations.js         # Combination viewer
 ✅ config/data-sets.json              # Test data (51 naughty strings)
 ✅ config/test-scenarios.json         # Scenario definitions
 ✅ config/environments.json           # Dev/staging/prod
@@ -139,7 +139,7 @@ node src/enhanced-report-generator.js --latest --open
 
 ### Single Dimension
 
-```
+```text
 naughtyStrings (51 items) → 51 tests
 
 "" → POST /Books//generate-summary
@@ -149,7 +149,7 @@ naughtyStrings (51 items) → 51 tests
 
 ### Multi-Dimensional (Cartesian Product)
 
-```
+```text
 isbnFormats (10) × endpoints (3) → 30 tests
 
 ISBN "978-0-..." × endpoint "search" → GET /books/search?isbn=978-0-...
@@ -288,18 +288,18 @@ node src/enhanced-report-generator.js --latest --open
 ```makefile
 .PHONY: combinator-export
 combinator-export:
-	@cd tests/newman-combinator && \
-	node src/export-combinations.js $(if $(SCENARIO),--scenario $(SCENARIO),)
+ @cd tests/newman-combinator && \
+ node src/export-combinations.js $(if $(SCENARIO),--scenario $(SCENARIO),)
 
 .PHONY: combinator-test
 combinator-test:
-	@cd tests/newman-combinator && \
-	node src/test-runner.js --scenario $(SCENARIO) --env $(ENV)
+ @cd tests/newman-combinator && \
+ node src/test-runner.js --scenario $(SCENARIO) --env $(ENV)
 
 .PHONY: combinator-report
 combinator-report:
-	@cd tests/newman-combinator && \
-	node src/enhanced-report-generator.js --latest --open
+ @cd tests/newman-combinator && \
+ node src/enhanced-report-generator.js --latest --open
 ```
 
 **Usage:**

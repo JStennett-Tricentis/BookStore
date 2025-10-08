@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K6 Performance Testing Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+        color: #e2e8f0;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .subtitle {
+        color: #cbd5e0;
+        font-size: 1.1rem;
+      }
+
+      .quick-links {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      .quick-link {
+        padding: 10px 20px;
+        background: rgba(99, 179, 237, 0.2);
+        border: 1px solid rgba(99, 179, 237, 0.4);
+        border-radius: 6px;
+        color: #90cdf4;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-weight: 500;
+      }
+
+      .quick-link:hover {
+        background: rgba(99, 179, 237, 0.3);
+        border-color: rgba(99, 179, 237, 0.6);
+        transform: translateY(-2px);
+      }
+
+      .dashboard {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      @media (max-width: 1024px) {
+        .dashboard {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 25px;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .panel h2 {
+        margin-bottom: 20px;
+        color: #fff;
+        font-size: 1.5rem;
+        border-bottom: 2px solid rgba(99, 179, 237, 0.3);
+        padding-bottom: 10px;
+      }
+
+      .scenario-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .scenario-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s;
+      }
+
+      .scenario-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(99, 179, 237, 0.4);
+      }
+
+      .scenario-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .scenario-name {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #90cdf4;
+      }
+
+      .scenario-description {
+        color: #cbd5e0;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+        font-size: 0.95rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+      }
+
+      .btn-primary:disabled {
+        background: #4a5568;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
+        color: white;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+      }
+
+      .btn-danger:hover {
+        background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+      }
+
+      .running-tests {
+        display: grid;
+        gap: 12px;
+      }
+
+      .test-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #4299e1;
+      }
+
+      .test-card.completed {
+        border-left-color: #48bb78;
+      }
+
+      .test-card.failed {
+        border-left-color: #f56565;
+      }
+
+      .test-card.running {
+        border-left-color: #ecc94b;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.8;
+        }
+      }
+
+      .test-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 10px;
+      }
+
+      .test-name {
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 5px;
+      }
+
+      .test-id {
+        color: #a0aec0;
+        font-size: 0.85rem;
+        font-family: monospace;
+      }
+
+      .test-status {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .status-running {
+        background: rgba(236, 201, 75, 0.2);
+        color: #ecc94b;
+      }
+
+      .status-completed {
+        background: rgba(72, 187, 120, 0.2);
+        color: #48bb78;
+      }
+
+      .status-failed {
+        background: rgba(245, 101, 101, 0.2);
+        color: #f56565;
+      }
+
+      .test-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .info-label {
+        font-size: 0.75rem;
+        color: #a0aec0;
+        margin-bottom: 2px;
+      }
+
+      .info-value {
+        font-weight: 600;
+        color: #e2e8f0;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #a0aec0;
+      }
+
+      .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        opacity: 0.5;
+      }
+
+      .spinner {
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-top-color: #4299e1;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+        margin-right: 8px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        color: #a0aec0;
+      }
+
+      .error {
+        background: rgba(245, 101, 101, 0.2);
+        border: 1px solid rgba(245, 101, 101, 0.4);
+        padding: 15px;
+        border-radius: 8px;
+        color: #fc8181;
+        margin-bottom: 20px;
+      }
+
+      .success {
+        background: rgba(72, 187, 120, 0.2);
+        border: 1px solid rgba(72, 187, 120, 0.4);
+        padding: 15px;
+        border-radius: 8px;
+        color: #68d391;
+        margin-bottom: 20px;
+      }
+
+      .test-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        color: #a0aec0;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🚀 K6 Performance Testing</h1>
+        <p class="subtitle">
+          Trigger load tests and monitor performance in real-time
+        </p>
+        <div class="quick-links">
+          <a href="http://localhost:3000" target="_blank" class="quick-link"
+            >📊 Grafana Dashboards</a
+          >
+          <a href="http://localhost:9090" target="_blank" class="quick-link"
+            >📈 Prometheus Metrics</a
+          >
+          <a href="http://localhost:15888" target="_blank" class="quick-link"
+            >🎯 Aspire Dashboard</a
+          >
+          <a href="http://localhost:7002/swagger" target="_blank" class="quick-link"
+            >📚 BookStore API</a
+          >
+        </div>
+      </header>
+
+      <div id="notification-area"></div>
+
+      <div class="dashboard">
+        <div class="panel">
+          <h2>⚡ Quick Start Tests</h2>
+          <div id="scenarios-container" class="scenario-grid">
+            <div class="loading">
+              <div class="spinner"></div>
+              Loading scenarios...
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>🏃 Running & Recent Tests</h2>
+          <div id="running-tests-container">
+            <div class="loading">
+              <div class="spinner"></div>
+              Loading tests...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          Performance Testing Dashboard | Powered by K6 & .NET Aspire |
+          <a
+            href="/swagger"
+            style="color: #90cdf4; text-decoration: none"
+            >API Docs</a
+          >
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      const API_BASE = "/api/v1/performancetest";
+      let refreshInterval = null;
+
+      // Scenario type enum (matches backend)
+      const ScenarioType = {
+        Smoke: 0,
+        Load: 1,
+        Stress: 2,
+        Spike: 3,
+        Soak: 4,
+        Volume: 5,
+      };
+
+      // Notification system
+      function showNotification(message, type = "success") {
+        const area = document.getElementById("notification-area");
+        const notification = document.createElement("div");
+        notification.className = type;
+        notification.textContent = message;
+        area.appendChild(notification);
+
+        setTimeout(() => {
+          notification.remove();
+        }, 5000);
+      }
+
+      // Load available scenarios
+      async function loadScenarios() {
+        const container = document.getElementById("scenarios-container");
+
+        try {
+          const response = await fetch(`${API_BASE}/scenarios`);
+          if (!response.ok) throw new Error("Failed to load scenarios");
+
+          const scenarios = await response.json();
+          container.innerHTML = "";
+
+          scenarios.forEach((scenario) => {
+            const card = document.createElement("div");
+            card.className = "scenario-card";
+            card.innerHTML = `
+              <div class="scenario-header">
+                <div class="scenario-name">${scenario.name}</div>
+              </div>
+              <div class="scenario-description">${scenario.description}</div>
+              <button class="btn btn-primary" onclick="startQuickTest('${scenario.name}')">
+                Start ${scenario.name} Test
+              </button>
+            `;
+            container.appendChild(card);
+          });
+        } catch (error) {
+          container.innerHTML = `
+            <div class="error">
+              Failed to load scenarios: ${error.message}
+            </div>
+          `;
+        }
+      }
+
+      // Start a quick test
+      async function startQuickTest(scenarioName) {
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner"></div> Starting...';
+
+        try {
+          const response = await fetch(
+            `${API_BASE}/quick-start/${scenarioName}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+
+          if (!response.ok) {
+            const error = await response.text();
+            throw new Error(error || "Failed to start test");
+          }
+
+          const result = await response.json();
+          showNotification(
+            `✅ ${scenarioName} test started! ID: ${result.testId}`,
+            "success"
+          );
+
+          // Refresh running tests
+          await loadRunningTests();
+
+          // Start auto-refresh if not already running
+          if (!refreshInterval) {
+            startAutoRefresh();
+          }
+        } catch (error) {
+          showNotification(`❌ Failed to start test: ${error.message}`, "error");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `Start ${scenarioName} Test`;
+        }
+      }
+
+      // Load running and recent tests
+      async function loadRunningTests() {
+        const container = document.getElementById("running-tests-container");
+
+        try {
+          const response = await fetch(`${API_BASE}/running`);
+          if (!response.ok) throw new Error("Failed to load tests");
+
+          const tests = await response.json();
+
+          if (tests.length === 0) {
+            container.innerHTML = `
+              <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <div>No running tests</div>
+                <div style="font-size: 0.9rem; margin-top: 5px;">
+                  Start a test from the Quick Start panel
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          container.innerHTML = "";
+          const runningTestsDiv = document.createElement("div");
+          runningTestsDiv.className = "running-tests";
+
+          tests.forEach((test) => {
+            const card = createTestCard(test);
+            runningTestsDiv.appendChild(card);
+          });
+
+          container.appendChild(runningTestsDiv);
+        } catch (error) {
+          container.innerHTML = `
+            <div class="error">
+              Failed to load tests: ${error.message}
+            </div>
+          `;
+        }
+      }
+
+      // Create a test card element
+      function createTestCard(test) {
+        const card = document.createElement("div");
+        const statusClass = getStatusClass(test.status);
+        card.className = `test-card ${statusClass}`;
+
+        const startTime = new Date(test.startTime).toLocaleString();
+        const duration = test.duration || "Running...";
+        const vus = test.options?.virtualUsers || "N/A";
+
+        card.innerHTML = `
+          <div class="test-header">
+            <div>
+              <div class="test-name">${test.testName}</div>
+              <div class="test-id">ID: ${test.testId}</div>
+            </div>
+            <span class="test-status status-${statusClass}">
+              ${test.status}
+            </span>
+          </div>
+          <div class="test-info">
+            <div class="info-item">
+              <span class="info-label">Started</span>
+              <span class="info-value">${startTime}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Duration</span>
+              <span class="info-value">${duration}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">VUs</span>
+              <span class="info-value">${vus}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Scenario</span>
+              <span class="info-value">${test.scenario || "Custom"}</span>
+            </div>
+          </div>
+          ${
+            test.status === "Running"
+              ? `
+          <div class="test-actions">
+            <button class="btn btn-danger" onclick="cancelTest('${test.testId}')">
+              Cancel Test
+            </button>
+          </div>
+          `
+              : ""
+          }
+        `;
+
+        return card;
+      }
+
+      // Get status class for styling
+      function getStatusClass(status) {
+        if (status === "Running") return "running";
+        if (status === "Completed") return "completed";
+        return "failed";
+      }
+
+      // Cancel a running test
+      async function cancelTest(testId) {
+        if (!confirm("Are you sure you want to cancel this test?")) return;
+
+        try {
+          const response = await fetch(`${API_BASE}/${testId}/cancel`, {
+            method: "POST",
+          });
+
+          if (!response.ok) throw new Error("Failed to cancel test");
+
+          showNotification(`✅ Test ${testId} cancelled`, "success");
+          await loadRunningTests();
+        } catch (error) {
+          showNotification(`❌ Failed to cancel test: ${error.message}`, "error");
+        }
+      }
+
+      // Auto-refresh running tests
+      function startAutoRefresh() {
+        refreshInterval = setInterval(async () => {
+          await loadRunningTests();
+        }, 5000); // Refresh every 5 seconds
+      }
+
+      function stopAutoRefresh() {
+        if (refreshInterval) {
+          clearInterval(refreshInterval);
+          refreshInterval = null;
+        }
+      }
+
+      // Initialize dashboard
+      async function init() {
+        await loadScenarios();
+        await loadRunningTests();
+        startAutoRefresh();
+      }
+
+      // Cleanup on page unload
+      window.addEventListener("beforeunload", stopAutoRefresh);
+
+      // Start the dashboard
+      init();
+    </script>
+  </body>
+</html>

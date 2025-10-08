@@ -87,6 +87,10 @@ app.MapPrometheusScrapingEndpoint();
 
 app.UseCors();
 
+// Static files for web UI
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

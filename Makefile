@@ -576,6 +576,22 @@ prometheus: ## Open Prometheus
 	@echo "Opening Prometheus..."
 	@open http://localhost:9090 || xdg-open http://localhost:9090
 
+.PHONY: perf-dashboard
+perf-dashboard: ## Open Performance Testing Dashboard (Web UI)
+	@echo "Opening Performance Testing Dashboard..."
+	@open http://localhost:7004 || xdg-open http://localhost:7004
+	@echo "✓ Performance Dashboard opened at http://localhost:7004"
+
+.PHONY: perf-workspace
+perf-workspace: ## Open complete performance testing workspace (Dashboard + Grafana + Prometheus)
+	@echo "Opening performance testing workspace..."
+	@open http://localhost:7004 || xdg-open http://localhost:7004
+	@sleep 0.5
+	@open http://localhost:3000/d/bookstore-mega || xdg-open http://localhost:3000/d/bookstore-mega
+	@sleep 0.5
+	@open http://localhost:15888 || xdg-open http://localhost:15888
+	@echo "✓ Workspace opened: Performance Dashboard, Grafana, Aspire Dashboard"
+
 # ==================== Quick Commands ====================
 
 .PHONY: up

@@ -90,7 +90,43 @@ k6 run scenarios/load-test.js --env BASE_URL=http://localhost:7002
 curl -X POST http://localhost:7004/api/v1/performancetest/start \
   -H "Content-Type: application/json" \
   -d '{"scenario": "smoke"}'
+
+# Web UI Dashboard (RECOMMENDED)
+make perf-dashboard              # Open performance testing web UI
+make perf-workspace             # Open complete workspace (Dashboard + Grafana + Aspire)
+# Then click "Start [Scenario] Test" buttons in the web interface
 ```
+
+### Performance Testing Web Dashboard ⭐ NEW
+
+**Self-contained web UI for triggering and monitoring K6 tests without CLI**
+
+Access: <http://localhost:7004>
+
+Features:
+- 🚀 One-click test execution (Smoke, Load, Stress, Spike)
+- 📊 Real-time test status monitoring (auto-refresh every 5s)
+- 🔗 Quick links to Grafana, Prometheus, Aspire Dashboard
+- 📈 Running & recent test history
+- 🎯 Test cancellation
+- ✅ Zero installation - single HTML file, no dependencies
+
+**Quick Start:**
+```bash
+make perf-workspace    # Opens dashboard + Grafana + Aspire in separate tabs
+# Then in dashboard: Click "Start Smoke Test"
+# Switch to Grafana tab to watch metrics live
+```
+
+**Workflow Example:**
+1. `make run-aspire` - Start all services
+2. `make perf-workspace` - Open workspace (3 tabs)
+3. Dashboard tab: Click "Start Load Test"
+4. Grafana tab: Watch CPU, RAM, request rates
+5. Aspire tab: Monitor service health
+6. Dashboard tab: View test completion
+
+See `BookStore.Performance.Service/wwwroot/README.md` for full documentation.
 
 ### Docker Operations
 

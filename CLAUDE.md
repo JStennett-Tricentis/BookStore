@@ -416,9 +416,11 @@ Edit `BookStore.Aspire.AppHost/appsettings.json`:
 
 ```json
 {
-  "ApiSimulatorEnabled": true // or false to disable
+  "ApiSimulatorEnabled": false  // Set to true to enable (disabled by default)
 }
 ```
+
+**Note:** The API Simulator is **disabled by default** to avoid Docker registry authentication issues. Enable it only when you need zero-cost LLM testing.
 
 **Ports:**
 

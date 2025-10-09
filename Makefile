@@ -33,7 +33,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "🌪️  CHAOS TESTING (Extreme Load)"
 	@echo "──────────────────────────────────────────────────────────────────"
-	@grep -E '^(chaos-workspace|grafana-chaos):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^(perf-chaos|perf-extreme|chaos-workspace|grafana-chaos):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "🤖 AI/LLM PERFORMANCE TESTING"
 	@echo "──────────────────────────────────────────────────────────────────"
@@ -256,7 +256,7 @@ perf-spike: ## Spike test - burst to 50 users
 		fi
 
 .PHONY: perf-chaos
-perf-chaos: ## Chaos test - random spikes, errors, LLM, all metrics (2.5 min)
+perf-chaos: ## Chaos test - random spikes, errors, LLM, all metrics (~4 min)
 	@echo "🌪️  Running chaos test - testing ALL dashboard widgets..."
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
@@ -265,6 +265,33 @@ perf-chaos: ## Chaos test - random spikes, errors, LLM, all metrics (2.5 min)
 		EXIT_CODE=$$?; \
 		echo "✓ Chaos complete. Generating HTML report..."; \
 		LATEST_JSON=$$(ls -t results/chaos-test-*.json 2>/dev/null | head -1); \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+
+.PHONY: perf-extreme
+perf-extreme: ## 🔥 EXTREME chaos test - WILL BREAK SYSTEM! (500+ VUs, 80% errors, ~6 min)
+	@echo "🔥🔥🔥 WARNING: EXTREME CHAOS TEST 🔥🔥🔥"
+	@echo "This test is DESIGNED TO BREAK YOUR SYSTEM!"
+	@echo ""
+	@echo "Peak load: 700 concurrent VUs"
+	@echo "Error rate: 50-80%"
+	@echo "Duration: ~6 minutes"
+	@echo "Expected: Service degradation, crashes, resource exhaustion"
+	@echo ""
+	@read -p "Are you sure? This WILL stress test to failure. (yes/no): " confirm; \
+	if [ "$$confirm" != "yes" ]; then \
+		echo "Cancelled. Use 'make perf-chaos' for standard chaos testing."; \
+		exit 1; \
+	fi
+	@echo ""
+	@echo "🔥 Starting EXTREME chaos test..."
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run scenarios/extreme-chaos-test.js --env BASE_URL=http://localhost:7002 \
+		--out json=results/extreme-chaos-$(shell date +%Y%m%d-%H%M%S).json; \
+		EXIT_CODE=$$?; \
+		echo "✓ EXTREME chaos complete (if system survived). Generating report..."; \
+		LATEST_JSON=$$(ls -t results/extreme-chaos-*.json 2>/dev/null | head -1); \
 		if [ -n "$$LATEST_JSON" ]; then \
 			node generate-html-report.js "$$LATEST_JSON" && \
 			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \

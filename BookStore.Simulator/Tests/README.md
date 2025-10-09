@@ -18,7 +18,7 @@ This directory contains contract tests that verify the API Simulator mock endpoi
    cd BookStore.Aspire.AppHost && dotnet run
    ```
 
-2. Open the Simulator UI: http://localhost:28880/ui/
+2. Open the Simulator UI: <http://localhost:28880/ui/>
 
 3. Navigate to the **Contract Tests** section
 
@@ -50,7 +50,7 @@ This directory contains contract tests that verify the API Simulator mock endpoi
 - ✅ `test_bedrock_invoke` - Bedrock Invoke Model
 - ✅ `test_bedrock_invoke_stream` - Bedrock Streaming
 
-**Total: 13 contract test services**
+Total: 13 contract test services
 
 ## SimV1 Schema Format
 
@@ -132,12 +132,12 @@ Ensure these ports are accessible:
 
 | Service       | Port  | Endpoint                   |
 | ------------- | ----- | -------------------------- |
-| Claude API    | 17070 | http://localhost:17070     |
-| OpenAI API    | 18080 | http://localhost:18080     |
-| Ollama API    | 11434 | http://localhost:11434     |
-| Bedrock API   | 19090 | http://localhost:19090     |
-| BookStore API | 17777 | http://localhost:17777     |
-| Simulator UI  | 28880 | http://localhost:28880/ui/ |
+| Claude API    | 17070 | <http://localhost:17070>     |
+| OpenAI API    | 18080 | <http://localhost:18080>     |
+| Ollama API    | 11434 | <http://localhost:11434>     |
+| Bedrock API   | 19090 | <http://localhost:19090>     |
+| BookStore API | 17777 | <http://localhost:17777>     |
+| Simulator UI  | 28880 | <http://localhost:28880/ui/> |
 
 ## Alternative Testing Methods
 
@@ -180,7 +180,7 @@ cd ../Postman
 
 Expected output:
 
-```
+```yaml
 🧪 Testing API Simulator Endpoints...
 
 === Simulator Management ===
@@ -204,7 +204,7 @@ Results: 7 passed, 0 failed
 
 ## Debugging
 
-1. **Check simulator logs** in Aspire Dashboard (http://localhost:15888)
+1. **Check simulator logs** in Aspire Dashboard (<http://localhost:15888>)
 2. **Verify simulations loaded** - Check simulator UI for active simulations
 3. **Test endpoints manually** - Use curl or Postman to verify connectivity
 4. **Review schema** - Validate against `simulations/iris_schema.json`

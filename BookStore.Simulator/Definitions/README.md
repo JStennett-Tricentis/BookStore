@@ -153,9 +153,9 @@ curl -X POST http://localhost:17777/api/v1/Books/68dedb16887eae6ff6743f51/genera
 
 Access the Tricentis Simulator UI to view all loaded simulations:
 
-- **UI Dashboard**: http://localhost:28880/ui/
-- **Settings API**: http://localhost:28880/api/agent/settings
-- **Simulations API**: http://localhost:28880/api/simulations
+- **UI Dashboard**: <http://localhost:28880/ui/>
+- **Settings API**: <http://localhost:28880/api/agent/settings>
+- **Simulations API**: <http://localhost:28880/api/simulations>
 
 ## Response Features
 

@@ -1,6 +1,6 @@
 # Tricentis API Simulator - Rules and Verification
 
-**Master verify, buffer, insert, save, and trigger rules**
+Master verify, buffer, insert, save, and trigger rules
 
 ## Overview
 
@@ -39,7 +39,7 @@ All rules use the same `RuleV1` structure from the schema.
 
 ##
 
-1.  Verify Rules (Response Validation)
+1. Verify Rules (Response Validation)
 
 Use `verify` in **`In`** steps to validate responses from external APIs.
 

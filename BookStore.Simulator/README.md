@@ -4,7 +4,7 @@ This directory contains all files related to the Tricentis API Simulator for zer
 
 ## Directory Structure
 
-```
+```yaml
 /simulations/
 ├── /definitions/          # Simulation YAML files (SimV1 schema)
 │   ├── claude-api.yaml
@@ -118,11 +118,11 @@ cd simulations/postman
 
 ## Features
 
-✅ **Zero-Cost Testing** - No API charges during load tests  
-✅ **Realistic Responses** - Token counts, timing, proper formats  
-✅ **Hot Reload** - Changes detected automatically  
-✅ **Full OpenTelemetry** - Traces, metrics, logs  
-✅ **Contract Tests** - Validate simulator behavior  
+✅ **Zero-Cost Testing** - No API charges during load tests
+✅ **Realistic Responses** - Token counts, timing, proper formats
+✅ **Hot Reload** - Changes detected automatically
+✅ **Full OpenTelemetry** - Traces, metrics, logs
+✅ **Contract Tests** - Validate simulator behavior
 ✅ **Postman Integration** - Ready-to-use collections
 
 ## Related Documentation

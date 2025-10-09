@@ -154,7 +154,12 @@ app.MapGet("/swagger", () => Results.Redirect("/swagger/index.html"));
 
 app.UseHealthChecks("/health");
 
-app.MapPrometheusScrapingEndpoint();
+// Only map Prometheus endpoint if exporter is enabled
+var prometheusEnabled = builder.Configuration.GetValue<bool>("Telemetry:Exporters:Prometheus:Enabled");
+if (prometheusEnabled)
+{
+    app.MapPrometheusScrapingEndpoint();
+}
 
 app.UseCors();
 

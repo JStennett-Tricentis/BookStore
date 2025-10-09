@@ -31,6 +31,10 @@ help: ## Show this help message
 	@echo "──────────────────────────────────────────────────────────────────"
 	@grep -E '^(perf-smoke|perf-load|perf-stress|perf-spike|perf-chaos|perf-comprehensive|perf-errors|perf-start-test|perf-list-tests|perf-results|perf-clean|perf-report|perf-report-latest|perf-report-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
+	@echo "🌪️  CHAOS TESTING (Extreme Load)"
+	@echo "──────────────────────────────────────────────────────────────────"
+	@grep -E '^(chaos-workspace|grafana-chaos):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@echo ""
 	@echo "🤖 AI/LLM PERFORMANCE TESTING"
 	@echo "──────────────────────────────────────────────────────────────────"
 	@grep -E '^(perf-ai-smoke|perf-ai-load|perf-ai-stress|perf-ai-spike|perf-mixed|perf-mixed-heavy|perf-ai-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -539,6 +543,11 @@ grafana: ## Open Grafana Dashboard
 	@echo "Opening Grafana Dashboard..."
 	@open http://localhost:3333 || xdg-open http://localhost:3333
 
+.PHONY: grafana-chaos
+grafana-chaos: ## Open Chaos Testing dashboard (RECOMMENDED for chaos testing)
+	@echo "Opening Chaos Testing dashboard..."
+	@open http://localhost:3333/d/bookstore-chaos || xdg-open http://localhost:3333/d/bookstore-chaos
+
 .PHONY: grafana-dashboards
 grafana-dashboards: ## Open all Grafana dashboards in separate tabs
 	@echo "Opening all Grafana dashboards..."
@@ -553,6 +562,8 @@ grafana-dashboards: ## Open all Grafana dashboards in separate tabs
 	@open http://localhost:3333/d/bookstore-http-performance || xdg-open http://localhost:3333/d/bookstore-http-performance
 	@sleep 0.5
 	@open http://localhost:3333/d/bookstore-threading || xdg-open http://localhost:3333/d/bookstore-threading
+	@sleep 0.5
+	@open http://localhost:3333/d/bookstore-chaos || xdg-open http://localhost:3333/d/bookstore-chaos
 	@sleep 0.5
 	@open http://localhost:3333/d/bookstore-dependencies || xdg-open http://localhost:3333/d/bookstore-dependencies
 	@sleep 0.5
@@ -588,6 +599,18 @@ perf-workspace: ## Open complete performance testing workspace (Dashboard + Graf
 	@open http://localhost:7004 || xdg-open http://localhost:7004
 	@sleep 0.5
 	@open http://localhost:3333/d/bookstore-mega || xdg-open http://localhost:3333/d/bookstore-mega
+	@sleep 0.5
+	@open http://localhost:15888 || xdg-open http://localhost:15888
+
+.PHONY: chaos-workspace
+chaos-workspace: ## Open chaos testing workspace (Dashboard + Chaos Dashboard + Aspire)
+	@echo "🌪️  Opening CHAOS testing workspace..."
+	@echo "   1. Performance Dashboard (start test)"
+	@echo "   2. Chaos Grafana Dashboard (watch metrics)"
+	@echo "   3. Aspire Dashboard (monitor services)"
+	@open http://localhost:7004 || xdg-open http://localhost:7004
+	@sleep 0.5
+	@open http://localhost:3333/d/bookstore-chaos?refresh=5s || xdg-open http://localhost:3333/d/bookstore-chaos?refresh=5s
 	@sleep 0.5
 	@open http://localhost:15888 || xdg-open http://localhost:15888
 	@echo "✓ Workspace opened: Performance Dashboard, Grafana, Aspire Dashboard"

@@ -6,11 +6,22 @@
 
 const fs = require("fs");
 const path = require("path");
+const readline = require("readline");
 
-function generateHTMLReport(jsonFile) {
-    // Read K6 JSON output
-    const data = fs.readFileSync(jsonFile, "utf8");
-    const lines = data.trim().split("\n");
+async function generateHTMLReport(jsonFile) {
+    // Stream K6 JSON output line by line to handle large files
+    const fileStream = fs.createReadStream(jsonFile);
+    const rl = readline.createInterface({
+        input: fileStream,
+        crlfDelay: Infinity
+    });
+
+    const lines = [];
+    for await (const line of rl) {
+        if (line.trim()) {
+            lines.push(line);
+        }
+    }
 
     const metrics = {};
     const checks = {};
@@ -360,22 +371,30 @@ function generateHTMLReport(jsonFile) {
 }
 
 // Main execution
-const args = process.argv.slice(2);
-if (args.length === 0) {
-    console.error("Usage: node generate-html-report.js <k6-json-output-file>");
-    console.error("Example: node generate-html-report.js results/smoke-20250101-120000.json");
-    process.exit(1);
+async function main() {
+    const args = process.argv.slice(2);
+    if (args.length === 0) {
+        console.error("Usage: node generate-html-report.js <k6-json-output-file>");
+        console.error("Example: node generate-html-report.js results/smoke-20250101-120000.json");
+        process.exit(1);
+    }
+
+    const jsonFile = args[0];
+    if (!fs.existsSync(jsonFile)) {
+        console.error(`Error: File not found: ${jsonFile}`);
+        process.exit(1);
+    }
+
+    const html = await generateHTMLReport(jsonFile);
+    const outputFile = jsonFile.replace(".json", ".html");
+    fs.writeFileSync(outputFile, html);
+
+    console.log(`✓ HTML report generated: ${outputFile}`);
+    console.log(`  Open in browser: open ${outputFile}`);
 }
 
-const jsonFile = args[0];
-if (!fs.existsSync(jsonFile)) {
-    console.error(`Error: File not found: ${jsonFile}`);
+// Run main function
+main().catch(err => {
+    console.error("Error generating report:", err);
     process.exit(1);
-}
-
-const html = generateHTMLReport(jsonFile);
-const outputFile = jsonFile.replace(".json", ".html");
-fs.writeFileSync(outputFile, html);
-
-console.log(`✓ HTML report generated: ${outputFile}`);
-console.log(`  Open in browser: open ${outputFile}`);
+});

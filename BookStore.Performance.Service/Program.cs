@@ -82,8 +82,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHealthChecks("/health");
 
-// Prometheus metrics scraping endpoint
-app.MapPrometheusScrapingEndpoint();
+// Prometheus metrics scraping endpoint - only if enabled
+var prometheusEnabled = builder.Configuration.GetValue<bool>("Telemetry:Exporters:Prometheus:Enabled");
+if (prometheusEnabled)
+{
+    app.MapPrometheusScrapingEndpoint();
+}
 
 app.UseCors();
 

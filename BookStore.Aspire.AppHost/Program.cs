@@ -32,10 +32,10 @@ var grafanaDashboardsPath = Path.GetFullPath(Path.Combine(builder.AppHostDirecto
 var grafana = builder.AddContainer("grafana", "grafana/grafana", "10.2.0")
     .WithBindMount(grafanaDatasourcesPath, "/etc/grafana/provisioning/datasources", isReadOnly: true)
     .WithBindMount(grafanaDashboardsPath, "/etc/grafana/provisioning/dashboards", isReadOnly: true)
-    .WithHttpEndpoint(port: 3000, targetPort: 3000, name: "http")
+    .WithHttpEndpoint(port: 3333, targetPort: 3000, name: "http")
     .WithEnvironment("GF_SECURITY_ADMIN_PASSWORD", "admin123")
     .WithEnvironment("GF_USERS_ALLOW_SIGN_UP", "false")
-    .WithEnvironment("GF_SERVER_ROOT_URL", "http://localhost:3000");
+    .WithEnvironment("GF_SERVER_ROOT_URL", "http://localhost:3333");
 
 // BookStore Service
 var bookstoreService = builder.AddProject<Projects.BookStore_Service>("bookstore-service")

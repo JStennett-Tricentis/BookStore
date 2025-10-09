@@ -313,7 +313,7 @@ Key configuration patterns in Program.cs:
 - API Simulator (service): port 5020
 - Aspire Dashboard: port 15888
 - Prometheus: port 9090
-- Grafana: port 3000 (credentials: admin/admin123)
+- Grafana: port 3333 (credentials: admin/admin123)
 
 ### Important Endpoints
 

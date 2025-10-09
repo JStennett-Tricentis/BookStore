@@ -426,7 +426,7 @@ run-aspire:
 
 # Open monitoring tools
 grafana:
- open http://localhost:3000
+ open http://localhost:3333
 
 prometheus:
  open http://localhost:9090
@@ -573,7 +573,7 @@ cd AppHost && dotnet run
 # 3. Verify services started
 curl http://localhost:15888  # Aspire Dashboard
 curl http://localhost:9090   # Prometheus
-curl http://localhost:3000   # Grafana (admin/admin123)
+curl http://localhost:3333   # Grafana (admin/admin123)
 
 # 4. Check metrics endpoint
 curl http://localhost:YOUR_SERVICE_PORT/metrics
@@ -650,7 +650,7 @@ After integration, verify:
   - All targets should show "UP" status
 
 - [ ] Grafana dashboards loading data
-  - Login to <http://localhost:3000> (admin/admin123)
+  - Login to <http://localhost:3333> (admin/admin123)
   - Open System Health dashboard
   - Verify all panels showing data (not "No Data")
 

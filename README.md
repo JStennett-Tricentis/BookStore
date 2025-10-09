@@ -19,7 +19,7 @@ make perf-report
 
 - API: <http://localhost:7002/swagger>
 - Aspire Dashboard: <http://localhost:15888>
-- Grafana: <http://localhost:3000> (admin/admin123)
+- Grafana: <http://localhost:3333> (admin/admin123)
 - Prometheus: <http://localhost:9090>
 
 **Dashboards:**

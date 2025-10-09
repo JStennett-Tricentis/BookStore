@@ -90,7 +90,7 @@ make perf-workspace
 ### Example 2: Load Testing Session
 
 1. Open Performance Dashboard (<http://localhost:7004>)
-2. Open Grafana in new tab (<http://localhost:3000/d/bookstore-mega>)
+2. Open Grafana in new tab (<http://localhost:3333/d/bookstore-mega>)
 3. In Dashboard: Start Load Test
 4. In Grafana: Monitor CPU, RAM, request rates
 5. In Dashboard: View test completion status

@@ -537,38 +537,38 @@ aspire-dashboard: ## Open Aspire Dashboard
 .PHONY: grafana
 grafana: ## Open Grafana Dashboard
 	@echo "Opening Grafana Dashboard..."
-	@open http://localhost:3000 || xdg-open http://localhost:3000
+	@open http://localhost:3333 || xdg-open http://localhost:3333
 
 .PHONY: grafana-dashboards
 grafana-dashboards: ## Open all Grafana dashboards in separate tabs
 	@echo "Opening all Grafana dashboards..."
-	@open http://localhost:3000/d/bookstore-perf || xdg-open http://localhost:3000/d/bookstore-perf
+	@open http://localhost:3333/d/bookstore-perf || xdg-open http://localhost:3333/d/bookstore-perf
 	@sleep 0.5
-	@open http://localhost:3000/d/bookstore-errors || xdg-open http://localhost:3000/d/bookstore-errors
+	@open http://localhost:3333/d/bookstore-errors || xdg-open http://localhost:3333/d/bookstore-errors
 	@sleep 0.5
-	@open http://localhost:3000/d/bookstore-llm || xdg-open http://localhost:3000/d/bookstore-llm
+	@open http://localhost:3333/d/bookstore-llm || xdg-open http://localhost:3333/d/bookstore-llm
 	@sleep 0.5
-	@open http://localhost:3000/d/bookstore-dotnet-runtime || xdg-open http://localhost:3000/d/bookstore-dotnet-runtime
+	@open http://localhost:3333/d/bookstore-dotnet-runtime || xdg-open http://localhost:3333/d/bookstore-dotnet-runtime
 	@sleep 0.5
-	@open http://localhost:3000/d/bookstore-http-performance || xdg-open http://localhost:3000/d/bookstore-http-performance
+	@open http://localhost:3333/d/bookstore-http-performance || xdg-open http://localhost:3333/d/bookstore-http-performance
 	@sleep 0.5
-	@open http://localhost:3000/d/bookstore-threading || xdg-open http://localhost:3000/d/bookstore-threading
+	@open http://localhost:3333/d/bookstore-threading || xdg-open http://localhost:3333/d/bookstore-threading
 	@sleep 0.5
-	@open http://localhost:3000/d/bookstore-dependencies || xdg-open http://localhost:3000/d/bookstore-dependencies
+	@open http://localhost:3333/d/bookstore-dependencies || xdg-open http://localhost:3333/d/bookstore-dependencies
 	@sleep 0.5
-	@open http://localhost:3000/d/bookstore-system || xdg-open http://localhost:3000/d/bookstore-system
+	@open http://localhost:3333/d/bookstore-system || xdg-open http://localhost:3333/d/bookstore-system
 	@echo "✓ All 8 dashboards opened"
 
 .PHONY: grafana-demo
 grafana-demo: ## Open comprehensive demo dashboard (53 curated panels)
 	@echo "Opening demo dashboard..."
-	@open http://localhost:3000/d/bookstore-demo || xdg-open http://localhost:3000/d/bookstore-demo
+	@open http://localhost:3333/d/bookstore-demo || xdg-open http://localhost:3333/d/bookstore-demo
 	@echo "✓ Demo dashboard opened"
 
 .PHONY: grafana-mega
 grafana-mega: ## Open MEGA dashboard with ALL 91 widgets
 	@echo "Opening MEGA dashboard..."
-	@open http://localhost:3000/d/bookstore-mega || xdg-open http://localhost:3000/d/bookstore-mega
+	@open http://localhost:3333/d/bookstore-mega || xdg-open http://localhost:3333/d/bookstore-mega
 	@echo "✓ MEGA dashboard opened (91 widgets across 8 sections)"
 
 .PHONY: prometheus
@@ -587,7 +587,7 @@ perf-workspace: ## Open complete performance testing workspace (Dashboard + Graf
 	@echo "Opening performance testing workspace..."
 	@open http://localhost:7004 || xdg-open http://localhost:7004
 	@sleep 0.5
-	@open http://localhost:3000/d/bookstore-mega || xdg-open http://localhost:3000/d/bookstore-mega
+	@open http://localhost:3333/d/bookstore-mega || xdg-open http://localhost:3333/d/bookstore-mega
 	@sleep 0.5
 	@open http://localhost:15888 || xdg-open http://localhost:15888
 	@echo "✓ Workspace opened: Performance Dashboard, Grafana, Aspire Dashboard"

@@ -51,7 +51,12 @@ SimV1 Schema Reference for BookStore Project
    - Reusable templates
    - Data-driven simulations
 
-3. **[09-ADVANCED-FEATURES.md](./09-ADVANCED-FEATURES.md)** 🚀 (15 min)
+3. **[11-EXTERNAL-DATA-FILES.md](./11-EXTERNAL-DATA-FILES.md)** 📊 (15 min)
+   - Building complex test cases with external data
+   - Performance testing with CSV datasets
+   - Best practices for data-driven testing
+
+4. **[09-ADVANCED-FEATURES.md](./09-ADVANCED-FEATURES.md)** 🚀 (15 min)
    - Forward/proxy mode
    - Learning mode (record real APIs)
    - Conditional simulation fallback
@@ -97,6 +102,10 @@ SimV1 Schema Reference for BookStore Project
 #### Use CSV/JSON files as data sources
 
 → See **[08-RESOURCES-TEMPLATES.md](./08-RESOURCES-TEMPLATES.md)**
+
+#### Build complex test cases with external data
+
+→ See **[11-EXTERNAL-DATA-FILES.md](./11-EXTERNAL-DATA-FILES.md)**
 
 #### Forward some requests to real APIs
 
@@ -291,8 +300,9 @@ services:
 | Response Generation | ✅ 04-MESSAGES.md            | ✅ All definition files      |
 | Verification        | ✅ 07-RULES-VERIFICATION.md  | ✅ Contract tests            |
 | Buffering           | ✅ 07-RULES-VERIFICATION.md  | ❌ Not in examples           |
-| Resources           | ✅ 08-RESOURCES-TEMPLATES.md | ❌ Not in examples           |
+| Resources           | ✅ 08-RESOURCES-TEMPLATES.md, 11-EXTERNAL-DATA-FILES.md | ❌ Not in examples           |
 | Templates           | ✅ 08-RESOURCES-TEMPLATES.md | ❌ Not in examples           |
+| External Data Files | ✅ 11-EXTERNAL-DATA-FILES.md | ❌ Not in examples           |
 | Forwarding          | ✅ 09-ADVANCED-FEATURES.md   | ❌ Not in examples           |
 | Learning            | ✅ 09-ADVANCED-FEATURES.md   | ❌ Not in examples           |
 
@@ -322,11 +332,12 @@ services:
 2. 05-TRIGGERS.md
 3. 07-RULES-VERIFICATION.md (verify + buffer)
 
-### Advanced (60 minutes)
+### Advanced (75 minutes)
 
 1. 06-OPENAI-LLM.md
 2. 08-RESOURCES-TEMPLATES.md
-3. 09-ADVANCED-FEATURES.md
+3. 11-EXTERNAL-DATA-FILES.md
+4. 09-ADVANCED-FEATURES.md
 
 ---
 
@@ -351,7 +362,7 @@ When working with Tricentis API Simulator files (SimV1 schema):
 
 ---
 
-**Total Documentation**: ~2 hours to read comprehensively
+**Total Documentation**: ~2.25 hours to read comprehensively
 **Quick Start**: 5 minutes (QUICK-START.md only)
 **Schema Version**: SimV1
 **Last Updated**: October 2025

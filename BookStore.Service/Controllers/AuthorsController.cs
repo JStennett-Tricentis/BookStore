@@ -18,14 +18,21 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Author>>> GetAuthors(
+    public async Task<ActionResult<object>> GetAuthors(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
         try
         {
-            var authors = await _authorService.GetAuthorsAsync(page, pageSize);
-            return Ok(authors);
+            var (authors, totalCount) = await _authorService.GetAuthorsAsync(page, pageSize);
+            return Ok(new
+            {
+                authors = authors,
+                totalCount = totalCount,
+                page = page,
+                pageSize = pageSize,
+                totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+            });
         }
         catch (Exception ex)
         {
@@ -69,6 +76,37 @@ public class AuthorsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating author");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpPost("bulk")]
+    public async Task<ActionResult<IEnumerable<Author>>> CreateAuthors([FromBody] IEnumerable<Author> authors)
+    {
+        try
+        {
+            var authorsList = authors.ToList();
+
+            if (!authorsList.Any())
+            {
+                return BadRequest("Authors list cannot be empty");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var createdAuthors = await _authorService.CreateAuthorsAsync(authorsList);
+            return Ok(new
+            {
+                message = $"Successfully created {createdAuthors.Count()} authors",
+                authors = createdAuthors
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating authors in bulk");
             return StatusCode(500, "Internal server error");
         }
     }

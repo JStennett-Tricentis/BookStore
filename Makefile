@@ -27,13 +27,21 @@ help: ## Show this help message
 	@echo "──────────────────────────────────────────────────────────────────"
 	@grep -E '^(docker-build|docker-run|docker-stop|docker-clean|docker-logs|docker-observability|docker-perf|down):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
-	@echo "🔥 PERFORMANCE TESTING"
+	@echo "🔥 PERFORMANCE TESTING - Standard Tests (Hardcoded Data)"
 	@echo "──────────────────────────────────────────────────────────────────"
-	@grep -E '^(perf-smoke|perf-load|perf-stress|perf-spike|perf-chaos|perf-comprehensive|perf-errors|perf-start-test|perf-list-tests|perf-results|perf-clean|perf-report|perf-report-latest|perf-report-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^(perf-smoke|perf-load|perf-stress|perf-spike|perf-chaos|perf-errors|perf-comprehensive):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "🎲 PERFORMANCE TESTING - Generated Data Tests (Variable Data)"
+	@echo "──────────────────────────────────────────────────────────────────"
+	@grep -E '^(perf-smoke-gen|perf-load-gen|perf-stress-gen|perf-spike-gen|perf-chaos-gen|perf-errors-gen):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+	@echo "📊 PERFORMANCE TESTING - Reports & Management"
+	@echo "──────────────────────────────────────────────────────────────────"
+	@grep -E '^(perf-start-test|perf-list-tests|perf-results|perf-clean|perf-report|perf-report-latest|perf-report-all):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "🌪️  CHAOS TESTING (Extreme Load)"
 	@echo "──────────────────────────────────────────────────────────────────"
-	@grep -E '^(perf-chaos|perf-extreme|chaos-workspace|grafana-chaos):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^(perf-chaos|perf-chaos-gen|perf-extreme|chaos-workspace|grafana-chaos):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "🤖 AI/LLM PERFORMANCE TESTING"
 	@echo "──────────────────────────────────────────────────────────────────"
@@ -49,7 +57,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "💾 DATA MANAGEMENT"
 	@echo "──────────────────────────────────────────────────────────────────"
-	@grep -E '^(seed-data|reset-db):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^(seed-data|reset-db|gen-book|gen-author|gen-books|gen-authors|gen-compact|gen-batch|gen-help):.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 	@echo "🔄 WORKFLOWS & CI/CD"
 	@echo "──────────────────────────────────────────────────────────────────"
@@ -185,9 +193,15 @@ docker-observability: ## Start monitoring stack (Grafana:3333)
 	@echo "Grafana: http://localhost:3333"
 
 # ==================== Performance Testing ====================
+#
+# Two types of tests available:
+#   1. Standard tests (perf-*): Use hardcoded/inline test data
+#   2. Generated data tests (perf-*-gen): Use pre-generated variable data from C# tool
+#
+# Generated data tests provide more realistic scenarios with varied data
 
 .PHONY: perf-smoke
-perf-smoke: ## Quick test - 1 user, 2 min
+perf-smoke: ## [Standard] Quick test - 1 user, 2 min
 	@echo "Running smoke test..."
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
@@ -204,8 +218,31 @@ perf-smoke: ## Quick test - 1 user, 2 min
 		fi; \
 		exit $$EXIT_CODE
 
+.PHONY: perf-smoke-gen
+perf-smoke-gen: ## [Generated] Smoke test with variable data (2 VUs, 2 min)
+	@echo "🎲 Running smoke test with pre-generated data..."
+	@echo "   Generating fresh test data..."
+	@cd Tools/BookStore.Performance.RequestGenerator && \
+		dotnet run -- book --count 50 --output test-data/books-bulk.json > /dev/null 2>&1 && \
+		dotnet run -- author --count 25 --output test-data/authors-bulk.json > /dev/null 2>&1
+	@echo "   ✓ Generated 50 books, 25 authors"
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run scenarios/smoke-test-generated-data.js --env BASE_URL=http://localhost:7002 \
+		--out json=results/smoke-gen-test-$(shell date +%Y%m%d-%H%M%S).json; \
+		EXIT_CODE=$$?; \
+		echo "✓ Test complete. Generating HTML report..."; \
+		LATEST_JSON=$$(ls -t results/smoke-gen-test-*.json 2>/dev/null | head -1); \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			(open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML" 2>/dev/null); \
+		fi; \
+		exit $$EXIT_CODE
+
 .PHONY: perf-load
-perf-load: ## Load test - 10 users, 10 min
+perf-load: ## [Standard] Load test - 10 users, 10 min
 	@echo "Running load test..."
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
@@ -221,8 +258,31 @@ perf-load: ## Load test - 10 users, 10 min
 			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
 		fi
 
+.PHONY: perf-load-gen
+perf-load-gen: ## [Generated] Load test with variable data (20 VUs, 16 min)
+	@echo "🎲 Running load test with pre-generated data..."
+	@echo "   Generating fresh test data..."
+	@cd Tools/BookStore.Performance.RequestGenerator && \
+		dotnet run -- book --count 100 --output test-data/books-bulk.json > /dev/null 2>&1 && \
+		dotnet run -- author --count 50 --output test-data/authors-bulk.json > /dev/null 2>&1
+	@echo "   ✓ Generated 100 books, 50 authors"
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run scenarios/load-test-generated-data.js --env BASE_URL=http://localhost:7002 \
+		--out json=results/load-gen-test-$(shell date +%Y%m%d-%H%M%S).json; \
+		EXIT_CODE=$$?; \
+		echo "✓ Test complete. Generating HTML report..."; \
+		LATEST_JSON=$$(ls -t results/load-gen-test-*.json 2>/dev/null | head -1); \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			(open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML" 2>/dev/null); \
+		fi; \
+		exit $$EXIT_CODE
+
 .PHONY: perf-stress
-perf-stress: ## Stress test - 30 users, 15 min
+perf-stress: ## [Standard] Stress test - 30 users, 15 min
 	@echo "Running stress test..."
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
@@ -238,8 +298,31 @@ perf-stress: ## Stress test - 30 users, 15 min
 			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
 		fi
 
+.PHONY: perf-stress-gen
+perf-stress-gen: ## [Generated] Stress test with variable data (40 VUs, 17 min)
+	@echo "🎲 Running stress test with pre-generated data..."
+	@echo "   Generating fresh test data..."
+	@cd Tools/BookStore.Performance.RequestGenerator && \
+		dotnet run -- book --count 150 --output test-data/books-bulk.json > /dev/null 2>&1 && \
+		dotnet run -- author --count 75 --output test-data/authors-bulk.json > /dev/null 2>&1
+	@echo "   ✓ Generated 150 books, 75 authors"
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run scenarios/stress-test-generated-data.js --env BASE_URL=http://localhost:7002 \
+		--out json=results/stress-gen-test-$(shell date +%Y%m%d-%H%M%S).json; \
+		EXIT_CODE=$$?; \
+		echo "✓ Test complete. Generating HTML report..."; \
+		LATEST_JSON=$$(ls -t results/stress-gen-test-*.json 2>/dev/null | head -1); \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			(open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML" 2>/dev/null); \
+		fi; \
+		exit $$EXIT_CODE
+
 .PHONY: perf-spike
-perf-spike: ## Spike test - burst to 50 users
+perf-spike: ## [Standard] Spike test - burst to 50 users
 	@echo "Running spike test..."
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
@@ -255,8 +338,31 @@ perf-spike: ## Spike test - burst to 50 users
 			open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML"; \
 		fi
 
+.PHONY: perf-spike-gen
+perf-spike-gen: ## [Generated] Spike test with variable data (5→50 VUs, 7 min)
+	@echo "🎲 Running spike test with pre-generated data..."
+	@echo "   Generating fresh test data..."
+	@cd Tools/BookStore.Performance.RequestGenerator && \
+		dotnet run -- book --count 100 --output test-data/books-bulk.json > /dev/null 2>&1 && \
+		dotnet run -- author --count 50 --output test-data/authors-bulk.json > /dev/null 2>&1
+	@echo "   ✓ Generated 100 books, 50 authors"
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run scenarios/spike-test-generated-data.js --env BASE_URL=http://localhost:7002 \
+		--out json=results/spike-gen-test-$(shell date +%Y%m%d-%H%M%S).json; \
+		EXIT_CODE=$$?; \
+		echo "✓ Test complete. Generating HTML report..."; \
+		LATEST_JSON=$$(ls -t results/spike-gen-test-*.json 2>/dev/null | head -1); \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			(open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML" 2>/dev/null); \
+		fi; \
+		exit $$EXIT_CODE
+
 .PHONY: perf-chaos
-perf-chaos: ## Chaos test - random spikes, errors, LLM, all metrics (~4 min)
+perf-chaos: ## [Standard] Chaos test - random spikes, errors, LLM (~4 min)
 	@echo "🌪️  Running chaos test - testing ALL dashboard widgets..."
 	@mkdir -p BookStore.Performance.Tests/results
 	@cd BookStore.Performance.Tests && \
@@ -267,6 +373,34 @@ perf-chaos: ## Chaos test - random spikes, errors, LLM, all metrics (~4 min)
 		LATEST_JSON=$$(ls -t results/chaos-test-*.json 2>/dev/null | head -1); \
 		if [ -n "$$LATEST_JSON" ]; then \
 			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			(open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML" 2>/dev/null); \
+		fi; \
+		exit $$EXIT_CODE
+
+.PHONY: perf-chaos-gen
+perf-chaos-gen: ## [Generated] Chaos test with variable data (~4 min)
+	@echo "🎲🌪️  Running chaos test with pre-generated data..."
+	@echo "   Generating fresh test data..."
+	@cd Tools/BookStore.Performance.RequestGenerator && \
+		dotnet run -- book --count 100 --output test-data/books-bulk.json > /dev/null 2>&1 && \
+		dotnet run -- author --count 50 --output test-data/authors-bulk.json > /dev/null 2>&1
+	@echo "   ✓ Generated 100 books, 50 authors"
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run scenarios/chaos-test-generated-data.js --env BASE_URL=http://localhost:7002 \
+		--out json=results/chaos-gen-test-$(shell date +%Y%m%d-%H%M%S).json; \
+		EXIT_CODE=$$?; \
+		echo "✓ Chaos complete. Generating HTML report..."; \
+		LATEST_JSON=$$(ls -t results/chaos-gen-test-*.json 2>/dev/null | head -1); \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			(open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML" 2>/dev/null); \
+		fi; \
+		exit $$EXIT_CODE
 
 .PHONY: perf-extreme
 perf-extreme: ## 🔥 EXTREME chaos test - WILL BREAK SYSTEM! (500+ VUs, 80% errors, ~6 min)
@@ -419,7 +553,7 @@ perf-ai-all: ## Run all AI performance tests (~40 min)
 	@$(MAKE) perf-ai-spike
 
 .PHONY: perf-errors
-perf-errors: ## Error handling test (intentionally generates errors)
+perf-errors: ## [Standard] Error scenarios (validates error handling)
 	@echo "Running error scenario test..."
 	@echo "⚠️  This test intentionally generates errors to validate error handling"
 	@mkdir -p BookStore.Performance.Tests/results
@@ -428,6 +562,30 @@ perf-errors: ## Error handling test (intentionally generates errors)
 		--out json=results/errors-$(shell date +%Y%m%d-%H%M%S).json
 	@echo "✓ Test complete. Run 'make perf-report' to view HTML report"
 	@echo "📊 Check Grafana for error metrics and traces in Traceloop"
+
+.PHONY: perf-errors-gen
+perf-errors-gen: ## [Generated] Error scenarios with variable data
+	@echo "🎲 Running error scenarios with pre-generated data..."
+	@echo "⚠️  This test intentionally generates errors with realistic data"
+	@echo "   Generating fresh test data..."
+	@cd Tools/BookStore.Performance.RequestGenerator && \
+		dotnet run -- book --count 50 --output test-data/books-bulk.json > /dev/null 2>&1 && \
+		dotnet run -- author --count 25 --output test-data/authors-bulk.json > /dev/null 2>&1
+	@echo "   ✓ Generated 50 books, 25 authors"
+	@mkdir -p BookStore.Performance.Tests/results
+	@cd BookStore.Performance.Tests && \
+		k6 run scenarios/error-scenarios-generated-data.js --env SCENARIO=errorTest --env BASE_URL=http://localhost:7002 \
+		--out json=results/errors-gen-$(shell date +%Y%m%d-%H%M%S).json; \
+		EXIT_CODE=$$?; \
+		echo "✓ Test complete. Generating HTML report..."; \
+		LATEST_JSON=$$(ls -t results/errors-gen-*.json 2>/dev/null | head -1); \
+		if [ -n "$$LATEST_JSON" ]; then \
+			node generate-html-report.js "$$LATEST_JSON" && \
+			LATEST_HTML=$$(ls -t results/*.html 2>/dev/null | head -1) && \
+			echo "📊 Opening report: $$LATEST_HTML" && \
+			(open "$$LATEST_HTML" || xdg-open "$$LATEST_HTML" 2>/dev/null); \
+		fi; \
+		exit $$EXIT_CODE
 
 .PHONY: docker-perf
 docker-perf: ## Run performance test via Docker
@@ -530,6 +688,83 @@ reset-db: ## Drop MongoDB database [DATA LOSS]
 	@echo "Resetting database..."
 	@docker exec -it mongodb mongosh bookstore --eval "db.dropDatabase()" 2>/dev/null || \
 		echo "MongoDB not running in Docker or database doesn't exist"
+
+# ==================== Request Generator (Data Generation) ====================
+
+.PHONY: gen-book
+gen-book: ## Generate a single book JSON
+	@cd Tools/BookStore.Performance.RequestGenerator && dotnet run -- book
+
+.PHONY: gen-author
+gen-author: ## Generate a single author JSON
+	@cd Tools/BookStore.Performance.RequestGenerator && dotnet run -- author
+
+.PHONY: gen-books
+gen-books: ## Generate 10 books to file (gen-books COUNT=50)
+	@echo "Generating books..."
+	@cd Tools/BookStore.Performance.RequestGenerator && \
+		dotnet run -- book --count $(or $(COUNT),10) --output test-data/books-$(shell date +%Y%m%d-%H%M%S).json 2>&1
+
+.PHONY: gen-authors
+gen-authors: ## Generate 10 authors to file (gen-authors COUNT=20)
+	@echo "Generating authors..."
+	@cd Tools/BookStore.Performance.RequestGenerator && \
+		dotnet run -- author --count $(or $(COUNT),10) --output test-data/authors-$(shell date +%Y%m%d-%H%M%S).json 2>&1
+
+.PHONY: gen-compact
+gen-compact: ## Generate 5 compact books (single line JSON)
+	@cd Tools/BookStore.Performance.RequestGenerator && \
+		dotnet run -- book --count 5 --compact
+
+.PHONY: gen-batch
+gen-batch: ## Generate bulk test data (100 books, 50 authors)
+	@echo "📦 Generating bulk test data..."
+	@mkdir -p Tools/BookStore.Performance.RequestGenerator/test-data
+	@cd Tools/BookStore.Performance.RequestGenerator && \
+		dotnet run -- book --count 100 --output test-data/books-bulk-$(shell date +%Y%m%d-%H%M%S).json 2>&1 && \
+		dotnet run -- author --count 50 --output test-data/authors-bulk-$(shell date +%Y%m%d-%H%M%S).json 2>&1
+	@echo "✅ Bulk data generated in Tools/BookStore.Performance.RequestGenerator/test-data/"
+
+.PHONY: gen-help
+gen-help: ## Show request generator usage guide
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "   BookStore Request Generator - Test Data Generation"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo ""
+	@echo "📖 What is the Request Generator?"
+	@echo "   C# tool to generate realistic JSON payloads for API testing"
+	@echo "   Creates Books and Authors with random but realistic data"
+	@echo ""
+	@echo "🎯 Quick Commands:"
+	@echo "   make gen-book           # Single book JSON (stdout)"
+	@echo "   make gen-author         # Single author JSON (stdout)"
+	@echo "   make gen-books          # 10 books to file"
+	@echo "   make gen-authors        # 10 authors to file"
+	@echo "   make gen-compact        # 5 books, compact JSON"
+	@echo "   make gen-batch          # Bulk: 100 books + 50 authors"
+	@echo ""
+	@echo "⚙️  Custom Count:"
+	@echo "   make gen-books COUNT=50     # Generate 50 books"
+	@echo "   make gen-authors COUNT=20   # Generate 20 authors"
+	@echo ""
+	@echo "🔧 Direct Tool Usage:"
+	@echo "   cd Tools/BookStore.Performance.RequestGenerator"
+	@echo "   dotnet run -- book --count 5 --output sample.json"
+	@echo "   dotnet run -- author --compact"
+	@echo "   dotnet run -- --help"
+	@echo ""
+	@echo "💡 Use Cases:"
+	@echo "   ✅ K6 load test data generation"
+	@echo "   ✅ Quick API testing payloads"
+	@echo "   ✅ Database seeding"
+	@echo "   ✅ Local experimentation (zero token cost)"
+	@echo ""
+	@echo "📂 Output Location:"
+	@echo "   Tools/BookStore.Performance.RequestGenerator/test-data/"
+	@echo ""
+	@echo "📚 Full Documentation:"
+	@echo "   Tools/BookStore.Performance.RequestGenerator/README.md"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # ==================== Development Utilities ====================
 

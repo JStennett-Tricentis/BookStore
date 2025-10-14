@@ -429,6 +429,9 @@ $RECYCLE.BIN/
 *.msp
 *.exe
 
+# Generated test data
+**/Tools/BookStore.Performance.RequestGenerator/test-data/*
+
 # Performance test outputs
 BookStore.Performance.Tests/results/
 *.har

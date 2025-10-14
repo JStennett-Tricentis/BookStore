@@ -52,7 +52,7 @@ public class BookService : IBookService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<Book>> GetBooksAsync(string? genre = null, string? author = null, int page = 1, int pageSize = 10)
+    public async Task<(IEnumerable<Book> Books, long TotalCount)> GetBooksAsync(string? genre = null, string? author = null, int page = 1, int pageSize = 10)
     {
         _logger.LogDebug("Getting books: genre={Genre}, author={Author}, page={Page}, pageSize={PageSize}", genre, author, page, pageSize);
 
@@ -69,6 +69,14 @@ public class BookService : IBookService
             filter &= filterBuilder.Eq(b => b.Author, author);
         }
 
+        // Get total count with filter applied
+        var countSw = System.Diagnostics.Stopwatch.StartNew();
+        var totalCount = await _books.CountDocumentsAsync(filter);
+        countSw.Stop();
+
+        MongoDbOperations.Add(1, new KeyValuePair<string, object?>("operation", "count"));
+        MongoDbDuration.Record(countSw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("operation", "count"));
+
         // Track MongoDB query
         var sw = System.Diagnostics.Stopwatch.StartNew();
         var books = await _books.Find(filter)
@@ -80,9 +88,9 @@ public class BookService : IBookService
         MongoDbOperations.Add(1, new KeyValuePair<string, object?>("operation", "find"));
         MongoDbDuration.Record(sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("operation", "find"));
 
-        _logger.LogInformation("Found {Count} books from database in {Duration}ms", books.Count, sw.Elapsed.TotalMilliseconds);
+        _logger.LogInformation("Found {Count} books from database (total: {TotalCount}) in {Duration}ms", books.Count, totalCount, sw.Elapsed.TotalMilliseconds);
 
-        return books;
+        return (books, totalCount);
     }
 
     public async Task<Book?> GetBookByIdAsync(string id)
@@ -176,6 +184,31 @@ public class BookService : IBookService
         await InvalidateRelatedCaches();
 
         return book;
+    }
+
+    public async Task<IEnumerable<Book>> CreateBooksAsync(IEnumerable<Book> books)
+    {
+        var booksList = books.ToList();
+        var now = DateTime.UtcNow;
+
+        foreach (var book in booksList)
+        {
+            book.CreatedAt = now;
+            book.UpdatedAt = now;
+        }
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        await _books.InsertManyAsync(booksList);
+        sw.Stop();
+
+        MongoDbOperations.Add(booksList.Count, new KeyValuePair<string, object?>("operation", "insertMany"));
+        MongoDbDuration.Record(sw.Elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("operation", "insertMany"));
+
+        _logger.LogInformation("Created {Count} books in {Duration}ms", booksList.Count, sw.Elapsed.TotalMilliseconds);
+
+        await InvalidateRelatedCaches();
+
+        return booksList;
     }
 
     public async Task<Book?> UpdateBookAsync(string id, Book book)

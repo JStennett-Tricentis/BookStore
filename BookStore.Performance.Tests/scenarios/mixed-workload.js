@@ -86,7 +86,8 @@ export function setup() {
     const booksResponse = http.get(`${environment.serviceUrl}/api/v1/Books?page=1&pageSize=50`);
     let bookIds = [];
     if (booksResponse.status === 200) {
-        const books = JSON.parse(booksResponse.body);
+        const responseData = JSON.parse(booksResponse.body);
+        const books = responseData.books || responseData; // Support both old and new response format
         bookIds = books.map((book) => book.id);
         console.log(`✓ Found ${bookIds.length} books for testing`);
     }

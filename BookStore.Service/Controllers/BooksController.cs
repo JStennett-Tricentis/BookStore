@@ -22,7 +22,7 @@ public class BooksController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Book>>> GetBooks(
+    public async Task<ActionResult<object>> GetBooks(
         [FromQuery] string? genre = null,
         [FromQuery] string? author = null,
         [FromQuery] int page = 1,
@@ -30,8 +30,15 @@ public class BooksController : ControllerBase
     {
         try
         {
-            var books = await _bookService.GetBooksAsync(genre, author, page, pageSize);
-            return Ok(books);
+            var (books, totalCount) = await _bookService.GetBooksAsync(genre, author, page, pageSize);
+            return Ok(new
+            {
+                books = books,
+                totalCount = totalCount,
+                page = page,
+                pageSize = pageSize,
+                totalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+            });
         }
         catch (Exception ex)
         {
@@ -75,6 +82,37 @@ public class BooksController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating book");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpPost("bulk")]
+    public async Task<ActionResult<IEnumerable<Book>>> CreateBooks([FromBody] IEnumerable<Book> books)
+    {
+        try
+        {
+            var booksList = books.ToList();
+
+            if (!booksList.Any())
+            {
+                return BadRequest("Books list cannot be empty");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var createdBooks = await _bookService.CreateBooksAsync(booksList);
+            return Ok(new
+            {
+                message = $"Successfully created {createdBooks.Count()} books",
+                books = createdBooks
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating books in bulk");
             return StatusCode(500, "Internal server error");
         }
     }

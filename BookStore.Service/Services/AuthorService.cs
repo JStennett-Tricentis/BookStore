@@ -22,17 +22,20 @@ public class AuthorService : IAuthorService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<Author>> GetAuthorsAsync(int page = 1, int pageSize = 10)
+    public async Task<(IEnumerable<Author> Authors, long TotalCount)> GetAuthorsAsync(int page = 1, int pageSize = 10)
     {
         // Temporarily bypass cache to debug the issue
         _logger.LogDebug("Getting authors: page={Page}, pageSize={PageSize}", page, pageSize);
+
+        // Get total count
+        var totalCount = await _authors.CountDocumentsAsync(_ => true);
 
         var authors = await _authors.Find(_ => true)
             .Skip((page - 1) * pageSize)
             .Limit(pageSize)
             .ToListAsync();
 
-        _logger.LogInformation("Found {Count} authors from database", authors.Count);
+        _logger.LogInformation("Found {Count} authors from database (total: {TotalCount})", authors.Count, totalCount);
 
         // Re-enable caching later
         /*
@@ -53,7 +56,7 @@ public class AuthorService : IAuthorService
         }
         */
 
-        return authors;
+        return (authors, totalCount);
     }
 
     public async Task<Author?> GetAuthorByIdAsync(string id)
@@ -94,6 +97,25 @@ public class AuthorService : IAuthorService
         await InvalidateRelatedCaches();
 
         return author;
+    }
+
+    public async Task<IEnumerable<Author>> CreateAuthorsAsync(IEnumerable<Author> authors)
+    {
+        var authorsList = authors.ToList();
+        var now = DateTime.UtcNow;
+
+        foreach (var author in authorsList)
+        {
+            author.CreatedAt = now;
+            author.UpdatedAt = now;
+        }
+
+        await _authors.InsertManyAsync(authorsList);
+        _logger.LogInformation("Created {Count} authors", authorsList.Count);
+
+        await InvalidateRelatedCaches();
+
+        return authorsList;
     }
 
     public async Task<Author?> UpdateAuthorAsync(string id, Author author)

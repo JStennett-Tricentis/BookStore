@@ -43,9 +43,21 @@
                                     "    pm.response.to.have.status(200);",
                                     "});",
                                     "",
-                                    "pm.test(\"Response is an array\", function () {",
+                                    "pm.test(\"Response has pagination metadata\", function () {",
                                     "    var jsonData = pm.response.json();",
-                                    "    pm.expect(jsonData).to.be.an('array');",
+                                    "    pm.expect(jsonData).to.have.property('books');",
+                                    "    pm.expect(jsonData).to.have.property('totalCount');",
+                                    "    pm.expect(jsonData).to.have.property('page');",
+                                    "    pm.expect(jsonData).to.have.property('pageSize');",
+                                    "    pm.expect(jsonData).to.have.property('totalPages');",
+                                    "    pm.expect(jsonData.books).to.be.an('array');",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Total count is valid\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.totalCount).to.be.a('number');",
+                                    "    pm.expect(jsonData.totalCount).to.be.at.least(0);",
+                                    "    console.log('Total books in database: ' + jsonData.totalCount);",
                                     "});",
                                     "",
                                     "pm.test(\"Response time is less than 500ms\", function () {",
@@ -53,8 +65,9 @@
                                     "});",
                                     "",
                                     "// Store first book ID for later use",
-                                    "if (pm.response.json().length > 0) {",
-                                    "    pm.collectionVariables.set(\"bookId\", pm.response.json()[0].id);",
+                                    "var jsonData = pm.response.json();",
+                                    "if (jsonData.books && jsonData.books.length > 0) {",
+                                    "    pm.collectionVariables.set(\"bookId\", jsonData.books[0].id);",
                                     "}"
                                 ],
                                 "type": "text/javascript"
@@ -191,6 +204,78 @@
                             "path": ["api", "v{{apiVersion}}", "Books"]
                         },
                         "description": "Create a new book in the catalog"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Books (Bulk)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Books created successfully\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('message');",
+                                    "    pm.expect(jsonData).to.have.property('books');",
+                                    "    pm.expect(jsonData.books).to.be.an('array');",
+                                    "    pm.expect(jsonData.books.length).to.be.at.least(1);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"All books have IDs assigned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    jsonData.books.forEach(function(book) {",
+                                    "        pm.expect(book).to.have.property('id');",
+                                    "    });",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [
+                                    "// Generate random data for bulk books",
+                                    "const genres = ['Fiction', 'Technology', 'Science', 'History', 'Mystery'];",
+                                    "const timestamp = Date.now();",
+                                    "",
+                                    "pm.variables.set(\"timestamp\", timestamp);",
+                                    "pm.variables.set(\"genre1\", genres[0]);",
+                                    "pm.variables.set(\"genre2\", genres[1]);",
+                                    "pm.variables.set(\"genre3\", genres[2]);",
+                                    "",
+                                    "// Generate random ISBNs",
+                                    "pm.variables.set(\"isbn1\", `978-${Math.floor(Math.random() * 10)}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100)}-${Math.floor(Math.random() * 10)}`);",
+                                    "pm.variables.set(\"isbn2\", `978-${Math.floor(Math.random() * 10)}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100)}-${Math.floor(Math.random() * 10)}`);",
+                                    "pm.variables.set(\"isbn3\", `978-${Math.floor(Math.random() * 10)}-${Math.floor(Math.random() * 100000)}-${Math.floor(Math.random() * 100)}-${Math.floor(Math.random() * 10)}`);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[\n  {\n    \"title\": \"Bulk Book 1 - {{timestamp}}\",\n    \"author\": \"Bulk Author 1\",\n    \"isbn\": \"{{isbn1}}\",\n    \"price\": 19.99,\n    \"publishedDate\": \"2024-01-01T00:00:00Z\",\n    \"genre\": \"{{genre1}}\",\n    \"description\": \"First book in bulk creation test\",\n    \"stockQuantity\": 50\n  },\n  {\n    \"title\": \"Bulk Book 2 - {{timestamp}}\",\n    \"author\": \"Bulk Author 2\",\n    \"isbn\": \"{{isbn2}}\",\n    \"price\": 24.99,\n    \"publishedDate\": \"2024-02-01T00:00:00Z\",\n    \"genre\": \"{{genre2}}\",\n    \"description\": \"Second book in bulk creation test\",\n    \"stockQuantity\": 75\n  },\n  {\n    \"title\": \"Bulk Book 3 - {{timestamp}}\",\n    \"author\": \"Bulk Author 3\",\n    \"isbn\": \"{{isbn3}}\",\n    \"price\": 29.99,\n    \"publishedDate\": \"2024-03-01T00:00:00Z\",\n    \"genre\": \"{{genre3}}\",\n    \"description\": \"Third book in bulk creation test\",\n    \"stockQuantity\": 100\n  }\n]"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/Books/bulk",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "Books", "bulk"]
+                        },
+                        "description": "Create multiple books in a single request for efficient bulk operations"
                     },
                     "response": []
                 },
@@ -401,14 +486,27 @@
                                     "    pm.response.to.have.status(200);",
                                     "});",
                                     "",
-                                    "pm.test(\"Response is an array\", function () {",
+                                    "pm.test(\"Response has pagination metadata\", function () {",
                                     "    var jsonData = pm.response.json();",
-                                    "    pm.expect(jsonData).to.be.an('array');",
+                                    "    pm.expect(jsonData).to.have.property('authors');",
+                                    "    pm.expect(jsonData).to.have.property('totalCount');",
+                                    "    pm.expect(jsonData).to.have.property('page');",
+                                    "    pm.expect(jsonData).to.have.property('pageSize');",
+                                    "    pm.expect(jsonData).to.have.property('totalPages');",
+                                    "    pm.expect(jsonData.authors).to.be.an('array');",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Total count is valid\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.totalCount).to.be.a('number');",
+                                    "    pm.expect(jsonData.totalCount).to.be.at.least(0);",
+                                    "    console.log('Total authors in database: ' + jsonData.totalCount);",
                                     "});",
                                     "",
                                     "// Store first author ID for later use",
-                                    "if (pm.response.json().length > 0) {",
-                                    "    pm.collectionVariables.set(\"authorId\", pm.response.json()[0].id);",
+                                    "var jsonData = pm.response.json();",
+                                    "if (jsonData.authors && jsonData.authors.length > 0) {",
+                                    "    pm.collectionVariables.set(\"authorId\", jsonData.authors[0].id);",
                                     "}"
                                 ],
                                 "type": "text/javascript"
@@ -509,6 +607,68 @@
                             "path": ["api", "v{{apiVersion}}", "Authors"]
                         },
                         "description": "Create a new author"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Authors (Bulk)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Authors created successfully\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('message');",
+                                    "    pm.expect(jsonData).to.have.property('authors');",
+                                    "    pm.expect(jsonData.authors).to.be.an('array');",
+                                    "    pm.expect(jsonData.authors.length).to.be.at.least(1);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"All authors have IDs assigned\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    jsonData.authors.forEach(function(author) {",
+                                    "        pm.expect(author).to.have.property('id');",
+                                    "    });",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        },
+                        {
+                            "listen": "prerequest",
+                            "script": {
+                                "exec": [
+                                    "// Generate timestamp for unique names",
+                                    "const timestamp = Date.now();",
+                                    "pm.variables.set(\"timestamp\", timestamp);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[\n  {\n    \"name\": \"Bulk Author 1 - {{timestamp}}\",\n    \"biography\": \"First author in bulk creation test. A renowned writer with multiple bestsellers.\",\n    \"birthDate\": \"1970-01-15T00:00:00Z\",\n    \"nationality\": \"American\"\n  },\n  {\n    \"name\": \"Bulk Author 2 - {{timestamp}}\",\n    \"biography\": \"Second author in bulk creation test. Award-winning novelist and essayist.\",\n    \"birthDate\": \"1975-05-20T00:00:00Z\",\n    \"nationality\": \"British\"\n  },\n  {\n    \"name\": \"Bulk Author 3 - {{timestamp}}\",\n    \"biography\": \"Third author in bulk creation test. Contemporary fiction specialist.\",\n    \"birthDate\": \"1980-09-30T00:00:00Z\",\n    \"nationality\": \"Canadian\"\n  }\n]"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/v{{apiVersion}}/Authors/bulk",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["api", "v{{apiVersion}}", "Authors", "bulk"]
+                        },
+                        "description": "Create multiple authors in a single request for efficient bulk operations"
                     },
                     "response": []
                 },

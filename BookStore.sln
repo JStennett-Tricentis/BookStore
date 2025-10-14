@@ -21,6 +21,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{66666666
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookStore.Benchmarks", "BookStore.Benchmarks\BookStore.Benchmarks.csproj", "{0FC8F4CB-DA61-45BB-8F79-09BB2C9230FD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{F273E0E7-AD0B-4569-B138-13611FE61324}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookStore.Performance.RequestGenerator", "Tools\BookStore.Performance.RequestGenerator\BookStore.Performance.RequestGenerator.csproj", "{81910573-CCA2-4EA6-8E25-9EA9568D91D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,8 +55,13 @@ Global
 		{0FC8F4CB-DA61-45BB-8F79-09BB2C9230FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FC8F4CB-DA61-45BB-8F79-09BB2C9230FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FC8F4CB-DA61-45BB-8F79-09BB2C9230FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81910573-CCA2-4EA6-8E25-9EA9568D91D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81910573-CCA2-4EA6-8E25-9EA9568D91D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81910573-CCA2-4EA6-8E25-9EA9568D91D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81910573-CCA2-4EA6-8E25-9EA9568D91D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{81910573-CCA2-4EA6-8E25-9EA9568D91D3} = {F273E0E7-AD0B-4569-B138-13611FE61324}
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

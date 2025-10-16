@@ -8,7 +8,7 @@ public interface ILLMServiceFactory
     /// <summary>
     /// Get an LLM service by provider name.
     /// </summary>
-    /// <param name="provider">Provider name (claude, openai, bedrock, ollama)</param>
+    /// <param name="provider">Provider name (claude, openai, bedrock, ollama, lmstudio)</param>
     /// <returns>The requested LLM service implementation</returns>
     ILLMService GetService(string provider);
 
@@ -35,12 +35,13 @@ public class LLMServiceFactory : ILLMServiceFactory
             "openai" => _serviceProvider.GetRequiredService<OpenAIService>(),
             "bedrock" => _serviceProvider.GetRequiredService<BedrockService>(),
             "ollama" => _serviceProvider.GetRequiredService<OllamaService>(),
+            "lmstudio" => _serviceProvider.GetRequiredService<LMStudioService>(),
             _ => throw new ArgumentException($"Unknown LLM provider: {provider}", nameof(provider))
         };
     }
 
     public IEnumerable<string> GetAvailableProviders()
     {
-        return new[] { "claude", "openai", "bedrock", "ollama" };
+        return new[] { "claude", "openai", "bedrock", "ollama", "lmstudio" };
     }
 }

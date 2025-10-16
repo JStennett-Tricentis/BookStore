@@ -66,6 +66,9 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = redisConnectionString;
 });
 
+// Add HttpClient for LM Studio
+builder.Services.AddHttpClient();
+
 // Services
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
@@ -75,6 +78,7 @@ builder.Services.AddSingleton<ClaudeService>();
 builder.Services.AddSingleton<OllamaService>();
 builder.Services.AddSingleton<OpenAIService>();
 builder.Services.AddSingleton<BedrockService>();
+builder.Services.AddSingleton<LMStudioService>();
 
 // Register default provider based on configuration (for backwards compatibility)
 var llmProvider = builder.Configuration["LLM:Provider"] ?? "Ollama";
@@ -86,6 +90,7 @@ builder.Services.AddSingleton<ILLMService>(sp =>
         "openai" => sp.GetRequiredService<OpenAIService>(),
         "bedrock" => sp.GetRequiredService<BedrockService>(),
         "ollama" => sp.GetRequiredService<OllamaService>(),
+        "lmstudio" => sp.GetRequiredService<LMStudioService>(),
         _ => sp.GetRequiredService<OllamaService>() // Default to Ollama
     };
 });

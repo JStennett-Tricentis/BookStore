@@ -17,115 +17,10 @@
         "x": 0,
         "y": 0
       },
-      "id": 1011,
+      "id": 111,
       "panels": [],
-      "title": "\ud83d\uddd1\ufe0f Garbage Collection (GC)",
+      "title": "\ud83d\uddd1\ufe0f Garbage Collection",
       "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 1
-      },
-      "id": 1,
-      "options": {
-        "legend": {
-          "calcs": [
-            "last",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "expr": "process_runtime_dotnet_gc_heap_size_bytes{generation=\"gen0\"} or vector(0)",
-          "legendFormat": "Gen 0",
-          "refId": "A"
-        },
-        {
-          "expr": "process_runtime_dotnet_gc_heap_size_bytes{generation=\"gen1\"} or vector(0)",
-          "legendFormat": "Gen 1",
-          "refId": "B"
-        },
-        {
-          "expr": "process_runtime_dotnet_gc_heap_size_bytes{generation=\"gen2\"} or vector(0)",
-          "legendFormat": "Gen 2",
-          "refId": "C"
-        },
-        {
-          "expr": "process_runtime_dotnet_gc_heap_size_bytes{generation=\"loh\"} or vector(0)",
-          "legendFormat": "Large Object Heap",
-          "refId": "D"
-        },
-        {
-          "expr": "process_runtime_dotnet_gc_heap_size_bytes{generation=\"poh\"} or vector(0)",
-          "legendFormat": "Pinned Object Heap",
-          "refId": "E"
-        }
-      ],
-      "title": "GC Heap Size by Generation",
-      "type": "timeseries"
     },
     {
       "datasource": {
@@ -159,9 +54,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 4,
         "w": 6,
-        "x": 12,
+        "x": 0,
         "y": 1
       },
       "id": 2,
@@ -220,10 +115,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 4,
         "w": 6,
-        "x": 0,
-        "y": 26
+        "x": 6,
+        "y": 1
       },
       "id": 3,
       "options": {
@@ -248,6 +143,172 @@
       ],
       "title": "GC Committed Memory",
       "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50000000
+              },
+              {
+                "color": "red",
+                "value": 100000000
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "expr": "process_runtime_dotnet_gc_committed_memory_size_bytes or vector(0)",
+          "refId": "A"
+        }
+      ],
+      "title": "GC Committed Memory",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "tooltip": false,
+              "viz": false,
+              "legend": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 5
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "expr": "process_runtime_dotnet_gc_heap_size_bytes{generation=\"gen0\"} or vector(0)",
+          "legendFormat": "Gen 0",
+          "refId": "A"
+        },
+        {
+          "expr": "process_runtime_dotnet_gc_heap_size_bytes{generation=\"gen1\"} or vector(0)",
+          "legendFormat": "Gen 1",
+          "refId": "B"
+        },
+        {
+          "expr": "process_runtime_dotnet_gc_heap_size_bytes{generation=\"gen2\"} or vector(0)",
+          "legendFormat": "Gen 2",
+          "refId": "C"
+        },
+        {
+          "expr": "process_runtime_dotnet_gc_heap_size_bytes{generation=\"loh\"} or vector(0)",
+          "legendFormat": "Large Object Heap",
+          "refId": "D"
+        },
+        {
+          "expr": "process_runtime_dotnet_gc_heap_size_bytes{generation=\"poh\"} or vector(0)",
+          "legendFormat": "Pinned Object Heap",
+          "refId": "E"
+        }
+      ],
+      "title": "GC Heap Size by Generation",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -305,8 +366,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 9
+        "x": 12,
+        "y": 5
       },
       "id": 4,
       "options": {
@@ -400,8 +461,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 9
+        "x": 0,
+        "y": 13
       },
       "id": 5,
       "options": {
@@ -490,8 +551,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 17
+        "x": 12,
+        "y": 13
       },
       "id": 6,
       "options": {
@@ -526,73 +587,12 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 21
       },
-      "id": 1012,
+      "id": 112,
       "panels": [],
       "title": "\ud83d\udcbe Memory Management",
       "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50000000
-              },
-              {
-                "color": "red",
-                "value": 100000000
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 0,
-        "y": 26
-      },
-      "id": 3,
-      "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "values": false,
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": ""
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
-      },
-      "pluginVersion": "10.0.0",
-      "targets": [
-        {
-          "expr": "process_runtime_dotnet_gc_committed_memory_size_bytes or vector(0)",
-          "refId": "A"
-        }
-      ],
-      "title": "GC Committed Memory",
-      "type": "gauge"
     },
     {
       "datasource": {
@@ -650,8 +650,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 6,
-        "y": 26
+        "x": 0,
+        "y": 22
       },
       "id": 7,
       "options": {
@@ -681,14 +681,14 @@
       "type": "timeseries"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 30
       },
-      "id": 1013,
+      "id": 113,
       "panels": [],
       "title": "\u26a1 JIT Compilation",
       "type": "row"
@@ -728,7 +728,7 @@
         "h": 4,
         "w": 6,
         "x": 0,
-        "y": 35
+        "y": 31
       },
       "id": 8,
       "options": {
@@ -782,7 +782,7 @@
         "h": 4,
         "w": 6,
         "x": 6,
-        "y": 35
+        "y": 31
       },
       "id": 9,
       "options": {
@@ -844,7 +844,7 @@
         "h": 4,
         "w": 6,
         "x": 12,
-        "y": 35
+        "y": 31
       },
       "id": 10,
       "options": {
@@ -872,14 +872,14 @@
       "type": "stat"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 35
       },
-      "id": 1014,
+      "id": 114,
       "panels": [],
       "title": "\ud83d\udd27 Runtime Internals",
       "type": "row"
@@ -908,10 +908,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 6,
+        "h": 8,
+        "w": 12,
         "x": 0,
-        "y": 40
+        "y": 36
       },
       "id": 11,
       "options": {
@@ -957,7 +957,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": ".NET Runtime",
+  "title": "BookStore - .NET Runtime",
   "uid": "bookstore-dotnet-runtime",
   "version": 1
 }

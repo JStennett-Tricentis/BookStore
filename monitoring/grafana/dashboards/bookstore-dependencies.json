@@ -17,9 +17,9 @@
         "x": 0,
         "y": 0
       },
-      "id": 1105,
+      "id": 205,
       "panels": [],
-      "title": "\ud83d\udce1 External Dependencies Overview",
+      "title": "\ud83d\udce1 Dependencies Overview",
       "type": "row"
     },
     {
@@ -54,7 +54,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 4,
         "w": 6,
         "x": 0,
         "y": 1
@@ -116,7 +116,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 4,
         "w": 6,
         "x": 6,
         "y": 1
@@ -178,7 +178,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 4,
         "w": 6,
         "x": 12,
         "y": 1
@@ -240,7 +240,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 4,
         "w": 6,
         "x": 18,
         "y": 1
@@ -305,7 +305,71 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 50
+        "y": 36
+      },
+      "id": 104,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus"
+          },
+          "expr": "(rate(redis_cache_hits[1m]) / (rate(redis_cache_hits[1m]) + rate(redis_cache_misses[1m]))) * 100",
+          "legendFormat": "Hit Ratio",
+          "refId": "A"
+        }
+      ],
+      "title": "Cache Hit Ratio %",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 44
       },
       "id": 104,
       "options": {
@@ -340,11 +404,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 9
       },
-      "id": 1106,
+      "id": 206,
       "panels": [],
-      "title": "\ud83c\udf10 HTTP Client (Outbound API Calls)",
+      "title": "\ud83c\udf10 HTTP Client",
       "type": "row"
     },
     {
@@ -404,7 +468,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 10
       },
       "id": 5,
       "options": {
@@ -505,7 +569,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 10
       },
       "id": 6,
       "options": {
@@ -606,7 +670,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 18
       },
       "id": 7,
       "options": {
@@ -697,7 +761,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 18
       },
       "id": 8,
       "options": {
@@ -747,11 +811,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 26
       },
-      "id": 1107,
+      "id": 207,
       "panels": [],
-      "title": "\ud83c\udf43 MongoDB Database",
+      "title": "\ud83c\udf43 MongoDB",
       "type": "row"
     },
     {
@@ -811,7 +875,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 33
+        "y": 27
       },
       "id": 100,
       "options": {
@@ -900,7 +964,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 33
+        "y": 27
       },
       "id": 101,
       "options": {
@@ -954,12 +1018,76 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 35
       },
-      "id": 1108,
+      "id": 208,
       "panels": [],
       "title": "\u26a1 Redis Cache",
       "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 36
+      },
+      "id": 104,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus"
+          },
+          "expr": "(rate(redis_cache_hits[1m]) / (rate(redis_cache_hits[1m]) + rate(redis_cache_misses[1m]))) * 100",
+          "legendFormat": "Hit Ratio",
+          "refId": "A"
+        }
+      ],
+      "title": "Cache Hit Ratio %",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -1017,8 +1145,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 42
+        "x": 12,
+        "y": 36
       },
       "id": 102,
       "options": {
@@ -1106,8 +1234,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 42
+        "x": 0,
+        "y": 44
       },
       "id": 103,
       "options": {
@@ -1179,8 +1307,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 50
+        "x": 12,
+        "y": 44
       },
       "id": 104,
       "options": {
@@ -1265,8 +1393,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 50
+        "x": 0,
+        "y": 52
       },
       "id": 105,
       "options": {
@@ -1315,16 +1443,16 @@
       "type": "timeseries"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 58
+        "y": 60
       },
-      "id": 1109,
+      "id": 209,
       "panels": [],
-      "title": "\ud83d\udd0d DNS Resolution",
+      "title": "\ud83d\udd0d DNS",
       "type": "row"
     },
     {
@@ -1382,9 +1510,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 24,
+        "w": 12,
         "x": 0,
-        "y": 59
+        "y": 61
       },
       "id": 9,
       "options": {
@@ -1447,7 +1575,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "External Dependencies",
+  "title": "BookStore - External Dependencies",
   "uid": "bookstore-dependencies",
   "version": 1
 }

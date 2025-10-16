@@ -29,9 +29,22 @@
         "x": 0,
         "y": 0
       },
-      "id": 1007,
+      "id": 107,
       "panels": [],
       "title": "\ud83d\udcb0 LLM Cost & Token Summary",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 108,
+      "panels": [],
+      "title": "\ud83d\udcca Token Usage Over Time",
       "type": "row"
     },
     {
@@ -66,8 +79,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 4,
+        "w": 6,
         "x": 0,
         "y": 1
       },
@@ -141,9 +154,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 12,
+        "h": 4,
+        "w": 6,
+        "x": 6,
         "y": 1
       },
       "id": 4,
@@ -200,10 +213,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 0,
-        "y": 7
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 1
       },
       "id": 5,
       "options": {
@@ -259,10 +272,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 8,
-        "y": 7
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 1
       },
       "id": 6,
       "options": {
@@ -293,19 +306,6 @@
       "title": "OpenAI Total Tokens",
       "type": "stat",
       "noValue": "0"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 13
-      },
-      "id": 1008,
-      "panels": [],
-      "title": "\ud83d\udcca Token Usage by Provider",
-      "type": "row"
     },
     {
       "datasource": {
@@ -364,7 +364,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 14
+        "y": 6
       },
       "id": 1,
       "options": {
@@ -491,9 +491,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 22
+        "w": 12,
+        "x": 12,
+        "y": 6
       },
       "id": 3,
       "options": {
@@ -542,19 +542,6 @@
       "type": "timeseries"
     },
     {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 30
-      },
-      "id": 1009,
-      "panels": [],
-      "title": "\ud83d\udcb5 Cost Analysis Over Time",
-      "type": "row"
-    },
-    {
       "datasource": {
         "type": "prometheus"
       },
@@ -568,9 +555,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 24,
+        "w": 12,
         "x": 0,
-        "y": 31
+        "y": 14
       },
       "id": 7,
       "options": {
@@ -643,8 +630,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "LLM Metrics",
-  "uid": "bookstore-llm",
+  "title": "BookStore - LLM Metrics",
+  "uid": "bookstore-llm-metrics",
   "version": 1,
   "weekStart": ""
 }

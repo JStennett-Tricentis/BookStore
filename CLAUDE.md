@@ -308,6 +308,8 @@ Key configuration patterns in Program.cs:
 - Performance Service: port 7004
 - MongoDB: port 27017
 - Redis: port 6379
+- Ollama: port 11434
+- LM Studio: port 1234
 - API Simulator (internal-api): port 17070
 - API Simulator (ui): port 28880
 - API Simulator (service): port 5020
@@ -358,33 +360,48 @@ All dashboards use 2-minute default time range and 5-second refresh.
 
 ### LLM Multi-Provider Architecture
 
-The application supports 4 LLM providers via factory pattern:
+The application supports 5 LLM providers via factory pattern:
 
-1. **Ollama** (default) - Free local models (llama3.2, mistral, phi3)
-2. **Claude** - Anthropic API (claude-3-5-sonnet-20241022)
-3. **OpenAI** - GPT models (gpt-4o, gpt-4.1-mini)
-4. **Bedrock** - AWS-hosted models (us.anthropic.claude-sonnet-4-\*)
+1. **Ollama** - Free local models (llama3.2, mistral, phi3, gemma3)
+2. **LM Studio** ⭐ - Free local models with OpenAI-compatible API (hundreds of models)
+3. **Claude** - Anthropic API (claude-3-5-sonnet-20241022)
+4. **OpenAI** - GPT models (gpt-4o, gpt-4o-mini, gpt-3.5-turbo)
+5. **Bedrock** - AWS-hosted models (us.anthropic.claude-sonnet-4-\*)
 
-**Key Components:**
+**📖 COMPLETE GUIDE: See [docs/LLM_PROVIDER_GUIDE.md](docs/LLM_PROVIDER_GUIDE.md)**
 
-- `ILLMService` - Common interface for all providers
-- `ILLMServiceFactory` - Provider selection and instantiation
-- `ClaudeService`, `OpenAIService`, `BedrockService`, `OllamaService` - Provider implementations
-- Configuration in `appsettings.json`: `LLM.Provider` setting
+**Quick Configuration:**
+
+1. Edit `BookStore.Service/appsettings.json`
+2. Set `LLM.Provider` to: `"Ollama"`, `"LMStudio"`, `"Claude"`, `"OpenAI"`, or `"Bedrock"`
+3. Configure provider-specific settings in `LLM.Providers.{ProviderName}` section
+4. Restart service: `make run-aspire`
 
 **Testing LLM endpoints:**
 
 ```bash
-make perf-ai-smoke      # Quick LLM endpoint test
-make perf-ai-load       # LLM load test
-make perf-ai-stress     # LLM stress test
+# Uses provider from appsettings.json
+make perf-ai-smoke      # Quick test (1-2 users, 3 min)
+make perf-ai-load       # Load test (3-5 users, 12 min)
+make perf-ai-stress     # Stress test (5-15 users, 17 min)
+make perf-mixed         # Mixed CRUD+AI workload (20% LLM traffic)
 
-# Test specific provider
+# Override provider via URL parameter (no restart needed)
 curl -X POST http://localhost:7002/api/v1/Books/{id}/generate-summary?provider=ollama
+curl -X POST http://localhost:7002/api/v1/Books/{id}/generate-summary?provider=lmstudio
 curl -X POST http://localhost:7002/api/v1/Books/{id}/generate-summary?provider=claude
 ```
 
-**Provider switching:** Edit `appsettings.json` and set `LLM.Provider` to "Ollama", "Claude", "OpenAI", or "Bedrock"
+**Zero-Cost Testing:**
+- **Ollama**: `ollama pull gemma3:1b` (fastest, smallest)
+- **LM Studio**: Download any model via UI (most flexible)
+
+**Key Components:**
+- `ILLMService` - Common interface
+- `ILLMServiceFactory` - Provider selection
+- Individual service classes: `OllamaService`, `LMStudioService`, `ClaudeService`, `OpenAIService`, `BedrockService`
+- Configuration: `BookStore.Service/appsettings.json`
+- Metrics automatically exported to Prometheus/Grafana for all providers
 
 ### Performance Test Reports
 

@@ -113,10 +113,17 @@ let createdBookIds = [];
 
 // Scenario 0: Setup MASSIVE test data
 export function setupTestData() {
-    console.log("🔥 EXTREME CHAOS: Setting up massive test dataset...");
+    console.log("🔥🔥🔥 EXTREME CHAOS TEST: Setting up MASSIVE test dataset...");
+    console.log(`   Creating ${extremeChaosConfig.dataSetup.numberOfBooks} books (this takes ~60-90 seconds)`);
+    console.log(`   Please wait - EXTREME chaos scenarios will start immediately after setup completes...`);
+    console.log("   ⚠️  WARNING: This test is DESIGNED TO BREAK YOUR SYSTEM!");
+    console.log("");
+
+    const total = extremeChaosConfig.dataSetup.numberOfBooks;
+    const progressInterval = Math.floor(total / 10); // Show progress every 10%
 
     // Create tons of books
-    for (let i = 0; i < extremeChaosConfig.dataSetup.numberOfBooks; i++) {
+    for (let i = 0; i < total; i++) {
         const book = books[i % books.length];
         const response = http.post(
             `${BASE_URL}/api/v1/Books`,
@@ -141,13 +148,27 @@ export function setupTestData() {
             createdBookIds.push(createdBook.id);
         }
 
+        // Show progress every 10%
+        if ((i + 1) % progressInterval === 0 || i === total - 1) {
+            const percent = Math.round(((i + 1) / total) * 100);
+            console.log(`   📊 Progress: ${i + 1}/${total} books created (${percent}%)`);
+        }
+
         // Brief pause every 50 books
         if (i % 50 === 0 && i > 0) {
             sleep(0.1);
         }
     }
 
+    console.log("");
     console.log(`✅ EXTREME: Created ${createdBookIds.length} books for stress testing`);
+    console.log("");
+    console.log("⏳ EXTREME chaos scenarios will begin in ~90 seconds...");
+    console.log("   First scenario (Random Spikes) starts at 90s");
+    console.log("   All scenarios will overlap simultaneously for MAXIMUM chaos");
+    console.log("   System will be pushed to absolute breaking point!");
+    console.log("   Watch the Chaos Dashboard - metrics will spike to extremes!");
+    console.log("");
 }
 
 // Helper: Inject EXTREME random errors

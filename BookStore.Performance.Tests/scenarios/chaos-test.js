@@ -110,10 +110,16 @@ let createdBookIds = [];
 
 // Scenario 0: Setup test data - creates books/authors to test with
 export function setupTestData() {
-    console.log("🚀 Setting up test data...");
+    console.log("🚀 CHAOS TEST: Setting up test data...");
+    console.log(`   Creating ${chaosConfig.dataSetup.numberOfBooks} books (this takes ~30-45 seconds)`);
+    console.log(`   Please wait - chaos scenarios will start immediately after setup completes...`);
+    console.log("");
+
+    const total = chaosConfig.dataSetup.numberOfBooks;
+    const progressInterval = Math.floor(total / 5); // Show progress every 20%
 
     // Create books with varied data (amount from config)
-    for (let i = 0; i < chaosConfig.dataSetup.numberOfBooks; i++) {
+    for (let i = 0; i < total; i++) {
         const book = books[i % books.length];
         const response = http.post(
             `${BASE_URL}/api/v1/Books`,
@@ -136,18 +142,33 @@ export function setupTestData() {
             const createdBook = JSON.parse(response.body);
             createdBookIds.push(createdBook.id);
         }
+
+        // Show progress every 20%
+        if ((i + 1) % progressInterval === 0 || i === total - 1) {
+            const percent = Math.round(((i + 1) / total) * 100);
+            console.log(`   📊 Progress: ${i + 1}/${total} books created (${percent}%)`);
+        }
     }
 
+    console.log("");
     console.log(`✅ Created ${createdBookIds.length} books for testing`);
 
     // Prime the cache by reading some books
+    console.log("   Priming cache with 10 sample reads...");
     for (let i = 0; i < 10; i++) {
         if (createdBookIds[i]) {
             http.get(`${BASE_URL}/api/v1/Books/${createdBookIds[i]}`);
         }
     }
 
+    console.log("");
     console.log("✅ Test data setup complete!");
+    console.log("");
+    console.log("⏳ Chaos scenarios will begin in ~45 seconds...");
+    console.log("   First scenario (Random Spikes) starts at 45s");
+    console.log("   Multiple scenarios will overlap for maximum chaos");
+    console.log("   Watch the Chaos Dashboard for dramatic metric changes!");
+    console.log("");
 }
 
 // Helper: Inject random errors for TRUE CHAOS

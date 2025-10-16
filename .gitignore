@@ -437,7 +437,26 @@ BookStore.Performance.Tests/results/
 *.har
 
 # Local configuration overrides
-appsettings.json
+appsettings.Development.json
 appsettings.development.local.json
 appsettings.local.json
-appsettings.development.local.json
+appsettings.Local.json
+
+# K6 test results (in test directory)
+BookStore.Performance.Tests/k6-results.json
+BookStore.Performance.Tests/results/*.json
+BookStore.Performance.Tests/results/*.html
+
+# Temporary notes and analysis files
+*_notes.txt
+*_analysis.md
+claude_notes.txt
+
+# Benchmark results
+BenchmarkDotNet.Artifacts/
+**/BenchmarkDotNet.Artifacts/**
+
+# Logs directory (runtime logs)
+logs/*.log
+logs/*.pid
+tests/newman-combinator/

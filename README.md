@@ -8,26 +8,29 @@ Enterprise-grade .NET 8 performance testing application demonstrating production
 # Setup and start (auto-cleans MongoDB, starts all services)
 make run-aspire
 
-# Run smoke test
-make perf-smoke
+# Open performance testing workspace (Dashboard + Grafana + Aspire)
+make perf-workspace
 
-# Generate HTML report
-make perf-report
+# Run quick test
+make perf-ai-smoke
 ```
 
-**Access:**
+**📖 Documentation:**
+- **[Makefile Reference](docs/MAKEFILE_REFERENCE.md)** - Complete command guide
+- **[LLM Provider Guide](docs/LLM_PROVIDER_GUIDE.md)** - Setup Ollama, LM Studio, Claude, etc.
+- **[CLAUDE.md](CLAUDE.md)** - Full project documentation
 
+**Quick Access:**
 - API: <http://localhost:7002/swagger>
 - Aspire Dashboard: <http://localhost:15888>
 - Grafana: <http://localhost:3333> (admin/admin123)
 - Prometheus: <http://localhost:9090>
+- K6 Web UI: <http://localhost:7004>
 
-**Dashboards:**
-
+**Key Dashboards:**
 ```bash
 make grafana-mega        # All 91 widgets in one view
-make grafana-demo        # 53 curated highlights
-make grafana-dashboards  # Open all 8 specialized dashboards
+make perf-workspace      # Dashboard + Grafana + Aspire (3 tabs)
 ```
 
 ## Architecture
@@ -56,33 +59,33 @@ make grafana-dashboards  # Open all 8 specialized dashboards
 
 ## LLM Support (Multi-Provider)
 
-### Providers
+**📖 Complete guide: [docs/LLM_PROVIDER_GUIDE.md](docs/LLM_PROVIDER_GUIDE.md)**
 
-1. **Ollama** (default) - Free unlimited local models
-   - llama3.2, mistral, phi3, etc.
-   - Zero cost for performance testing
-   - Full OpenTelemetry instrumentation
+### Supported Providers
 
-2. **Claude** - Anthropic direct API
-   - claude-3-5-sonnet-20241022
-   - $3/M input, $15/M output tokens
+1. **Ollama** - Free local models (llama3.2, gemma3:1b, mistral)
+2. **LM Studio** ⭐ - Free local models with hundreds of options
+3. **Claude** - Anthropic API (claude-3-5-sonnet-20241022)
+4. **OpenAI** - GPT models (gpt-4o, gpt-4o-mini)
+5. **Bedrock** - AWS-hosted models
 
-3. **OpenAI** - GPT models (SDK ready)
-   - gpt-4o, gpt-4.1-mini
+### Quick Provider Setup
 
-4. **Bedrock** - AWS-hosted models (SDK ready)
-   - us.anthropic.claude-sonnet-4-\*
+1. Edit `BookStore.Service/appsettings.json`
+2. Set `LLM.Provider` to: `"Ollama"`, `"LMStudio"`, `"Claude"`, `"OpenAI"`, or `"Bedrock"`
+3. Configure provider-specific settings in `LLM.Providers` section
+4. Restart: `make run-aspire`
 
-### Switch Provider
+**Zero-Cost Testing:**
+```bash
+# Ollama (fastest setup)
+ollama pull gemma3:1b
+# Set Provider: "Ollama" in appsettings.json
 
-Edit `appsettings.json`:
-
-```json
-{
-  "LLM": {
-    "Provider": "Ollama" // or "Claude", "OpenAI", "Bedrock"
-  }
-}
+# LM Studio (most flexible)
+# Download from lmstudio.ai
+# Load any model, start server
+# Set Provider: "LMStudio" in appsettings.json
 ```
 
 ## Performance Testing

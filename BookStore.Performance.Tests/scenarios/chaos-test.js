@@ -163,7 +163,10 @@ export function setupTestData() {
 
     console.log("");
     console.log("✅ Test data setup complete!");
-    console.log("🌪️  CHAOS SCENARIOS STARTING NOW...");
+    console.log("");
+    console.log("⏳ Chaos scenarios will begin in ~45 seconds...");
+    console.log("   First scenario (Random Spikes) starts at 45s");
+    console.log("   Multiple scenarios will overlap for maximum chaos");
     console.log("   Watch the Chaos Dashboard for dramatic metric changes!");
     console.log("");
 }

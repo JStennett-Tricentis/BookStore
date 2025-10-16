@@ -1,0 +1,514 @@
+{
+  "info": {
+    "name": "BookStore API - Smoke Tests",
+    "description": "Automated smoke tests for BookStore API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "bookstore-smoke-tests"
+  },
+  "item": [
+    {
+      "name": "Health Checks",
+      "item": [
+        {
+          "name": "Health Check - Basic",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is less than 500ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(500);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Books CRUD Operations",
+      "item": [
+        {
+          "name": "Get All Books",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains books with required fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0]).to.have.property('id');",
+                  "        pm.expect(jsonData[0]).to.have.property('title');",
+                  "        pm.expect(jsonData[0]).to.have.property('author');",
+                  "        pm.expect(jsonData[0]).to.have.property('isbn');",
+                  "        pm.expect(jsonData[0]).to.have.property('price');",
+                  "    }",
+                  "});",
+                  "",
+                  "// Store first book ID for subsequent tests",
+                  "if (pm.response.json().length > 0) {",
+                  "    pm.collectionVariables.set(\"existingBookId\", pm.response.json()[0].id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"]
+            }
+          }
+        },
+        {
+          "name": "Get Book by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct book structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('title');",
+                  "    pm.expect(jsonData).to.have.property('author');",
+                  "    pm.expect(jsonData).to.have.property('isbn');",
+                  "    pm.expect(jsonData).to.have.property('price');",
+                  "    pm.expect(jsonData).to.have.property('stockQuantity');",
+                  "});",
+                  "",
+                  "pm.test(\"Book ID matches requested ID\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.eql(pm.collectionVariables.get(\"existingBookId\"));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Ensure we have a book ID from previous test",
+                  "if (!pm.collectionVariables.get(\"existingBookId\")) {",
+                  "    pm.collectionVariables.set(\"existingBookId\", \"68d73d771f4a556f534529a8\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/{{existingBookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "{{existingBookId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create New Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains created book\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData.title).to.eql(\"Test Book - \" + pm.variables.get(\"timestamp\"));",
+                  "    pm.expect(jsonData.author).to.eql(\"Test Author\");",
+                  "});",
+                  "",
+                  "// Store created book ID for cleanup",
+                  "pm.collectionVariables.set(\"createdBookId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate unique timestamp for book title",
+                  "pm.variables.set(\"timestamp\", new Date().getTime());"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Book - {{timestamp}}\",\n  \"author\": \"Test Author\",\n  \"isbn\": \"978-0-{{timestamp}}\",\n  \"price\": 29.99,\n  \"publishedDate\": \"2024-01-01T00:00:00Z\",\n  \"genre\": \"Test\",\n  \"description\": \"A test book created by smoke tests\",\n  \"stockQuantity\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"]
+            }
+          }
+        },
+        {
+          "name": "Update Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Book is updated correctly\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.title).to.include(\"Updated\");",
+                  "    pm.expect(jsonData.price).to.eql(39.99);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Test Book - {{timestamp}}\",\n  \"author\": \"Updated Author\",\n  \"isbn\": \"978-0-{{timestamp}}\",\n  \"price\": 39.99,\n  \"publishedDate\": \"2024-01-01T00:00:00Z\",\n  \"genre\": \"Updated\",\n  \"description\": \"An updated test book\",\n  \"stockQuantity\": 20\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/{{createdBookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "{{createdBookId}}"]
+            }
+          }
+        },
+        {
+          "name": "Search Books",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Search returns results\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    pm.expect(jsonData.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Search results contain query term\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var searchTerm = \"gatsby\";",
+                  "    var found = jsonData.some(book => ",
+                  "        book.title.toLowerCase().includes(searchTerm) || ",
+                  "        book.author.toLowerCase().includes(searchTerm)",
+                  "    );",
+                  "    pm.expect(found).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/search?query=gatsby",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "search"],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "gatsby"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body is empty\", function () {",
+                  "    pm.expect(pm.response.text()).to.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/{{createdBookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "{{createdBookId}}"]
+            }
+          }
+        },
+        {
+          "name": "Verify Book Deleted",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Book no longer exists\", function () {",
+                  "    pm.expect(pm.response.code).to.eql(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/{{createdBookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "{{createdBookId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Handling",
+      "item": [
+        {
+          "name": "Get Non-Existent Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/000000000000000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "000000000000000000000000"]
+            }
+          }
+        },
+        {
+          "name": "Invalid Book ID Format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/invalid-id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books", "invalid-id"]
+            }
+          }
+        },
+        {
+          "name": "Create Book with Invalid Data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"\",\n  \"price\": -10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Performance Checks",
+      "item": [
+        {
+          "name": "Response Time Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response time is under 1000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "pm.test(\"Response time is under 500ms (warning)\", function () {",
+                  "    if (pm.response.responseTime > 500) {",
+                  "        console.warn(\"Response time is \" + pm.response.responseTime + \"ms - consider optimization\");",
+                  "    }",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "books"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:7002",
+      "type": "default"
+    },
+    {
+      "key": "existingBookId",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "createdBookId",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "timestamp",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}

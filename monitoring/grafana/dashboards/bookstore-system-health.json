@@ -957,7 +957,7 @@
         "from": "now-2m",
         "to": "now"
     },
-    "timepicker": ,
+    "timepicker": {},
     "timezone": "",
     "title": "System Health",
     "uid": "bookstore-system",

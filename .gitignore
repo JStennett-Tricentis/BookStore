@@ -456,3 +456,4 @@ BenchmarkDotNet.Artifacts/
 # Logs directory (runtime logs)
 logs/*.log
 logs/*.pid
+tests/newman-combinator/

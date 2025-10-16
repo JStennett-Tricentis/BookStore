@@ -162,7 +162,10 @@ export function setupTestData() {
 
     console.log("");
     console.log(`✅ EXTREME: Created ${createdBookIds.length} books for stress testing`);
-    console.log("🔥 EXTREME CHAOS SCENARIOS STARTING NOW...");
+    console.log("");
+    console.log("⏳ EXTREME chaos scenarios will begin in ~90 seconds...");
+    console.log("   First scenario (Random Spikes) starts at 90s");
+    console.log("   All scenarios will overlap simultaneously for MAXIMUM chaos");
     console.log("   System will be pushed to absolute breaking point!");
     console.log("   Watch the Chaos Dashboard - metrics will spike to extremes!");
     console.log("");

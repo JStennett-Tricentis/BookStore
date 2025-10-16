@@ -267,6 +267,10 @@ perf-chaos: ## Chaos test - random spikes, errors, LLM, all metrics (~4 min)
 		LATEST_JSON=$$(ls -t results/chaos-test-*.json 2>/dev/null | head -1); \
 		if [ -n "$$LATEST_JSON" ]; then \
 			node generate-html-report.js "$$LATEST_JSON" && \
+			REPORT=$$(ls -t results/chaos-test-*.html 2>/dev/null | head -1) && \
+			[ -n "$$REPORT" ] && open "$$REPORT"; \
+		fi; \
+		exit $$EXIT_CODE
 
 .PHONY: perf-extreme
 perf-extreme: ## 🔥 EXTREME chaos test - WILL BREAK SYSTEM! (500+ VUs, 80% errors, ~6 min)

@@ -24,7 +24,7 @@ jobs:
 
         steps:
             - name: Checkout code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
 
             - name: Start services with Docker Compose
               run: |
@@ -86,7 +86,7 @@ jobs:
                   done
 
             - name: Upload performance results
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v5
               if: always()
               with:
                   name: performance-results-${{ github.run_number }}
@@ -102,7 +102,7 @@ jobs:
                     > grafana-snapshots/performance-dashboard.json || true
 
             - name: Upload Grafana snapshots
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v5
               if: always()
               with:
                   name: grafana-snapshots-${{ github.run_number }}
